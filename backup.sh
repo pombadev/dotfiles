@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-DEST=Documents/backups
+DEST=~/Documents/backups
+SRC=$*
 
-rsync -avh ~/.bashrc ~/$DEST --delete
-rsync -avh ~/.bash_aliases ~/$DEST --delete
+logger "[INCRON] Backuping $SRC to $DEST"
+
+rsync -avh $SRC $DEST --delete

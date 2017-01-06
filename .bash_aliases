@@ -11,7 +11,7 @@ alias v='git branch -v'
 # Utilities #
 
 # Get running process that matches the passed argument
-# If none provided, will show all running processes
+# If none provided, will show all running processes.
 function po() {
 	ps fx | grep -i "$1"
 }
