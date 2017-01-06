@@ -1,0 +1,1 @@
+### Personal `bashrc`, `bash_aliases` and some shortcuts.
