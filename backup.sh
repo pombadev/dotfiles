@@ -3,6 +3,6 @@
 DEST=~/Documents/backups
 SRC=$*
 
-logger "[INCRON] Backuping $SRC to $DEST"
+logger "[INCRON] Backing up $SRC to $DEST"
 
 rsync -avh $SRC $DEST --delete
