@@ -4,6 +4,10 @@ Requires [incron](http://inotify.aiken.cz/?section=incron&page=about&lang=en) to
 
     sudo apt-get install incron
 
+Helpful incron guide:
+    
+    https://www.howtoforge.com/tutorial/trigger-commands-on-file-or-directory-changes-with-incron/
+
 Watched files/directories:
 
 - .bashrc
