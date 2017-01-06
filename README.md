@@ -1,6 +1,6 @@
 ### Personal `bashrc`, `bash_aliases` and some shortcuts.
 
-Requires `incorn`
+Requires `incron`
 
     sudo apt-get install incron
 
