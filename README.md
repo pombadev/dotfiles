@@ -8,6 +8,11 @@ Helpful incron guide:
     
     https://www.howtoforge.com/tutorial/trigger-commands-on-file-or-directory-changes-with-incron/
 
+Sample incron job
+
+    /home/pomba/.bash_aliases IN_MODIFY /bin/bash /home/pomba/Documents/backups/backup.sh $@
+    /home/pomba/.bashrc IN_MODIFY /bin/bash /home/pomba/Documents/backups/backup.sh $@
+
 Watched files/directories:
 
 - .bashrc
