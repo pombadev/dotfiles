@@ -35,5 +35,6 @@ if [[ $STATUS_1 = 0 && $STATUS_2 = 0 && $STATUS_3 = 0 && $STATUS_4 = 0 ]] ; then
 		echo -e '\nEverything is up-to-date\n'
 	fi
 else
-	notify-send "Something's not right, check terminal for more info!" --icon=$PWD/warning.png
+	ICON_PATH=$HOME/Documents/backups
+	notify-send "Something's not right, check terminal for more info!" --icon=$ICON_PATH/warning.png
 fi
