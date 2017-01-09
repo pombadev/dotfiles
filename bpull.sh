@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # Update master
-echo -e '\nCheckout and update master\n'
-git checkout master && git pull
+echo -e '\nCheckout and update master.\n'
+git checkout master && git pull origin master
 STATUS_1=$?
 
 # Checking out master branch for each submodules
-echo -e '\nChecking out each submodules\n'
+echo -e '\nChecking out each submodules.\n'
 git submodule foreach --recursive git checkout master
 STATUS_2=$?
 
 # Update submodules recursively
-echo -e '\nUpdating each submodules\n'
+echo -e '\nUpdating each submodules.\n'
 git submodule foreach --recursive git pull
 STATUS_3=$?
 

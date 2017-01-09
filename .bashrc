@@ -160,7 +160,7 @@ function parse_git_dirty {
 
     # Echo status
     if [[ ! -z $BITS ]]; then
-        echo "$BITS$STOP_CLR"
+        echo "$BITS"
     else
         echo "$GREEN✓$STOP_CLR"
     fi

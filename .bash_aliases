@@ -1,7 +1,13 @@
-# GIT Stuffs
+# GIT Stuffs #
+
+# Prettier git log
+function gl() {
+	git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an%Creset' --abbrev-commit
+}
+
 alias gd='git diff '
 alias gi='git commit -am '
-alias gl='git log --format=%+s\ %+an\ %+ad\ %+H  --date=local'
+alias gl='gl'
 alias gm='git merge '
 alias go='git checkout '
 alias gp='git pull '
