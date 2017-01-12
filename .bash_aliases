@@ -2,7 +2,7 @@
 
 # Prettier git log
 function gl() {
-	git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an%Creset' --abbrev-commit
+	git log --pretty=format:'%Cgreen%s%Creset %Cred(%h)%Creset %n%C(bold blue)%an%Creset %Cred(%cr)%n'
 }
 
 alias gd='git diff '
