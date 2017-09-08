@@ -16,8 +16,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=10000
+HISTFILESIZE=${HISTFILESIZE}
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -87,11 +87,6 @@ fi
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -116,65 +111,9 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Define colours
-GREEN='\e[32m'
-RED='\e[31m'
-STOP_CLR='\e[0m'
-YELLOW='\e[33m'
 
-# get current status of git repo
-function parse_git_dirty {
-    STATUS=$(git status 2>&1 | tee)
-    DIRTY=$(echo -n "$STATUS" 2> /dev/null | grep "modified:" &> /dev/null; echo "$?")
-    UNTRACKED=$(echo -n "$STATUS" 2> /dev/null | grep "Untracked files" &> /dev/null; echo "$?")
-    AHEAD=$(echo -n "$STATUS" 2> /dev/null | grep "Your branch is ahead of" &> /dev/null; echo "$?")
-    NEWFILE=$(echo -n "$STATUS" 2> /dev/null | grep "new file:" &> /dev/null; echo "$?")
-    RENAMED=$(echo -n "$STATUS" 2> /dev/null | grep "renamed:" &> /dev/null; echo "$?")
-    DELETED=$(echo -n "$STATUS" 2> /dev/null | grep "deleted:" &> /dev/null; echo "$?")
-    BITS=''
+export PYTHONSTARTUP=~/.pythonrc
+export HISTTIMEFORMAT="%d/%m/%y %T "
 
-    # Set BITS
-    if [[ $RENAMED == "0" ]]; then
-        BITS="$RED>$BITS$STOP_CLR"
-    fi
-
-    if [[ $AHEAD == "0" ]]; then
-        BITS="$YELLOW*$BITS$STOP_CLR"
-    fi
-
-    if [[ $NEWFILE == "0" ]]; then
-        BITS="$YELLOW+$BITS$STOP_CLR"
-    fi
-
-    if [[ $UNTRACKED == "0" ]]; then
-        BITS="$RED❓$BITS$STOP_CLR"
-    fi
-
-    if [[ $DELETED == "0" ]]; then
-        BITS="$RED✗$BITS$STOP_CLR"
-    fi
-
-    if [[ $DIRTY == "0" ]]; then
-        BITS="$RED❗$BITS$STOP_CLR"
-    fi
-
-    # Echo status
-    if [[ ! -z $BITS ]]; then
-        echo "$BITS"
-    else
-        echo "$GREEN✓$STOP_CLR"
-    fi
-}
-
-# get current branch in git repo
-function parse_git_branch() {
-	BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
-	if [[ -z $BRANCH ]]; then
-		echo ""
-	else
-        STAT=$(parse_git_dirty)
-		echo -e ":$BRANCH $STAT"
-	fi
-}
-
-export PS1="$GREEN\u$RED@$YELLOW\W$STOP_CLR\`parse_git_branch\` "
+# Fancy prompt
+source ~/liquidprompt/liquidprompt

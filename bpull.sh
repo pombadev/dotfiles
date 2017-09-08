@@ -1,34 +1,37 @@
 #!/bin/bash
 
 # Update master
-echo -e '\nCheckout and update master.\n'
+echo -e '\n\e[4m\e[1mCheckout and update master\n\e[0m'
 git checkout master && git pull origin master
 STATUS_1=$?
 
 # Checking out master branch for each submodules
-echo -e '\nChecking out each submodules.\n'
+echo -e '\n\e[4m\e[1mChecking out submodules\n\e[0m'
 git submodule foreach --recursive git checkout master
 STATUS_2=$?
 
 # Update submodules recursively
-echo -e '\nUpdating each submodules.\n'
+echo -e '\n\e[4m\e[1mPull submodules\n\e[0m'
 git submodule foreach --recursive git pull
 STATUS_3=$?
 
-# processor needs to be in dev branch
-cd src/scripts/processor/ && git checkout dev && git pull
-STATUS_4=$?
+#
+# echo -e '\n\e[4m\e[1mUpdating submodules\n\e[0m'
+# git submodule update
+# STATUS_4=$?
 
 if [[ $STATUS_1 = 0 && $STATUS_2 = 0 && $STATUS_3 = 0 && $STATUS_4 = 0 ]] ; then
 
-	read -p 'Start dev/watch/continue? <d/w/x> ' PROMPT
+	read -p 'Start dev/watch/continue? <d/w/x> ' -n 1 PROMPT
+
+	echo -e '\n'
 
 	if [ "$PROMPT" = 'd' ]; then
-		grunt dev:dev &
+		grunt dev:local &
 	fi
 
 	if [ "$PROMPT" = 'w' ]; then
-		grunt run:dev &
+		grunt run:local &
 	fi
 
 	if [[ "$PROMPT" = 'x' ]]; then

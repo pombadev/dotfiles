@@ -15,15 +15,19 @@ fi
 DEFAULT_DIR=src/scripts/
 
 function GREP_ME() {
-	grep --exclude-dir={.git,node_modules,bower_components} -irHn --color=auto "$1" "$2"
+	grep --exclude="yarn.lock" --exclude-dir={.git,node_modules,bower_components,out,vendor} -irHn --color=auto "$1" "$2"
 }
 
 # If search string is provided but no directory, use default
 if [[ ! $2 ]] ; then
 	if [[ -d $DEFAULT_DIR ]]; then
+		# All's good, continue
 		GREP_ME "$1" $DEFAULT_DIR
+	elif [[ -d scripts/ ]]; then
+		# Try scripts/
+		GREP_ME "$1" scripts/
 	else
-		# DEFAULT_DIR doesn't exist use pwd
+		# DEFAULT_DIR & scripts/ doesn't exist use pwd
 		GREP_ME "$1" "$PWD"
 	fi
 # both search string and directory specified use them
