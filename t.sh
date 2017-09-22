@@ -19,18 +19,23 @@ function GREP_ME() {
 }
 
 # If search string is provided but no directory, use default
+# CD-ing to search in the PWD because tilix custom link doesn't
+# work if path is not absolute
 if [[ ! $2 ]] ; then
 	if [[ -d $DEFAULT_DIR ]]; then
+		cd $DEFAULT_DIR
 		# All's good, continue
-		GREP_ME "$1" $DEFAULT_DIR
+		GREP_ME "$1" "$PWD"
 	elif [[ -d scripts/ ]]; then
+		cd scripts/
 		# Try scripts/
-		GREP_ME "$1" scripts/
+		GREP_ME "$1" "$PWD"
 	else
 		# DEFAULT_DIR & scripts/ doesn't exist use pwd
 		GREP_ME "$1" "$PWD"
 	fi
 # both search string and directory specified use them
 else
-	GREP_ME "$1" "$2"
+	cd "$2"
+	GREP_ME "$1" "$PWD"
 fi
