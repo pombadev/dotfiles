@@ -17,5 +17,8 @@ Watched files/directories:
 
 - .bashrc
 - .bash_aliases
+- .zshrc
+- .vimrc
+- .... and more
 
 `backup.sh` will be added to a incron job and executed in case watched file(s) are modified.
