@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DEST=~/Documents/backups
+DEST=~/Documents/dotfiles
 SRC=$*
 
 logger "[INCRON] Backing up $SRC to $DEST"

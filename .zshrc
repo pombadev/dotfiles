@@ -6,7 +6,7 @@ prompt adam1
 setopt append_history histignorealldups sharehistory
 
 # Use emacs keybindings even if our EDITOR is set to vi
-bindkey -e
+# bindkey -e
 
 # Keep 1000 lines of history within the shell and save it to ~/.zsh_history:
 HISTSIZE=1000
@@ -37,8 +37,11 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 # Load custom plugins
 source ~/.bash_aliases
-source ~/liquidprompt/liquidprompt
+# source ~/.zsh/liquidprompt/liquidprompt
 source ~/.zsh/zsh-autosuggestions.zsh
 source /etc/zsh_command_not_found
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/.zsh/zsh-interactive-cd.plugin.zsh
+source ~/.zsh/geometry/geometry.zsh
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
