@@ -116,4 +116,6 @@ export PYTHONSTARTUP=~/.pythonrc
 export HISTTIMEFORMAT="%d/%m/%y %T "
 
 # Fancy prompt
-source ~/liquidprompt/liquidprompt
+source ~/.zsh/liquidprompt/liquidprompt
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

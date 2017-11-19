@@ -41,7 +41,8 @@ source ~/.bash_aliases
 source ~/.zsh/zsh-autosuggestions.zsh
 source /etc/zsh_command_not_found
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source ~/.zsh/zsh-interactive-cd.plugin.zsh
+# source ~/.zsh/zsh-interactive-cd.plugin.zsh
 source ~/.zsh/geometry/geometry.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PYTHONSTARTUP=~/.pythonrc

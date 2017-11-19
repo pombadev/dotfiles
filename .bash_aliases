@@ -53,16 +53,29 @@ function str_comp() {
 #    guake -r $(basename $PWD)
 # }
 
+# Expand URL
+function check() {
+	curl -sI $1 | sed -n 's/Location: *//p';
+}
+
+
 
 alias bpull='go master && gp && gsm checkout master && gsm pull'
 alias po='po'
-alias t='bash ~/Documents/backups/t.sh'
+alias t='bash ~/Documents/dotfiles/t.sh'
 alias ava='ava -v'
 alias st='ping -c 3 google.com'
 alias rnet='sudo service network-manager restart'
 alias comp='str_comp'
 # alias cd='update_dir_name'
-
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias checkurl='check'
 
 # Stuffs
 export nm='./node_modules/.bin/'
