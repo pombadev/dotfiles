@@ -3,6 +3,6 @@
 DEST=~/Documents/dotfiles
 SRC=$*
 
-logger "[INCRON] Backing up $SRC to $DEST"
+echo "[$(date +'%a %d %b %Y  %r')] Backing up $SRC to $DEST" >> /home/pomba/Desktop/backup.log
 
-rsync -avh $SRC $DEST --delete
+rsync -avh "$SRC" $DEST --delete

@@ -12,19 +12,25 @@ set ignorecase					" ignore case when searching
 set incsearch 					" show search matches as you type
 set laststatus=2
 set list
-set listchars=tab:\|\ 			" don't trim
+set listchars=tab:\|\ " don't trim
 set nocompatible
 set noshowmode
 set noswapfile
 set number						" show line number
+set shortmess+=c
 set showmatch					" set show matching parenthesis
 set smartcase					" ignore case if search pattern is all lowercase, case-sensitive otherwise
 set smarttab					" insert tabs on the start of a line according to shiftwidth, not tabstop
+set termguicolors
 set title						" change the terminal's title
 set undolevels=1000				" use many muchos levels of undo
 set updatetime=250				" update time in millisecond
 
 syntax on
+
+if has('gui_running')
+    set lines=9999 columns=9999
+endif
 
 call plug#begin('~/.vim/plugged')
 Plug 'airblade/vim-gitgutter'
@@ -34,17 +40,23 @@ Plug 'itchyny/lightline.vim'
 Plug 'itchyny/vim-gitbranch'
 Plug 'jiangmiao/auto-pairs'
 Plug 'jistr/vim-nerdtree-tabs'
-Plug 'lifepillar/vim-mucomplete'
+Plug 'MaxSt/FlatColor', {'on': []}
+Plug 'mhartington/oceanic-next'
 Plug 'mhinz/vim-startify'
-Plug 'NLKNguyen/papercolor-theme'
+Plug 'roxma/nvim-cm-tern',  {'do': 'npm install'}
+Plug 'roxma/nvim-completion-manager'
 Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
 Plug 'skywind3000/asyncrun.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'w0rp/ale'
+" conditional
+if !has('nvim')
+    Plug 'roxma/vim-hug-neovim-rpc'
+endif
 call plug#end()
 
 " colorscheme
-colorscheme PaperColor
+colorscheme OceanicNext
 
 " custom keybinding
 map <C-\> :NERDTreeToggle<CR>
@@ -54,16 +66,8 @@ map <C-/> :TComment<CR>
 " ctrlp
 let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git\|build\|out\|docs\|coverage'
 
-" mucomplete - all these to get auto complete menu
-inoremap <expr> <c-e> mucomplete#popup_exit('\<c-e>')
-inoremap <expr> <c-y> mucomplete#popup_exit('\<c-y>')
-inoremap <expr>  <cr> mucomplete#popup_exit('\<cr>')
-let g:mucomplete#enable_auto_at_startup = 1
-set completeopt=preview
-set completeopt+=noinsert,menuone,noselect
-set noshowmode shortmess+=c
-
 " ale linter
+let g:ale_sign_column_always = 1
 let g:ale_linters = {
 \ 'javascript': ['eslint'],
 \ 'bash': ['shellcheck'],
@@ -72,7 +76,6 @@ let g:ale_linters = {
 \ }
 let g:ale_sign_error = '❌'
 let g:ale_sign_warning = '⚠'
-let g:ale_sign_column_always = 1
 
 " lightline
 let g:airline#extensions#tabline#enabled = 1
@@ -99,3 +102,7 @@ augroup vimrc
 augroup END
 " F8 to toggle quickfix window
 :noremap <F8> :call asyncrun#quickfix_toggle(8)<cr>
+
+" nvim-completion-manager
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"

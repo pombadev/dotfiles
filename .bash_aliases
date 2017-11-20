@@ -47,7 +47,7 @@ function str_comp() {
 	fi
 }
 
-# Update Guake's tab title 
+# Update Guake's tab title
 # function update_dir_name () {
 #    builtin cd $@
 #    guake -r $(basename $PWD)
