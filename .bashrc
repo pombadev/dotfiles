@@ -114,8 +114,9 @@ fi
 
 export PYTHONSTARTUP=~/.pythonrc
 export HISTTIMEFORMAT="%d/%m/%y %T "
+export PATH=$PATH:/usr/local/go/bin
 
 # Fancy prompt
-source ~/.zsh/liquidprompt/liquidprompt
+# source ~/.zsh/liquidprompt/liquidprompt
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash

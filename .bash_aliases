@@ -6,10 +6,8 @@ function gl() {
 }
 
 function gsm() {
-	let local COUNTER=0
-
-	git submodule foreach --recursive \
-	git "$@"
+	# let local COUNTER=0
+	git submodule foreach --recursive git "$@"
 
 	echo -e '\n\e[32m\e[1mExecuted:\e[0m git submodule foreach --recursive git' "$@" '\n'
 }
@@ -18,7 +16,7 @@ alias gd='git diff '
 alias gi='git commit -am '
 alias gl='gl'
 alias gm='git merge '
-alias go='git checkout '
+# alias go='git checkout '
 alias gp='git pull '
 alias c='git status'
 alias v='git branch -v'
@@ -59,12 +57,36 @@ function check() {
 }
 
 
+function calc () {
+	while getopts ":h:help" option; do
+		case $option in
+			h | help)
+				# echo 'This is a basic calculator, use with caution!'
+				echo 'Calculator :)'
+				return
+			;;
+		esac
+	done
+	# bash version
+	# echo Result is: "$(($@))"
+	# nodejs version
+	node -e "console.log('Result is:', $*)"
+}
+
+function st() {
+	if [[ ! -z "$@" ]]; then
+		speedtest-cli --bytes
+	else
+		ping -c 3 google.com
+	fi
+}
+
 
 alias bpull='go master && gp && gsm checkout master && gsm pull'
 alias po='po'
 alias t='bash ~/Documents/dotfiles/t.sh'
 alias ava='ava -v'
-alias st='ping -c 3 google.com'
+alias st='st'
 alias rnet='sudo service network-manager restart'
 alias comp='str_comp'
 # alias cd='update_dir_name'
@@ -76,6 +98,11 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 alias checkurl='check'
+# for the lulz
+alias vi='nvim'
+alias vim='nvim'
+# cal
+alias calc='noglob calc'
 
 # Stuffs
 export nm='./node_modules/.bin/'
