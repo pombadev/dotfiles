@@ -16,7 +16,7 @@ alias gd='git diff '
 alias gi='git commit -am '
 alias gl='gl'
 alias gm='git merge '
-# alias go='git checkout '
+alias go='git checkout '
 alias gp='git pull '
 alias c='git status'
 alias v='git branch -v'
@@ -68,9 +68,17 @@ function calc () {
 		esac
 	done
 	# bash version
-	# echo Result is: "$(($@))"
+	# echo Result is: "$(($@))" # fastest but doesnt work on fractions
+	# echo Result is: $(expr $(($@))) # fastest but doesnt work on fractions
+
 	# nodejs version
-	node -e "console.log('Result is:', $*)"
+	# node -e "console.log('Result is:', $*)" # slowest
+	# python version
+	# python -c "print('Result is:', $*)" # slowest but faster than nodejs
+
+	# `bc` version (http://hacktux.com/bash-calculator/)
+	# slower than bash but faster than the above languages
+	echo Result is: "$(echo "scale=3; $*" | /usr/bin/bc -l)"
 }
 
 function st() {
@@ -81,6 +89,26 @@ function st() {
 	fi
 }
 
+function pac() {
+	# so that when CTRL+C is pressed, just exit
+	trap SIGINT
+
+	if [[ $1 == "i" ]]; then
+		sudo pacman -S $2
+	elif [[ $1 == "s" ]]; then
+		pacman -Ss $2
+	fi
+
+	if [[ $? != 0 ]]; then
+		echo -e '\n\033[1mNot found, using yaourt....\033[0m\n'
+
+		if [[ $1 == "i" ]]; then
+			yaourt -S $2
+		elif [[ $1 == "s" ]]; then
+			yaourt -Ss $2
+		fi
+	fi
+}
 
 alias bpull='go master && gp && gsm checkout master && gsm pull'
 alias po='po'
@@ -99,10 +127,10 @@ alias la='ls -A'
 alias l='ls -CF'
 alias checkurl='check'
 # for the lulz
-alias vi='nvim'
-alias vim='nvim'
+alias vi='vim'
+alias vim='vim'
 # cal
-alias calc='noglob calc'
+# alias calc='noglob calc'
 
 # Stuffs
 export nm='./node_modules/.bin/'
