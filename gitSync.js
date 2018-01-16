@@ -1,3 +1,5 @@
+#!/usr/bin/node
+
 const fs = require('fs')
 const {spawnSync, spawn} = require('child_process')
 let arg = process.argv[2]

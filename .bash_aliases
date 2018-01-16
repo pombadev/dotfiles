@@ -23,6 +23,7 @@ alias v='git branch -v'
 alias gpa='git checkout master && git pull && git rebase master pmagar'
 alias bp='bash ~/Documents/backups/bp.sh'
 alias gsm='gsm'
+alias ls='ls --color=auto -hl'
 
 
 # Utilities #
@@ -110,12 +111,25 @@ function pac() {
 	fi
 }
 
+function rnet() {
+	distro="$(python -c 'import platform; print(platform.dist()[1].lower())')"
+
+	case $distro in
+		manjaro)
+			sudo systemctl restart NetworkManager.service
+			;;
+
+		ubuntu)
+			sudo service network-manager restart
+			;;
+	esac
+}
+
 alias bpull='go master && gp && gsm checkout master && gsm pull'
 alias po='po'
 alias t='bash ~/Documents/dotfiles/t.sh'
 alias ava='ava -v'
 alias st='st'
-alias rnet='sudo service network-manager restart'
 alias comp='str_comp'
 # alias cd='update_dir_name'
 alias ls='ls --color=auto'
