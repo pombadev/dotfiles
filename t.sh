@@ -26,10 +26,10 @@ if [[ ! $2 ]] ; then
 		cd $DEFAULT_DIR
 		# All's good, continue
 		GREP_ME "$1" "$PWD"
-	elif [[ -d scripts/ ]]; then
-		cd scripts/
+#	elif [[ -d scripts/ ]]; then
+#		cd scripts/
 		# Try scripts/
-		GREP_ME "$1" "$PWD"
+#		GREP_ME "$1" "$PWD"
 	else
 		# DEFAULT_DIR & scripts/ doesn't exist use pwd
 		GREP_ME "$1" "$PWD"

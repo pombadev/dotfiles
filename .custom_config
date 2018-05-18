@@ -1,4 +1,4 @@
-#
+#####
 # ~/.custom_config
 # Include this in ~/.bashrc with
 # [[ -f ~/.custom_config ]] && source ~/.custom_config
