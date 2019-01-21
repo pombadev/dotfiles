@@ -10,8 +10,8 @@ Helpful incron guide:
 
 Sample incron job
 
-    /home/pomba/.bash_aliases IN_MODIFY /bin/bash /home/pomba/Documents/backups/backup.sh $@
-    /home/pomba/.bashrc IN_MODIFY /bin/bash /home/pomba/Documents/backups/backup.sh $@
+    $HOME/.bash_aliases IN_MODIFY /bin/bash $HOME/dotfiles/backup.sh $@
+    $HOME/.bashrc IN_MODIFY /bin/bash $HOME/dotfiles/backup.sh $@
 
 Watched files/directories:
 
