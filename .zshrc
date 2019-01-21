@@ -1,45 +1,41 @@
-# Set up the prompt
-autoload -Uz promptinit; promptinit
-prompt pure
+# ██╗  ██╗██╗███████╗████████╗ ██████╗ ██████╗ ██╗   ██╗     ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗ ███████╗
+# ██║  ██║██║██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝    ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝ ██╔════╝
+# ███████║██║███████╗   ██║   ██║   ██║██████╔╝ ╚████╔╝     ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗███████╗
+# ██╔══██║██║╚════██║   ██║   ██║   ██║██╔══██╗  ╚██╔╝      ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║╚════██║
+# ██║  ██║██║███████║   ██║   ╚██████╔╝██║  ██║   ██║       ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝███████║
+# ╚═╝  ╚═╝╚═╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝        ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ ╚══════╝
 
-setopt append_history histignorealldups sharehistory
+HISTFILE=$HOME/.zsh_history     #Where to save history to disk
+HISTSIZE=10000000               #How many lines of history to keep in memory
+SAVEHIST=10000000               #Number of history entries to save to disk
+setopt SHARE_HISTORY
+setopt EXTENDED_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_EXPIRE_DUPS_FIRST
+alias history='history 1'
+export HISTTIMEFORMAT="%F %T "
 
-# Use vi keybindings
-# bindkey -v
+autoload -U compinit && compinit # required for completions
 
-# Keep 1000 lines of history within the shell and save it to ~/.zsh_history:
-HISTSIZE=1000
-SAVEHIST=1000
-HISTFILE=~/.zsh_history
+# From dotfiles
+source $HOME/Documents/dotfiles/aliases.sh
+source $HOME/Documents/dotfiles/zman.zsh
 
-# Use modern completion system
-autoload -Uz compinit; compinit
+if [ -e /usr/share/terminfo/x/xterm-256color ]; then
+    export TERM='xterm-256color'
+else
+    export TERM='xterm-color'
+fi
 
-zstyle ':completion:*' auto-description 'specify: %d'
-zstyle ':completion:*' completer _expand _complete _correct _approximate
-zstyle ':completion:*' format 'Completing %d'
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*' menu select=2
-eval "$(dircolors -b)"
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-zstyle ':completion:*' list-colors ''
-zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
-zstyle ':completion:*' menu select=long
-zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
-zstyle ':completion:*' use-compctl false
-zstyle ':completion:*' verbose true
+# sourced from alias
+zle -N fzf:preview:file
+bindkey '^T' fzf:preview:file
 
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
-zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+# sourced from alias
+zle -N fzf:grep
+bindkey '^P' fzf:grep
 
-# Load custom plugins
-source ~/.bash_aliases
-source ~/.zsh/zsh-autosuggestions.zsh
-source /etc/zsh_command_not_found
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# source ~/.zsh/geometry/geometry.zsh
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export PYTHONSTARTUP=~/.pythonrc
-export PATH=$PATH:/usr/local/go/bin
+# sourced from alias
+zle -N fzf:npm:scripts
+bindkey '^[w' fzf:npm:scripts

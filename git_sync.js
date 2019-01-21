@@ -1,5 +1,5 @@
 const fs = require('fs')
-const {spawnSync} = require('child_process')
+const {spawnSync, execSync} = require('child_process')
 
 function checkout(branch, path) {
 	exec(`git checkout ${branch}`, path)
@@ -15,7 +15,23 @@ function exec(cmd, path = process.cwd()) {
 	console.log(exec.stderr.toString().trim())
 }
 
-function main() {
+async function deleteOtherBranches(currentBranch, path) {
+	const branches = await execSync(`git branch`, {shell: true, cwd: path})
+		.toString()
+		.split('\n')
+		.map(raw => raw.trim())
+		.filter(raw => (raw !== '' && !raw.startsWith('*') && raw !== currentBranch))
+
+	for (let branch of branches) {
+		try {
+			await exec(`git branch -D ${branch}`, path)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+}
+
+async function main() {
 	// console.log(`Node version:`, process.version + '\n')
 	let pkg
 
@@ -37,9 +53,17 @@ function main() {
 		return console.log('Exiting, key "submoduleConfig" is not found in package.json.')
 	}
 
-	// sync the main repo
-	checkout('master')
-	pull('master')
+	if (process.argv.includes('-clean')) {
+		deleteOtherBranches('master')
+	} else if (process.argv.includes('-checkout')) {
+		checkout('master')
+	} else if (process.argv.includes('-current')) {
+		exec('git pull origin $(git rev-parse --abbrev-ref HEAD)')
+	} else {
+		// sync the main repo
+		checkout('master')
+		pull('master')
+	}
 
 	const envs = ['dev', 'prod']
 	const env = envs.includes(process.arvg0) ? process.arvg0 : envs[0]
@@ -55,8 +79,14 @@ function main() {
 		console.log('Directory: ', path)
 		console.log('Git branch: ', branch)
 
-		checkout(branch, path)
-		pull(branch, path)
+		if (process.argv.includes('-clean')) {
+			deleteOtherBranches(branch, path)
+		} else if (process.argv.includes('-checkout')) {
+			checkout(branch, path)
+		} else {
+			checkout(branch, path)
+			pull(branch, path)
+		}
 
 		console.log('\n')
 	}
