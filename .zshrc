@@ -21,6 +21,7 @@ autoload -U compinit && compinit # required for completions
 # From dotfiles
 source $HOME/Documents/dotfiles/aliases.sh
 source $HOME/Documents/dotfiles/zman.zsh
+source $HOME/dotfiles/exports
 
 if [ -e /usr/share/terminfo/x/xterm-256color ]; then
     export TERM='xterm-256color'
