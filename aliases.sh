@@ -25,10 +25,12 @@ alias gi='git commit -am '
 alias gl='git log --pretty=format:"%C(bold cyan)%s %C(red)(%h)%Creset%n%C(magenta)%b%n%C(yellow)%cr by %an%Creset" --stat'
 alias go='git checkout '
 alias gp='git pull origin $(branch)'
+alias gps='git push origin $(branch)'
 alias c='git status'
 alias v='git branch -vv'
 alias gpr='git pull origin master && git rebase master $(branch)'
 alias bp='bash ~/Documents/backups/bp.sh'
+alias bpull='node ~/dotfiles/git_sync.js'
 
 
 # ██╗   ██╗████████╗██╗██╗     ██╗████████╗██╗███████╗███████╗
@@ -186,7 +188,6 @@ fzf:npm:scripts() {
 	fi
 }
 
-alias bpull='node ~/Documents/dotfiles/git_sync.js'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
