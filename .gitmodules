@@ -1,0 +1,3 @@
+[submodule "zman"]
+	path = zman
+	url = https://github.com/pjmp/zman.git
