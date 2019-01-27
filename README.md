@@ -5,7 +5,7 @@ Requires [incron](http://inotify.aiken.cz/?section=incron&page=about&lang=en) to
     sudo apt-get install incron
 
 Helpful incron guide:
-    
+
     https://www.howtoforge.com/tutorial/trigger-commands-on-file-or-directory-changes-with-incron/
 
 Sample incron job
@@ -22,3 +22,10 @@ Watched files/directories:
 - .... and more
 
 `backup.sh` will be added to a incron job and executed in case watched file(s) are modified.
+
+Cheatsheets:
+
+- https://github.com/hubsmoke/bro
+- https://github.com/tldr-pages/tldr
+- https://github.com/chubin/cheat.sh
+- https://github.com/srsudar/eg
