@@ -1,33 +1,23 @@
-# ██╗  ██╗██╗███████╗████████╗ ██████╗ ██████╗ ██╗   ██╗     ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗ ███████╗
-# ██║  ██║██║██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗╚██╗ ██╔╝    ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝ ██╔════╝
-# ███████║██║███████╗   ██║   ██║   ██║██████╔╝ ╚████╔╝     ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗███████╗
-# ██╔══██║██║╚════██║   ██║   ██║   ██║██╔══██╗  ╚██╔╝      ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║╚════██║
-# ██║  ██║██║███████║   ██║   ╚██████╔╝██║  ██║   ██║       ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝███████║
-# ╚═╝  ╚═╝╚═╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝        ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ ╚══════╝
-
-HISTFILE=$HOME/.zsh_history     #Where to save history to disk
+# zsh options
+HISTFILE=~/.zsh_history
 HISTSIZE=10000000               #How many lines of history to keep in memory
 SAVEHIST=10000000               #Number of history entries to save to disk
-setopt SHARE_HISTORY
-setopt EXTENDED_HISTORY
-setopt HIST_IGNORE_DUPS
-setopt HIST_IGNORE_ALL_DUPS
-setopt HIST_EXPIRE_DUPS_FIRST
-alias history='history 1'
-export HISTTIMEFORMAT="%F %T "
+setopt EXTENDED_HISTORY       # record timestamp of command in HISTFILE
+setopt HIST_EXPIRE_DUPS_FIRST # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt HIST_IGNORE_DUPS       # ignore duplicated commands history list
+setopt HIST_IGNORE_SPACE      # ignore commands that start with space
+setopt HIST_VERIFY            # show command with history expansion to user before running it
+setopt INC_APPEND_HISTORY     # add commands to HISTFILE in order of execution
+setopt APPENDHISTORY          #append to history
+setopt SHARE_HISTORY          # share command history data
+setopt COMPLETE_ALIASES
 
 autoload -U compinit && compinit # required for completions
 
 # From dotfiles
-source $HOME/Documents/dotfiles/aliases.sh
-source $HOME/Documents/dotfiles/zman.zsh
+source $HOME/dotfiles/aliases.sh
 source $HOME/dotfiles/exports
-
-if [ -e /usr/share/terminfo/x/xterm-256color ]; then
-    export TERM='xterm-256color'
-else
-    export TERM='xterm-color'
-fi
+source $HOME/dotfiles/zman.zsh
 
 # sourced from alias
 zle -N fzf:preview:file
@@ -40,3 +30,5 @@ bindkey '^P' fzf:grep
 # sourced from alias
 zle -N fzf:npm:scripts
 bindkey '^[w' fzf:npm:scripts
+
+alias history='history 1'

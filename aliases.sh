@@ -188,6 +188,46 @@ fzf:npm:scripts() {
 	fi
 }
 
+dig() {
+	query=$*
+	provider=''
+
+	case "$1" in
+		t|T)
+			provider=tldr
+		;;
+		e|E)
+			provider=eg
+		;;
+		c|C)
+			provider=cht.sh
+		;;
+	esac
+
+	if [ -n "$provider" ]; then
+		"$provider" "${query[@]:1}"
+		return 0
+	fi
+
+	printf "Digging with 'tldr' ...\n"
+
+	if ! tldr "$query"; then
+		printf "\nDigging with 'eg' ...\n"
+
+		TMP_FILE=$(mktemp)
+
+		eg "$query" > "$TMP_FILE"
+
+		if ! grep --color=never "No entry found" "$TMP_FILE"; then
+			cat "$TMP_FILE"
+		else
+			printf "\nDigging with 'cht.sh' ...\n"
+
+			cht.sh "$query"
+		fi
+	fi
+}
+
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
@@ -199,7 +239,6 @@ alias ls='ls --color=auto -hls'
 alias grep='grep --colour=auto'
 alias egrep='egrep --colour=auto'
 alias fgrep='fgrep --colour=auto'
-alias cp="cp -i"                          # confirm before overwriting something
 alias df='df -h'                          # human-readable sizes
 alias free='free -mhtw'                      # show sizes in MB
 alias np='nano -w PKGBUILD'
@@ -207,3 +246,7 @@ alias more=less
 alias g='\gl'
 alias open='xdg-open'
 alias bat='bat --color=always'
+alias xcopy='xclip -in -selection clipboard'
+alias xpaste='xclip -out -selection clipboard'
+alias cp='acp -gi'
+alias mv='amv -gi'
