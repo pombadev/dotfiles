@@ -2,6 +2,17 @@
 # linting via shellcheck
 # shellcheck disable=SC2096
 
+# Exit on error. Append "|| true" if you expect an error.
+# set -o errexit
+# # Exit on error inside any functions or subshells.
+# set -o errtrace
+# # Do not allow use of undefined vars. Use ${VAR:-} to use an undefined VAR
+# set -o nounset
+# # Catch the error in case mysqldump fails (but gzip succeeds) in `mysqldump |gzip`
+# set -o pipefail
+# Turn on traces, useful while debugging but commented out by default
+# set -o xtrace
+
 #  ██████╗ ██╗████████╗
 # ██╔════╝ ██║╚══██╔══╝
 # ██║  ███╗██║   ██║
@@ -114,22 +125,14 @@ t() {
 		grep --exclude="yarn.lock" --exclude-dir={.git,node_modules,bower_components,out,vendor,flow-typed} -irHn --color=auto "$1" "$2"
 	}
 
-	# If search string is provided but no directory, use default
-	# CD-ing to search in the PWD because tilix custom link doesn't
-	# work if path is not absolute
-	if [[ ! $2 ]] ; then
+	if [[ -z $2 ]] ; then
 		if [[ -d $DEFAULT_DIR ]]; then
-			cd $DEFAULT_DIR
-			# All's good, continue
-			GREP_ME "$1" "$PWD"
+			GREP_ME "$1" "$(pwd)/$DEFAULT_DIR"
 		else
-			# DEFAULT_DIR & scripts/ doesn't exist use pwd
-			GREP_ME "$1" "$PWD"
+			GREP_ME "$1" "$(pwd)"
 		fi
-	# both search string and directory specified use them
 	else
-		cd "$2"
-		GREP_ME "$1" "$PWD"
+		GREP_ME "$1" "$(pwd)/$2"
 	fi
 }
 
@@ -189,6 +192,11 @@ fzf:npm:scripts() {
 }
 
 dig() {
+	if [ -z "$1" ]; then
+		echo "Provide a query string to dig up."
+		return 0
+	fi
+
 	query=$*
 	provider=''
 
