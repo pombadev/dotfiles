@@ -1,7 +1,4 @@
-#!/usr/bin/env bash zsh
-# linting via shellcheck
-# shellcheck disable=SC2096
-
+#!/usr/bin/env bash
 
 # ███╗   ██╗ ██████╗ ██████╗ ███████╗     ██╗███████╗
 # ████╗  ██║██╔═══██╗██╔══██╗██╔════╝     ██║██╔════╝
@@ -46,3 +43,5 @@ export RUST_SRC_PATH=$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/li
 # ╚██████╔╝███████║███████╗██║  ██║    ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
 #  ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝     ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝
 export EDITOR=nvim
+
+# export ZMAN__='TEST'

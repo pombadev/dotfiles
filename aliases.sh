@@ -236,6 +236,14 @@ dig() {
 	fi
 }
 
+serve() {
+	if [[ $(python -V) =~ 3 ]]; then
+		python3 -m http.server
+	elif [[ $(python -V) =~ 2 ]]; then
+		python -m SimpleHTTPServer
+	fi
+}
+
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
