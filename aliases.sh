@@ -122,7 +122,7 @@ t() {
 	local DEFAULT_DIR=src/scripts/
 
 	GREP_ME() {
-		grep --exclude="yarn.lock" --exclude-dir={.git,node_modules,bower_components,out,vendor,flow-typed} -irHn --color=auto "$1" "$2"
+		egrep --exclude="yarn.lock" --exclude-dir={.git,node_modules,bower_components,out,vendor,flow-typed} -irHn --color=auto "$1" "$2"
 	}
 
 	if [[ -z $2 ]] ; then
