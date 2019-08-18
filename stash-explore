@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+git stash list | fzf --reverse --preview '
+	local stash=`echo {} | egrep -roh "^stash+.+}" -`
+
+	git stash show -p $stash | diff-so-fancy
+'

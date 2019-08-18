@@ -122,7 +122,7 @@ t() {
 	local DEFAULT_DIR=src/scripts/
 
 	GREP_ME() {
-		egrep --exclude="yarn.lock" --exclude-dir={.git,node_modules,bower_components,out,vendor,flow-typed} -irHn --color=auto "$1" "$2"
+		egrep --exclude="yarn.lock" --exclude-dir={.git,node_modules,bower_components,out,vendor,flow-typed,build,coverage} -irHn --color=auto "$1" "$2"
 	}
 
 	if [[ -z $2 ]] ; then
@@ -244,6 +244,11 @@ serve() {
 	fi
 }
 
+d() {
+	# history -1 | fzf --tac --bind 'enter:execute(echo {} | sed -r "s/ *[0-9]*\*? *//")+abort'
+	print -z $(history -1 | fzf --tac | sed -r 's/ *[0-9]*\*? *//' | sed -r 's/\\/\\\\/g')
+}
+
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
@@ -266,3 +271,4 @@ alias xcopy='xclip -in -selection clipboard'
 alias xpaste='xclip -out -selection clipboard'
 alias cp='acp -gi'
 alias mv='amv -gi'
+alias code='code --disable-gpu'
