@@ -43,8 +43,8 @@ zle -N fzf:grep
 bindkey '^P' fzf:grep
 
 # sourced from alias
-zle -N fzf:npm:scripts
-bindkey '^[w' fzf:npm:scripts
+# zle -N fzf:npm:scripts
+# bindkey '^[w' fzf:npm:scripts
 alias history='history 1'
 
 # source $HOME/.zman/zman.zsh
@@ -68,6 +68,7 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 # REPORTTIME=3
 
 export PATH=$PATH:$HOME/.poetry/bin
+export PATH=$PATH:$HOME/.local/bin
 
 ### Added by Zplugin's installer
 source '/home/pomba/.zplugin/bin/zplugin.zsh'
@@ -76,19 +77,32 @@ autoload -Uz _zplugin
 ### End of Zplugin's installer chunk
 
 zplugin light zsh-users/zsh-autosuggestions
-# zplugin light zdharma/fast-syntax-highlighting
 zplugin snippet OMZ::lib/key-bindings.zsh
-
-# zplugin ice pick"async.zsh" src"pure.zsh"; zplugin light sindresorhus/pure
-# zplugin ice pick"lib/" src"spaceship.zsh"; zplugin light denysdovhan/spaceship-prompt
 zplugin ice src"sublime.zsh"; zplugin light pjmp/sublime
-# zplugin ice src"powerlevel9k.zsh-theme"; zplugin light romkatv/powerlevel10k
-# POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-# POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="🐧 "
-# zplugin snippet https://raw.githubusercontent.com/romkatv/powerlevel10k/master/config/p10k-classic.zsh
-# zplugin snippet https://raw.githubusercontent.com/romkatv/powerlevel10k/master/config/p10k-lean.zsh
-# zplugin snippet https://raw.githubusercontent.com/romkatv/powerlevel10k/master/config/p10k-pure.zsh
-# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(ssh context dir vcs)
-# POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs command_execution_time)
+zplugin light ael-code/zsh-colored-man-pages
+
+# execution time
+zplugin light popstas/zsh-command-time
+ZSH_COMMAND_TIME_MIN_SECONDS=3
+zsh_command_time() {
+    if [ -n "$ZSH_COMMAND_TIME" ]; then
+        hours=$(($ZSH_COMMAND_TIME/3600))
+        min=$(($ZSH_COMMAND_TIME/60))
+        sec=$(($ZSH_COMMAND_TIME%60))
+        if [ "$ZSH_COMMAND_TIME" -le 60 ]; then
+            timer_show="$fg[green]$ZSH_COMMAND_TIME s."
+        elif [ "$ZSH_COMMAND_TIME" -gt 60 ] && [ "$ZSH_COMMAND_TIME" -le 180 ]; then
+            timer_show="$fg[yellow]$min min. $sec s."
+        else
+            if [ "$hours" -gt 0 ]; then
+                min=$(($min%60))
+                timer_show="$fg[red]$hours h. $min min. $sec s."
+            else
+                timer_show="$fg[red]$min min. $sec s."
+            fi
+        fi
+        printf "${ZSH_COMMAND_TIME_MSG}\n" "$timer_show"
+    fi
+}
 
 export PATH=$PATH:$HOME/go/bin

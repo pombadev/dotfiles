@@ -1,4 +1,4 @@
-#!/usr/bin/env bash zsh
+#!/usr/bin/env bash
 # linting via shellcheck
 # shellcheck disable=SC2096
 
@@ -43,7 +43,6 @@ alias gpr='git pull origin master && git rebase master $(branch)'
 alias bp='bash ~/Documents/backups/bp.sh'
 alias bpull='node ~/dotfiles/git_sync.js'
 
-
 # ██╗   ██╗████████╗██╗██╗     ██╗████████╗██╗███████╗███████╗
 # ██║   ██║╚══██╔══╝██║██║     ██║╚══██╔══╝██║██╔════╝██╔════╝
 # ██║   ██║   ██║   ██║██║     ██║   ██║   ██║█████╗  ███████╗
@@ -60,7 +59,6 @@ po() {
 
 # String comparison
 comp_str() {
-
 	if [[ "$1" == "$2" ]]; then
 		echo 'Matched!'
 	else
@@ -70,7 +68,7 @@ comp_str() {
 
 # Expand URL
 expand_url() {
-	curl -sI "$1" | sed -n 's/Location: *//p';
+	curl -sI "$1" | sed -n 's/Location: *//p'
 }
 
 # Mini calculator
@@ -89,20 +87,22 @@ st() {
 	if [ -z "$*" ]; then
 		ping -c 3 google.com
 	else
-		speedtest-cli --bytes
+		speedtest-cli --bytes --no-upload
 	fi
 }
 
 # restart network manager
 rnet() {
-	distro=$(lsb_release -i | rev | cut -d: -f1 | rev | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+	distro=$(lsb_release -i | column -t | cut -d\  -f5 | tr '[:upper:]' '[:lower:]')
 
 	case $distro in
 		manjarolinux)
-			sudo -k systemctl restart NetworkManager.service ;;
+			sudo -k systemctl restart NetworkManager.service
+		;;
 
 		ubuntu)
-			sudo -k service network-manager restart ;;
+			sudo -k service network-manager restart
+		;;
 	esac
 }
 
@@ -125,7 +125,7 @@ t() {
 		egrep --exclude="yarn.lock" --exclude-dir={.git,node_modules,bower_components,out,vendor,flow-typed,build,coverage} -irHn --color=auto "$1" "$2"
 	}
 
-	if [[ -z $2 ]] ; then
+	if [[ -z $2 ]]; then
 		if [[ -d $DEFAULT_DIR ]]; then
 			GREP_ME "$1" "$(pwd)/$DEFAULT_DIR"
 		else
@@ -145,12 +145,18 @@ gcp() {
 }
 
 fkill() {
-  local pid
-  pid=$(ps -ef | sed 1d | fzf --reverse -m | awk '{print $2}')
+	local PID=$(
+		ps -aux |
+			sed 1d |
+			fzf --sync \
+				--border --prompt='⚙ ' \
+				--reverse \
+				--multi \
+				--preview 'echo {} | column -t | cut -d\  -f 3 | xargs pstree -h ' |
+			awk '{print $2}'
+	)
 
-  if [ "x$pid" != "x" ]; then
-    echo "$pid" | xargs kill -9 -"${1:-9}"
-  fi
+	[[ -n "$PID" ]] && echo "$PID" | xargs kill -SIGTERM
 }
 
 fzf:preview:file() {
@@ -163,7 +169,7 @@ fzf:grep() {
 
 	local match=$(grep -r -nEHI '[[:alnum:]]' "." --exclude="yarn.lock" --exclude-dir={.git,node_modules,bower_components,out,vendor,flow-typed} | fzf --reverse --cycle)
 
-	if [[ "$match" ]]; then
+	if [[ -n "$match" ]]; then
 		local file
 		local line
 
@@ -174,20 +180,24 @@ fzf:grep() {
 	fi
 }
 
-fzf:npm:scripts() {
-	local match=$(node -e "try { Object.keys(require('./package.json').scripts).forEach(script => console.log(script)) } catch (e) {console.log(e.message)}" | fzf --reverse)
+npm-scripts() {
+	local script
 
-	# echo $match
+	if command -v jq &> /dev/null; then
+		script=$(jq --monochrome-output --raw-output '.scripts | keys[]' package.json | fzf --reverse)
+	else
+		script=$(node -e "try { Object.keys(require('./package.json').scripts).forEach(script => console.log(script)) } catch (e) {console.log(e.message)}" | fzf --reverse)
+	fi
 
-	if [[ "$match" ]]; then
-		local file
-		local line
+	local pkg_man_with_cmd="npm run"
 
-		IFS=: read -r file line _ <<< "$match"
+	if [ -f yarn.lock ]; then
+		pkg_man_with_cmd="yarn"
+	fi
 
-		# subl "$file":"$line" < /dev/tty
-		# yarn $file
-		command $file
+	if [ -n "$script" ]; then
+		echo "$(tput setaf 11) $pkg_man_with_cmd $script$(tput sgr0)"
+		sh -c "$pkg_man_with_cmd $script"
 	fi
 }
 
@@ -246,7 +256,87 @@ serve() {
 
 d() {
 	# history -1 | fzf --tac --bind 'enter:execute(echo {} | sed -r "s/ *[0-9]*\*? *//")+abort'
-	print -z $(history -1 | fzf --tac | sed -r 's/ *[0-9]*\*? *//' | sed -r 's/\\/\\\\/g')
+	print -z $(history -1 | fzf --reverse --tac | sed -r 's/ *[0-9]*\*? *//' | sed -r 's/\\/\\\\/g')
+}
+
+pkg() {
+	exit_on_sigint() {
+		return "$?"
+	}
+
+	trap "exit_on_sigint" SIGINT
+
+	case "$1" in
+		s|S|search)
+			shift
+
+			if ! pacman -Ss "$@"; then
+				yay -Ss "$@"
+			fi
+		;;
+
+		i|I|install)
+			shift
+
+			if ! sudo -k pacman -S "$@"; then
+				# normally if the above commands fails, this block will never run
+				# but when SIGINT (Ctrl+c) is sent it's not recieved by our `exit_on_sigint` function
+				# so returning early here.
+				if [[ "$?" == "0" ]]; then
+					return 1
+				fi
+
+				yay -S "$@"
+			fi
+		;;
+
+		r|R|remove)
+			shift
+
+			sudo -k pacman -Rs "$@"
+		;;
+
+		p|P|purge)
+			sudo -k pacman -Rns $(pacman -Qttdq)
+		;;
+
+		u|U|update)
+			shift
+
+			local pkg_man="yay" && [[ -n "$1" ]] && pkg_man="$1"
+
+			if ! [[ "$pkg_man" =~ (pacman|yay) ]]; then
+				echo 'error: unsupported package manager, use either pacman or yay'
+				return 1
+			fi
+
+			"$pkg_man" -Syyuu --noconfirm
+		;;
+
+		*)
+			echo 'pkg - A thin shellscript wrapper for pacman and yay'
+			echo 'usage: pkg [option] <packages>'
+			echo 'operations:'
+			echo -e '\t pkg [s | search] [i | install] [r | remove] <packages>'
+			echo -e '\t pkg [p | purge]'
+			echo -e '\t pkg [u | upgrade]'
+			echo -e '\t pkg [option] <pacman/yay options>'
+		;;
+	esac
+
+	# remove trap
+	trap - SIGINT
+}
+
+check-colors() {
+	for i in {0..256}; do
+		printf "$(tput setaf $i)$i"
+		[[ $i == 256 ]] && echo
+	done
+}
+
+clean-git-branches() {
+	git branch | egrep -v "(^\s+dev$|^\s+master|^\*.+$)" | xargs git branch -D
 }
 
 alias grep='grep --color=auto'
@@ -260,8 +350,8 @@ alias ls='ls --color=auto -hls'
 alias grep='grep --colour=auto'
 alias egrep='egrep --colour=auto'
 alias fgrep='fgrep --colour=auto'
-alias df='df -h'                          # human-readable sizes
-alias free='free -mhtw'                      # show sizes in MB
+alias df='df -h'
+alias free='free -mhtw'
 alias np='nano -w PKGBUILD'
 alias more=less
 alias g='\gl'
@@ -269,6 +359,4 @@ alias open='xdg-open'
 alias bat='bat --color=always'
 alias xcopy='xclip -in -selection clipboard'
 alias xpaste='xclip -out -selection clipboard'
-alias cp='acp -gi'
-alias mv='amv -gi'
 alias code='code --disable-gpu'
