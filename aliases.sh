@@ -22,13 +22,25 @@
 
 # shellcheck disable=SC2034
 branch() {
-	echo "$(git rev-parse --abbrev-ref HEAD)"
+	git rev-parse --abbrev-ref HEAD
 }
 
 gsm() {
 	git submodule foreach --recursive git "$@"
 
 	echo -e '\n\e[32m\e[1mExecuted:\e[0m git submodule foreach --recursive git' "$@" '\n'
+}
+
+stash-explore() {
+	git stash list | fzf --reverse --preview-window=70% --preview '
+		local stash=$(echo {} | egrep -roh "^stash+.+}" -)
+
+		git stash show -p $stash | diff-so-fancy
+	'
+}
+
+clean-git-branches() {
+	git branch | grep -E -v "(^\s+dev$|^\s+master|^\*.+$)" | xargs git branch -D
 }
 
 alias gd='git diff '
@@ -40,8 +52,6 @@ alias gps='git push origin $(branch)'
 alias c='git status'
 alias v='git branch -vv'
 alias gpr='git pull origin master && git rebase master $(branch)'
-alias bp='bash ~/Documents/backups/bp.sh'
-alias bpull='node ~/dotfiles/git_sync.js'
 
 # ██╗   ██╗████████╗██╗██╗     ██╗████████╗██╗███████╗███████╗
 # ██║   ██║╚══██╔══╝██║██║     ██║╚══██╔══╝██║██╔════╝██╔════╝
@@ -67,7 +77,7 @@ comp_str() {
 }
 
 # Expand URL
-expand_url() {
+check-url() {
 	curl -sI "$1" | sed -n 's/Location: *//p'
 }
 
@@ -122,7 +132,7 @@ t() {
 	local DEFAULT_DIR=src/scripts/
 
 	GREP_ME() {
-		egrep --exclude="yarn.lock" --exclude-dir={.git,node_modules,bower_components,out,vendor,flow-typed,build,coverage} -irHn --color=auto "$1" "$2"
+		grep -E --exclude="yarn.lock" --exclude-dir={.git,node_modules,bower_components,out,vendor,flow-typed,build,coverage} -irHn --color=auto "$1" "$2"
 	}
 
 	if [[ -z $2 ]]; then
@@ -145,6 +155,7 @@ gcp() {
 }
 
 fkill() {
+	# shellcheck disable=SC2155
 	local PID=$(
 		ps -aux |
 			sed 1d |
@@ -167,6 +178,7 @@ fzf:preview:file() {
 fzf:grep() {
 	# local xxx="echo {} | egrep -io '^\\|\..+:' | xargs -I % sh -c 'cat'"
 
+	# shellcheck disable=SC2155
 	local match=$(grep -r -nEHI '[[:alnum:]]' "." --exclude="yarn.lock" --exclude-dir={.git,node_modules,bower_components,out,vendor,flow-typed} | fzf --reverse --cycle)
 
 	if [[ -n "$match" ]]; then
@@ -256,7 +268,7 @@ serve() {
 
 d() {
 	# history -1 | fzf --tac --bind 'enter:execute(echo {} | sed -r "s/ *[0-9]*\*? *//")+abort'
-	print -z $(history -1 | fzf --reverse --tac | sed -r 's/ *[0-9]*\*? *//' | sed -r 's/\\/\\\\/g')
+	print -z "$(history -1 | fzf --reverse --tac | sed -r 's/ *[0-9]*\*? *//' | sed -r 's/\\/\\\\/g')"
 }
 
 pkg() {
@@ -282,6 +294,7 @@ pkg() {
 				# normally if the above commands fails, this block will never run
 				# but when SIGINT (Ctrl+c) is sent it's not recieved by our `exit_on_sigint` function
 				# so returning early here.
+				# shellcheck disable=SC2181
 				if [[ "$?" == "0" ]]; then
 					return 1
 				fi
@@ -297,7 +310,7 @@ pkg() {
 		;;
 
 		p|P|purge)
-			sudo -k pacman -Rns $(pacman -Qttdq)
+			sudo -k pacman -Rns "$(pacman -Qttdq)"
 		;;
 
 		u|U|update)
@@ -310,7 +323,7 @@ pkg() {
 				return 1
 			fi
 
-			"$pkg_man" -Syyuu --noconfirm
+			sh -c "$pkg_man -Syyuu --noconfirm"
 		;;
 
 		*)
@@ -330,13 +343,14 @@ pkg() {
 
 check-colors() {
 	for i in {0..256}; do
-		printf "$(tput setaf $i)$i"
+		printf "%s %s" "$(tput setaf $i)" $i
 		[[ $i == 256 ]] && echo
 	done
 }
 
-clean-git-branches() {
-	git branch | egrep -v "(^\s+dev$|^\s+master|^\*.+$)" | xargs git branch -D
+man2pdf() {
+	local DEST=${2:-$HOME/Documents}
+	man -Tpdf "$1" > "$DEST/$1.pdf"
 }
 
 alias grep='grep --color=auto'
@@ -347,14 +361,10 @@ alias la='ls -A'
 alias l='ls -CF'
 alias gh='history | grep'
 alias ls='ls --color=auto -hls'
-alias grep='grep --colour=auto'
-alias egrep='egrep --colour=auto'
-alias fgrep='fgrep --colour=auto'
 alias df='df -h'
 alias free='free -mhtw'
 alias np='nano -w PKGBUILD'
 alias more=less
-alias g='\gl'
 alias open='xdg-open'
 alias bat='bat --color=always'
 alias xcopy='xclip -in -selection clipboard'
