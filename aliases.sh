@@ -213,55 +213,79 @@ npm-scripts() {
 	fi
 }
 
-dig() {
-	if [ -z "$1" ]; then
-		echo "Provide a query string to dig up."
-		return 0
+pry() {
+	if [ ${#@} -eq 0 ]; then
+		echo "Provide a query to look up."
+		return 1
 	fi
 
-	query=$*
-	provider=''
+	local provider=''
 
-	case "$1" in
-		t|T)
-			provider=tldr
-		;;
-		e|E)
-			provider=eg
-		;;
-		c|C)
-			provider=cht.sh
-		;;
-	esac
+	while getopts "tec" arg; do
+		case $arg in
+			c)
+				provider=cht.sh
+				shift
+			;;
+			t)
+				provider=tldr
+				shift
+			;;
+			e)
+				provider=eg
+				shift
+			;;
+			?)
+				exit 1
+			;;
+		esac
+	done
+
+	TMP_FILE=$(mktemp)
 
 	if [ -n "$provider" ]; then
-		"$provider" "${query[@]:1}"
+		script -q -e -f -c "$provider $@"
 		return 0
 	fi
 
-	printf "Digging with 'tldr' ...\n"
+	declare -a providers=(tldr cht.sh eg)
 
-	if ! tldr "$query"; then
-		printf "\nDigging with 'eg' ...\n"
+	for provider in ${providers[@]}; do
+		echo
+		echo "looking up with '$provider'"
 
-		TMP_FILE=$(mktemp)
+		script -q -e -f -c "$provider $@" "$TMP_FILE"
 
-		eg "$query" > "$TMP_FILE"
-
-		if ! grep --color=never "No entry found" "$TMP_FILE"; then
-			cat "$TMP_FILE"
-		else
-			printf "\nDigging with 'cht.sh' ...\n"
-
-			cht.sh "$query"
+		if [[ "$provider" == "tldr" ]]; then
+			if grep 'documentation is not available' "$TMP_FILE" &> /dev/null; then
+				continue
+			else
+				break
+			fi
 		fi
-	fi
+
+		if [[ "$provider" == "cht.sh" ]]; then
+			if grep 'Unknown topic' "$TMP_FILE" &> /dev/null; then
+				continue
+			else
+				break
+			fi
+		fi
+
+		if [[ "$provider" == "eg" ]]; then
+			if grep 'No entry found' "$TMP_FILE" &> /dev/null; then
+				continue
+			else
+				break
+			fi
+		fi
+	done
 }
 
 serve() {
-	if [[ $(python -V) =~ 3 ]]; then
-		python3 -m http.server
-	elif [[ $(python -V) =~ 2 ]]; then
+	if [[ $(python -V) == Python[[:space:]]3.* ]]; then
+		python -m http.server
+	elif [[ $(python -V) == Python[[:space:]]2.* ]]; then
 		python -m SimpleHTTPServer
 	fi
 }
