@@ -43,6 +43,14 @@ clean-git-branches() {
 	git branch | grep -E -v "(^\s+dev$|^\s+master|^\*.+$)" | xargs git branch -D
 }
 
+# gcp - git commit with previews
+gcp() {
+	local _gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
+	local _viewGitLogLine="$_gitLogLineToHash | xargs -I % sh -c 'git show --color=always % | diff-so-fancy'"
+
+	git log --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr% C(auto)%an" "$@" | fzf --no-sort --reverse --tiebreak=index --no-multi --ansi --preview "$_viewGitLogLine"
+}
+
 alias gd='git diff '
 alias gi='git commit -am '
 alias gl='git log --pretty=format:"%C(bold cyan)%s %C(red)(%h)%Creset%n%C(magenta)%b%n%C(yellow)%cr by %an%Creset" --stat'
@@ -144,14 +152,6 @@ t() {
 	else
 		GREP_ME "$1" "$(pwd)/$2"
 	fi
-}
-
-# gcp - git commit with previews
-gcp() {
-	local _gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
-	local _viewGitLogLine="$_gitLogLineToHash | xargs -I % sh -c 'git show --color=always % | diff-so-fancy'"
-
-	git log --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr% C(auto)%an" "$@" | fzf --no-sort --reverse --tiebreak=index --no-multi --ansi --preview "$_viewGitLogLine"
 }
 
 fkill() {
@@ -374,7 +374,12 @@ check-colors() {
 
 man2pdf() {
 	local DEST=${2:-$HOME/Documents}
-	man -Tpdf "$1" > "$DEST/$1.pdf"
+
+	if command man -w "$1" 1> /dev/null; then
+		command man -Tpdf "$1" > "$DEST/$1.pdf"
+
+		printf "'%s' saved in '%s' \n" $1.pdf $DEST
+	fi
 }
 
 alias grep='grep --color=auto'
