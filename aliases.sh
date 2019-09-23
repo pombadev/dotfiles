@@ -32,11 +32,10 @@ gsm() {
 }
 
 stash-explore() {
-	git stash list | fzf --reverse --preview-window=70% --preview '
-		local stash=$(echo {} | egrep -roh "^stash+.+}" -)
-
-		git stash show -p $stash | diff-so-fancy
-	'
+	# git stash list | cut -d \  -f1 | grep -Eo 'stash@{[0-9]{1,}}' | fzf --reverse --preview-window=70% --preview 'git stash show -p {} | diff-so-fancy'
+	git stash list \
+		| fzf --reverse --preview-window=70% --preview 'git stash show -p $(echo {} | grep -Eo "stash@{[0-9]{1,}}") | diff-so-fancy' \
+		| grep --color=none -Eo 'stash@{[0-9]{1,}}'
 }
 
 clean-git-branches() {
@@ -213,9 +212,12 @@ npm-scripts() {
 	fi
 }
 
-pry() {
+poke() {
+	# set -x
+	# set -v
+
 	if [ ${#@} -eq 0 ]; then
-		echo "Provide a query to look up."
+		echo "Provide a query to poke around."
 		return 1
 	fi
 
@@ -252,9 +254,9 @@ pry() {
 
 	for provider in ${providers[@]}; do
 		echo
-		echo "looking up with '$provider'"
+		echo "poking with '$provider'"
 
-		script -q -e -f -c "$provider $@" "$TMP_FILE"
+		script -q -e -f -c "$provider" "$@" "$TMP_FILE"
 
 		if [[ "$provider" == "tldr" ]]; then
 			if grep 'documentation is not available' "$TMP_FILE" &> /dev/null; then
@@ -365,7 +367,7 @@ pkg() {
 	trap - SIGINT
 }
 
-check-colors() {
+print-colors() {
 	for i in {0..256}; do
 		printf "%s %s" "$(tput setaf $i)" $i
 		[[ $i == 256 ]] && echo
