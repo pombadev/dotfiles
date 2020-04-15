@@ -50,15 +50,21 @@ gcp() {
 	git log --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr% C(auto)%an" "$@" | fzf --no-sort --reverse --tiebreak=index --no-multi --ansi --preview "$_viewGitLogLine"
 }
 
+qs() {
+	BRANCH=$(shuf /usr/share/dict/words -n 1 | sed "s/'//g")
+	git checkout -b "wip/${BRANCH}"
+}
+
 alias gd='git diff '
 alias gi='git commit -am '
 alias gl='git log --pretty=format:"%C(bold cyan)%s %C(red)(%h)%Creset%n%C(magenta)%b%n%C(yellow)%cr by %an%Creset" --stat'
-alias go='git checkout '
+alias gc='git checkout '
 alias gp='git pull origin $(branch)'
 alias gps='git push origin $(branch)'
 alias c='git status'
 alias v='git branch -vv'
 alias gpr='git pull origin master && git rebase master $(branch)'
+alias gll="git log --pretty=format:'%Cred%h%Creset -%C(white bold) %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
 # ██╗   ██╗████████╗██╗██╗     ██╗████████╗██╗███████╗███████╗
 # ██║   ██║╚══██╔══╝██║██║     ██║╚══██╔══╝██║██╔════╝██╔════╝
@@ -212,6 +218,48 @@ npm-scripts() {
 	fi
 }
 
+write-iso-usb() {
+	usage() {
+		echo "Usage:"
+		echo
+		echo "	write-iso-usb path/to/iso path/to/usb_device"
+	}
+
+	if [ ${#@} -lt 2 ]; then
+		usage
+		return 1
+	fi
+
+	iso_path=$1
+	usb_device=$2
+
+	if [ ! -f "$iso_path" ] || [ ! -b "$usb_device" ]; then
+		usage
+		return 1
+	fi
+
+	# sanity checks
+	echo "File info:"
+	file "$iso_path"
+
+	echo "Usb info:"
+	file "$usb_device"
+
+	while read -n 1 -rep "Proceed? [y/n] " response; do
+		if [ "$response" == 'y' ]; then
+			echo "doing stuffs"
+
+			sudo -k dd if="$iso_path" of="$usb_device" oflag=sync bs=4M status=progress
+
+			break
+
+		elif [ "$response" == 'n' ]; then
+			echo 'Bye!'
+			break
+		fi
+	done
+}
+
 poke() {
 	# set -x
 	# set -v
@@ -238,50 +286,51 @@ poke() {
 				shift
 			;;
 			?)
-				exit 1
+				return 1
 			;;
 		esac
 	done
 
 	TMP_FILE=$(mktemp)
 
-	if [ -n "$provider" ]; then
-		script -q -e -f -c "$provider $@"
-		return 0
-	fi
+	echo $provider $@
 
-	declare -a providers=(tldr cht.sh eg)
+	# if [ -n "$provider" ]; then
+	# 	script -q -e -f -c "$(printf '%s %s' "$provider" "$@")" > "$TMP_FILE"
+	# 	return 0
+	# fi
 
-	for provider in ${providers[@]}; do
-		echo
-		echo "poking with '$provider'"
+	# declare -a providers=(tldr cht.sh eg)
 
-		script -q -e -f -c "$provider" "$@" "$TMP_FILE"
+	# for provider in ${providers[@]}; do
+	# 	echo "poking with '$provider'"
 
-		if [[ "$provider" == "tldr" ]]; then
-			if grep 'documentation is not available' "$TMP_FILE" &> /dev/null; then
-				continue
-			else
-				break
-			fi
-		fi
+	# 	script -q -e -f -c "$(printf '%s %s' "$provider" "$@")" > "$TMP_FILE"
 
-		if [[ "$provider" == "cht.sh" ]]; then
-			if grep 'Unknown topic' "$TMP_FILE" &> /dev/null; then
-				continue
-			else
-				break
-			fi
-		fi
+	# 	if [[ "$provider" == "tldr" ]]; then
+	# 		if grep 'documentation is not available' "$TMP_FILE" &> /dev/null; then
+	# 			continue
+	# 		else
+	# 			break
+	# 		fi
+	# 	fi
 
-		if [[ "$provider" == "eg" ]]; then
-			if grep 'No entry found' "$TMP_FILE" &> /dev/null; then
-				continue
-			else
-				break
-			fi
-		fi
-	done
+	# 	if [[ "$provider" == "cht.sh" ]]; then
+	# 		if grep 'Unknown topic' "$TMP_FILE" &> /dev/null; then
+	# 			continue
+	# 		else
+	# 			break
+	# 		fi
+	# 	fi
+
+	# 	if [[ "$provider" == "eg" ]]; then
+	# 		if grep 'No entry found' "$TMP_FILE" &> /dev/null; then
+	# 			continue
+	# 		else
+	# 			break
+	# 		fi
+	# 	fi
+	# done
 }
 
 serve() {
@@ -382,6 +431,10 @@ man2pdf() {
 
 		printf "'%s' saved in '%s' \n" $1.pdf $DEST
 	fi
+}
+
+update-yarn() {
+	curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
 }
 
 alias grep='grep --color=auto'

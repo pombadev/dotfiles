@@ -49,7 +49,6 @@ Plug 'airblade/vim-gitgutter'
 Plug 'prettier/vim-prettier', {'do': 'yarn install'}
 Plug 'itchyny/vim-gitbranch'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'kizza/actionmenu.nvim'
 Plug 'tpope/vim-commentary'
 Plug 'sheerun/vim-polyglot'
 Plug 'editorconfig/editorconfig-vim'
