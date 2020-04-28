@@ -165,7 +165,8 @@ fkill() {
 		ps -aux |
 			sed 1d |
 			fzf --sync \
-				--border --prompt='⚙ ' \
+				--border \
+				--prompt='⚙ ' \
 				--reverse \
 				--multi \
 				--preview 'echo {} | column -t | cut -d\  -f 3 | xargs pstree -h ' |
@@ -176,8 +177,7 @@ fkill() {
 }
 
 fzf:preview:file() {
-	# find "$PWD" -type f | fzf-tmux --reverse -d 100 --preview 'bat {}'
-	rg --files --ignore --hidden -g "*" -g "\!.git" | fzf-tmux --reverse -d 100 --preview 'bat --color=always {}'
+	rg --files | fzf --reverse --preview 'bat --color=always {}'
 }
 
 fzf:grep() {
@@ -220,9 +220,10 @@ npm-scripts() {
 
 write-iso-usb() {
 	usage() {
-		echo "Usage:"
-		echo
-		echo "	write-iso-usb path/to/iso path/to/usb_device"
+		cat <<EFO
+Usage:
+	write-iso-usb path/to/iso path/to/usb_device
+EFO
 	}
 
 	if [ ${#@} -lt 2 ]; then
@@ -258,79 +259,6 @@ write-iso-usb() {
 			break
 		fi
 	done
-}
-
-poke() {
-	# set -x
-	# set -v
-
-	if [ ${#@} -eq 0 ]; then
-		echo "Provide a query to poke around."
-		return 1
-	fi
-
-	local provider=''
-
-	while getopts "tec" arg; do
-		case $arg in
-			c)
-				provider=cht.sh
-				shift
-			;;
-			t)
-				provider=tldr
-				shift
-			;;
-			e)
-				provider=eg
-				shift
-			;;
-			?)
-				return 1
-			;;
-		esac
-	done
-
-	TMP_FILE=$(mktemp)
-
-	echo $provider $@
-
-	# if [ -n "$provider" ]; then
-	# 	script -q -e -f -c "$(printf '%s %s' "$provider" "$@")" > "$TMP_FILE"
-	# 	return 0
-	# fi
-
-	# declare -a providers=(tldr cht.sh eg)
-
-	# for provider in ${providers[@]}; do
-	# 	echo "poking with '$provider'"
-
-	# 	script -q -e -f -c "$(printf '%s %s' "$provider" "$@")" > "$TMP_FILE"
-
-	# 	if [[ "$provider" == "tldr" ]]; then
-	# 		if grep 'documentation is not available' "$TMP_FILE" &> /dev/null; then
-	# 			continue
-	# 		else
-	# 			break
-	# 		fi
-	# 	fi
-
-	# 	if [[ "$provider" == "cht.sh" ]]; then
-	# 		if grep 'Unknown topic' "$TMP_FILE" &> /dev/null; then
-	# 			continue
-	# 		else
-	# 			break
-	# 		fi
-	# 	fi
-
-	# 	if [[ "$provider" == "eg" ]]; then
-	# 		if grep 'No entry found' "$TMP_FILE" &> /dev/null; then
-	# 			continue
-	# 		else
-	# 			break
-	# 		fi
-	# 	fi
-	# done
 }
 
 serve() {

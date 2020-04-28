@@ -1,10 +1,5 @@
 #! /usr/bin/env bash
 
-if [ "$#" -gt 1 ]; then
-	echo "Too many arguments passed, only accepted flag is --write-to-stdout"
-	exit 1
-fi
-
 cache_dir="$HOME/.cache/licenses_generator"
 
 if [[ ! -d "$cache_dir" ]]; then
