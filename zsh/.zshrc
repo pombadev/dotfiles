@@ -27,8 +27,11 @@ setopt extendedglob
 # faux autocomplete menu
 # setopt menucomplete
 
+fpath+=~/dotfiles/zsh
+source ~/dotfiles/exports
+
 autoload -U compinit && compinit # required for completions
-autoload -U promptinit # required for prompts
+# autoload -U prompt && promptinit # required for prompts
 
 # from dotfiles
 source $HOME/dotfiles/zsh/customize.zsh

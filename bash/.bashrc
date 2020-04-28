@@ -1,3 +1,6 @@
+# shellcheck source=/dev/null
+# shellcheck disable=SC2164
+
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
@@ -18,11 +21,9 @@ export HISTSIZE=
 [ -r /usr/share/bash-completion/bash_completion   ] && . /usr/share/bash-completion/bash_completion
 
 source ~/dotfiles/aliases.sh
+source ~/dotfiles/exports
 
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-
-eval "$(starship init bash)"
-
+# shellcheck disable=SC2120
 ble-bootstrap() {
 	opt=$1
 
@@ -30,7 +31,7 @@ ble-bootstrap() {
 		(
 			if [ -d ~/dotfiles/bash/ble.sh ]; then
 				cd ~/dotfiles/bash/ble.sh
-				if  [ -f .git ] && [ $(git remote get-url origin) == "https://github.com/akinomyoga/ble.sh.git" ]; then
+				if  [ -f .git ] && [ "$(git remote get-url origin)" == "https://github.com/akinomyoga/ble.sh.git" ]; then
 					return 0
 				fi
 			fi
@@ -53,7 +54,9 @@ ble-bootstrap() {
 		)
 	elif [[ $opt == "u" ]] || [[ $opt == "update" ]]; then
 		(
+				# shellcheck disable=SC2154
 			if is-ble-installed && ((_ble_bash)); then
+				# shellcheck disable=SC2164
 				cd ~/dotfiles/bash/ble.sh
 				git pull origin master
 				make
@@ -62,6 +65,7 @@ ble-bootstrap() {
 	fi
 
 	if [[ $- == *i* ]]; then
+		# shellcheck source=/dev/null
 		source ~/dotfiles/bash/ble.sh/out/ble.sh --noattach --rcfile ~/dotfiles/bash/.blerc
 		((_ble_bash)) && ble-attach
 	fi
