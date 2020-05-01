@@ -227,6 +227,11 @@ lookup::main() {
 		return 0
 	fi
 
+	if [[ $1 == "--init" ]]; then
+		lookup::init
+		return 0
+	fi
+
 	if ! lookup::is_initialized; then
 		echo "lookup hasn't been initialized, please run \`lookup --init\`"
 		return 0
@@ -234,11 +239,6 @@ lookup::main() {
 
 	if [[ $1 == "--update" ]] || [[ $1 == "-u" ]]; then
 		lookup::update
-		return 0
-	fi
-
-	if [[ $1 == "--init" ]]; then
-		lookup::init
 		return 0
 	fi
 
