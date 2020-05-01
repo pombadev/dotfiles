@@ -125,7 +125,8 @@ lookup::not_found() {
 }
 
 lookup::tldr() {
-	cd "$LOOKUP_DIR/tldr" || echo "tldr error"
+	cd "$LOOKUP_DIR/tldr"
+
 	local result
 
 	result=$(find pages/common pages/"$(lookup::get_os)" -iname "$1.md")
@@ -170,7 +171,8 @@ lookup::bropages() {
 }
 
 lookup::eg() {
-	cd "$LOOKUP_DIR/eg" || echo "eg error"
+	cd "$LOOKUP_DIR/eg"
+
 	local result
 
 	result=$(find eg/examples -iname "$1.md")
@@ -187,7 +189,7 @@ lookup::cht.sh() {
 }
 
 lookup::cheatsheets() {
-	cd "$LOOKUP_DIR/cheatsheets" || echo "cheatsheet error"
+	cd "$LOOKUP_DIR/cheatsheets"
 
 	local result
 
@@ -222,10 +224,6 @@ lookup::main() {
 		lookup::init
 		return 0
 	fi
-
-	# if [[ "$1" =~ ^(-.+?) ]]; then
-	# 	echo "Passing $1"
-	# fi
 
 	while getopts "tecbCx" arg; do
 		case $arg in
