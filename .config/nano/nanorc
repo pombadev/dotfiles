@@ -259,7 +259,7 @@ include "/usr/share/nano/*.nanorc"
 bind ^Z undo main
 bind ^Y redo main
 bind ^S savefile main
-bind ^Q exit all
+# bind ^Q exit all
 #bind ^W writeout main
 #bind ^O insert main
 #bind ^H help all
