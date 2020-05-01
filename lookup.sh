@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC2164
+
 SYS_DATA_DIR=${XDG_DATA_HOME:-$HOME/.local/share}
 LOOKUP_DIR=${LOOKUP_DIR:-$SYS_DATA_DIR/lookup}
 
-if [ ! -d "$LOOKUP_DIR" ]; then
-	mkdir -p "$LOOKUP_DIR"
-fi
+readonly -A plugins=(
+	[tldr]="https://github.com/tldr-pages/tldr.git"
+	[eg]="https://github.com/srsudar/eg.git"
+	[cheatsheets]="https://github.com/cheat/cheatsheets.git"
+)
 
 lookup::print() {
-	lang=${2:-bash}
+	local lang=${2:-bash}
 
 	if command -v bat &> /dev/null; then
 		bat --number --language "$lang" <<< "$1"
@@ -17,7 +21,7 @@ lookup::print() {
 	fi
 }
 
-lookup::os() {
+lookup::get_os() {
 	 case $(uname -s) in
 		Darwin)					echo "osx"		;;
 		Linux)					echo "linux"	;;
@@ -32,78 +36,137 @@ lookup::usage() {
 lookup v0.2
 
 USAGE:
-    lookup [OPTIONS] [query]
+    lookup [FLAG] [OPTIONS] [query]
 
 OPTIONS:
     -h, --help              Prints help information
+    -u --update             Update databases
+    --init                  [Re]Initilize \`lookup\`
+
+FLAG:
     -b, -bro                Query data from http://bropages.org/
-    -ch, -cht.sh            Query data from https://cheat.sh/
-    -cf, -commandlinefu     Query data from https://www.commandlinefu.com
+    -c, -cht.sh             Query data from https://cheat.sh/
+    -C, -commandlinefu      Query data from https://www.commandlinefu.com
     -e, -eg                 Query data from https://github.com/srsudar/eg
     -t, -tldr               Query data from https://tldr.sh/
-    -cs, -cheatsheets       Query data from https://github.com/cheat/cheatsheets
+    -x, -cheatsheets        Query data from https://github.com/cheat/cheatsheets
 EFO
 }
 
 lookup::init() {
+	if [ ! -d "$LOOKUP_DIR" ]; then
+		mkdir -p "$LOOKUP_DIR"
+	fi
+
+	if ! lookup::is_init; then
+		(
+			cd "$LOOKUP_DIR"
+
+			for plugin in "${!plugins[@]}"; do
+				if ! lookup::has_plugin "$plugin" "${plugins[$plugin]}"; then
+					git clone --progress "${plugins[$plugin]}" &
+				fi
+			done
+
+			wait < <(jobs -p)
+
+			echo
+		)
+	else
+		echo "Already initialized!"
+	fi
+}
+
+lookup::has_plugin() {
 	(
-		cd "$LOOKUP_DIR" 2> /dev/null || {
-			echo "$LOOKUP_DIR doesnt exist, run \`lookup --repair\`."
-			exit 1
-		}
+		cd "$LOOKUP_DIR/$1" 2> /dev/null || return 1
 
-		git clone https://github.com/tldr-pages/tldr.git &> /dev/null &
-
-		tldr_pid=$!
-
-		git clone https://github.com/srsudar/eg.git &> /dev/null &
-
-		eg_pid=$!
-
-		git clone https://github.com/cheat/cheatsheets.git &> /dev/null &
-
-		cheatsheet_pid=$!
-
-
-		echo "Caching tldr, eg, cheatsheet..."
-		wait $tldr_pid $eg_pid $cheatsheet_pid
+		test "$(git config --get remote.origin.url 2> /dev/null)" == "$2" || return 1
 	)
+
+	return $?
+}
+
+lookup::is_init() {
+	local exit_code=0
+
+	for plugin in "${!plugins[@]}"; do
+		if ! lookup::has_plugin "$plugin" "${plugins[$plugin]}"; then
+			exit_code=$((exit_code += 1))
+		fi
+	done
+
+	return $exit_code
+}
+
+lookup::update() {
+	(
+		cd "$LOOKUP_DIR"
+
+		if lookup::is_init; then
+			for plugin in "${!plugins[@]}"; do
+				cd "$plugin"
+				echo "Updating '$plugin'"
+				git pull 1> /dev/null &
+
+				# shellcheck disable=SC2103
+				cd - &> /dev/null
+			done
+		else
+			echo "lookup is not initialized, please run \`lookup --init\`"
+		fi
+
+		wait < <(jobs -p)
+	)
+}
+
+lookup::not_found() {
+	printf "%s No results found for '%s'$(tput init)\n" "$(tput setaf 11)" "$*"
 }
 
 lookup::tldr() {
 	cd "$LOOKUP_DIR/tldr" || echo "tldr error"
-	# find pages/* -iname "$1.md" -exec bat --number {} \;
 	local result
 
-	result=$(find pages/common pages/"$(lookup::os)" -iname "$1.md")
+	result=$(find pages/common pages/"$(lookup::get_os)" -iname "$1.md")
 
 	if [[ -n "$result" ]]; then
-		# sed will remove {{, }}, ` from the input
+		# sed will remove
+		# these: {{, }}, `
+		# from the input
 		lookup::print "$(sed -e 's/`\|{{\|}}//g' -e 's/^>\|^-/#/g' "$result")"
 	else
-		echo "no results"
+		lookup::not_found "$*"
 	fi
 }
 
 lookup::commandlinefu() {
-	encode() {
-		python -c 'import base64, sys; print(base64.b64encode("{0}".format(sys.argv[1]).encode()).decode())' "$@"
-	}
+	local result
 
-	lookup::print "$(curl -s "https://www.commandlinefu.com/commands/matching/$*/$(encode "$@")/plaintext" | tail -n +3)"
+	result="$(curl -s "https://www.commandlinefu.com/commands/matching/$*/$(printf "%s" "$*" | base64)/plaintext" | tail -n +3)"
+
+	if [[ -n "$result" ]]; then
+		lookup::print "$result"
+	else
+		lookup::not_found "$*"
+	fi
+
 }
 
 lookup::bropages() {
 	local output
-	output="$(curl -f -s -H "Content-Type: application/json" "http://bropages.org/$*.json")"
 
-	if [[ -z $output ]]; then
-		output="# '$*' not found"
-	else
-		output="$(jq -r '.[] | .msg' <<< "$output")"
+	output="$(curl -s -H "Content-Type: application/json" "http://bropages.org/$*.json")"
+
+	if [[ "$output" == "<h1>Page Not Found</h1>" ]]; then
+		output="$(curl -s -H "Content-Type: application/json" "http://bropages.org/search/$*.json" | jq '.[]')"
 	fi
 
-	lookup::print "$output"
+	if [[ -z $output ]]; then
+		lookup::not_found "$*"
+	else
+		lookup::print "$(jq -r '.[] | .msg' <<< "$output")"
+	fi
 }
 
 lookup::eg() {
@@ -115,7 +178,7 @@ lookup::eg() {
 	if [[ -n "$result" ]]; then
 		lookup::print "$(cat "$result")" md
 	else
-		echo "no results"
+		lookup::not_found "$*"
 	fi
 }
 
@@ -133,14 +196,26 @@ lookup::cheatsheets() {
 	if [[ -n "$result" ]]; then
 		lookup::print "$(sed -E '/---/d' <<< "$(sed -E '/tags: \[.+\]/d' "$result")")"
 	else
-		echo "no results"
+		lookup::not_found "$*"
 	fi
 }
 
-lookup() {
+lookup::main() {
+	if ! lookup::is_init; then
+		echo "lookup hasn't been initialized, initilizing..."
+		lookup::init
+		lookup::usage
+		return 0
+	fi
+
 	if [[ $1 == "--help" ]] || [[ $1 == "-h" ]]; then
 		lookup::usage
-		return 1
+		return 0
+	fi
+
+	if [[ $1 == "--update" ]] || [[ $1 == "-u" ]]; then
+		lookup::update
+		return 0
 	fi
 
 	if [[ $1 == "--init" ]]; then
@@ -164,17 +239,12 @@ lookup() {
 		esac
 	done
 
-	provider=${provider:-tldr}
-
 	if [[ $# -eq 0 ]]; then
 		lookup::usage
 		return 1
 	fi
 
-	if [[ $(command ls "$LOOKUP_DIR" | wc -l) -eq 0 ]]; then
-		echo "lookup hasn't been initilized, initilizing..."
-		lookup::init
-	fi
+	provider=${provider:-tldr}
 
 	if [[ $provider == "tldr" ]]; then
 		lookup::tldr "$*"
@@ -201,4 +271,4 @@ lookup() {
 	fi
 }
 
-lookup "$@"
+lookup::main "$@"
