@@ -58,7 +58,9 @@ lookup::init() {
 		mkdir -p "$LOOKUP_DIR"
 	fi
 
-	if ! lookup::is_init; then
+	if lookup::is_init; then
+		echo "Already initialized!"
+	else
 		(
 			cd "$LOOKUP_DIR"
 
@@ -72,8 +74,6 @@ lookup::init() {
 
 			echo
 		)
-	else
-		echo "Already initialized!"
 	fi
 }
 
@@ -105,18 +105,17 @@ lookup::update() {
 
 		if lookup::is_init; then
 			for plugin in "${!plugins[@]}"; do
-				cd "$plugin"
-				echo "Updating '$plugin'"
-				git pull 1> /dev/null &
+				(
+					cd "$plugin"; echo "Updating '$plugin'"
 
-				# shellcheck disable=SC2103
-				cd - &> /dev/null
+					git pull 1> /dev/null &
+				)
 			done
+
+			wait < <(jobs -p)
 		else
 			echo "lookup is not initialized, please run \`lookup --init\`"
 		fi
-
-		wait < <(jobs -p)
 	)
 }
 
@@ -125,63 +124,70 @@ lookup::not_found() {
 }
 
 lookup::tldr() {
-	cd "$LOOKUP_DIR/tldr"
+	(
+		cd "$LOOKUP_DIR/tldr"
 
-	local result
+		local result
 
-	result=$(find pages/common pages/"$(lookup::get_os)" -iname "$1.md")
+		result=$(find pages/common pages/"$(lookup::get_os)" -iname "$1.md")
 
-	if [[ -n "$result" ]]; then
-		# sed will remove
-		# these: {{, }}, `
-		# from the input
-		lookup::print "$(sed -e 's/`\|{{\|}}//g' -e 's/^>\|^-/#/g' "$result")"
-	else
-		lookup::not_found "$*"
-	fi
+		if [[ -n "$result" ]]; then
+			# sed will remove
+			# these: {{, }}, `
+			# from the input
+			lookup::print "$(sed -e 's/`\|{{\|}}//g' -e 's/^>\|^-/#/g' "$result")"
+		else
+			lookup::not_found "$*"
+		fi
+	)
 }
 
 lookup::commandlinefu() {
-	local result
+	(
+		local result
 
-	result="$(curl -s "https://www.commandlinefu.com/commands/matching/$*/$(printf "%s" "$*" | base64)/plaintext" | tail -n +3)"
+		result="$(curl -s "https://www.commandlinefu.com/commands/matching/$*/$(printf "%s" "$*" | base64)/plaintext" | tail -n +3)"
 
-	if [[ -n "$result" ]]; then
-		lookup::print "$result"
-	else
-		lookup::not_found "$*"
-	fi
-
+		if [[ -n "$result" ]]; then
+			lookup::print "$result"
+		else
+			lookup::not_found "$*"
+		fi
+	)
 }
 
 lookup::bropages() {
-	local output
+	(
+		local output
 
-	output="$(curl -s -H "Content-Type: application/json" "http://bropages.org/$*.json")"
+		output="$(curl -s -H "Content-Type: application/json" "http://bropages.org/$*.json")"
 
-	if [[ "$output" == "<h1>Page Not Found</h1>" ]]; then
-		output="$(curl -s -H "Content-Type: application/json" "http://bropages.org/search/$*.json" | jq '.[]')"
-	fi
+		if [[ "$output" == "<h1>Page Not Found</h1>" ]]; then
+			output="$(curl -s -H "Content-Type: application/json" "http://bropages.org/search/$*.json" | jq '.[]')"
+		fi
 
-	if [[ -z $output ]]; then
-		lookup::not_found "$*"
-	else
-		lookup::print "$(jq -r '.[] | .msg' <<< "$output")"
-	fi
+		if [[ -z $output ]]; then
+			lookup::not_found "$*"
+		else
+			lookup::print "$(jq -r '.[] | .msg' <<< "$output")"
+		fi
+	)
 }
 
 lookup::eg() {
-	cd "$LOOKUP_DIR/eg"
+	(
+		cd "$LOOKUP_DIR/eg"
 
-	local result
+		local result
 
-	result=$(find eg/examples -iname "$1.md")
+		result=$(find eg/examples -iname "$1.md")
 
-	if [[ -n "$result" ]]; then
-		lookup::print "$(cat "$result")" md
-	else
-		lookup::not_found "$*"
-	fi
+		if [[ -n "$result" ]]; then
+			lookup::print "$(cat "$result")" md
+		else
+			lookup::not_found "$*"
+		fi
+	)
 }
 
 lookup::cht.sh() {
@@ -189,17 +195,19 @@ lookup::cht.sh() {
 }
 
 lookup::cheatsheets() {
-	cd "$LOOKUP_DIR/cheatsheets"
+	(
+		cd "$LOOKUP_DIR/cheatsheets"
 
-	local result
+		local result
 
-	result="$(find . -iname "$1")"
+		result="$(find . -iname "$1")"
 
-	if [[ -n "$result" ]]; then
-		lookup::print "$(sed -E '/---/d' <<< "$(sed -E '/tags: \[.+\]/d' "$result")")"
-	else
-		lookup::not_found "$*"
-	fi
+		if [[ -n "$result" ]]; then
+			lookup::print "$(sed -E '/---/d' <<< "$(sed -E '/tags: \[.+\]/d' "$result")")"
+		else
+			lookup::not_found "$*"
+		fi
+	)
 }
 
 lookup::main() {
