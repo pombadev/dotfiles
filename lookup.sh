@@ -21,7 +21,7 @@ lookup::print() {
 	local lang=${2:-bash}
 
 	if command -v bat &> /dev/null; then
-		bat --language "$lang" <<< "$1"
+		bat --style plain --language "$lang" <<< "$1"
 	else
 		cat <<< "$1" | command less -RFE
 	fi
@@ -170,19 +170,40 @@ lookup::commandlinefu() {
 }
 
 lookup::bropages() {
+	# in case jq is not available
+	# full => grep -Poe 'msg":".*?,' | sed -e 's/msg":"//g' -e 's/",/\n/g' -e 's/\\n/\n/g' -e 's/\\t/    /g' -e 's/\\"/"/g'
+	# search => grep -Poe 'cmd":".*?,' | sed -e 's/cmd":"//g' -e 's/",//g'
+
 	(
 		local output
 
 		output="$(curl -s -H "Content-Type: application/json" "http://bropages.org/$*.json")"
 
-		if [[ "$output" == "<h1>Page Not Found</h1>" ]]; then
-			output="$(curl -s -H "Content-Type: application/json" "http://bropages.org/search/$*.json" | jq '.[]')"
-		fi
-
 		if [[ -z $output ]]; then
 			lookup::not_found "$*"
 		else
-			lookup::print "$(jq -r '.[] | .msg' <<< "$output")"
+			if command -v jq &> /dev/null; then
+				output="$(jq -r '.[] | .msg' <<< "$output")"
+			else
+				# best effort conver json to proper format, won't deal well with escaped stuffs
+				output="$(
+					grep -Poe 'msg":".*?,' <<< "$output" |\
+					 sed -e '
+						# consume "msg:":"
+						s/msg":"//g;
+						# transform ", to newline
+						s/",/\n/g;
+						# change escaped \n to literal newline
+						s/\\n/\n/g;
+						# change escaped \t to 4 spaces
+						s/\\t/    /g;
+						# change escaped \" to literal "
+						s/\\"/"/g
+					'
+				)"
+			fi
+
+			lookup::print "$output"
 		fi
 	)
 }
