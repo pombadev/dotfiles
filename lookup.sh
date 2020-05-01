@@ -23,7 +23,7 @@ lookup::print() {
 	if command -v bat &> /dev/null; then
 		bat --language "$lang" <<< "$1"
 	else
-		cat <<< "$1"
+		cat <<< "$1" | command less -RFE
 	fi
 }
 
@@ -204,7 +204,7 @@ lookup::eg() {
 }
 
 lookup::cht.sh() {
-	curl -s "cheat.sh/$*" | command less -RFEN
+	curl -s "cheat.sh/$*" | command less -RFE
 }
 
 lookup::cheatsheets() {
