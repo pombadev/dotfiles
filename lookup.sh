@@ -5,6 +5,12 @@
 SYS_DATA_DIR=${XDG_DATA_HOME:-$HOME/.local/share}
 LOOKUP_DIR=${LOOKUP_DIR:-$SYS_DATA_DIR/lookup}
 
+
+# create necessary directory
+if [ ! -d "$LOOKUP_DIR" ]; then
+	mkdir -p "$LOOKUP_DIR"
+fi
+
 readonly -A resources=(
 	[tldr]="https://github.com/tldr-pages/tldr.git"
 	[eg]="https://github.com/srsudar/eg.git"
@@ -65,10 +71,6 @@ lookup::exec_all_resources() {
 }
 
 lookup::init() {
-	if [ ! -d "$LOOKUP_DIR" ]; then
-		mkdir -p "$LOOKUP_DIR"
-	fi
-
 	if lookup::is_initialized; then
 		echo "Already initialized!"
 	else
