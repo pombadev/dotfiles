@@ -15,9 +15,9 @@ lookup::print() {
 	local lang=${2:-bash}
 
 	if command -v bat &> /dev/null; then
-		bat --number --language "$lang" <<< "$1"
+		bat --language "$lang" <<< "$1"
 	else
-		cat --number <<< "$1"
+		cat <<< "$1"
 	fi
 }
 
