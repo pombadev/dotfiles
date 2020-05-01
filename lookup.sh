@@ -227,7 +227,7 @@ lookup::main() {
 		return 0
 	fi
 
-	if [[ ! $1 == "--init" ]] && [[ ! $(lookup::is_initialized) ]]; then
+	if ! lookup::is_initialized; then
 		echo "lookup hasn't been initialized, please run \`lookup --init\`"
 		return 0
 	fi
