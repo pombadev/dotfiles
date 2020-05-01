@@ -5,7 +5,7 @@
 SYS_DATA_DIR=${XDG_DATA_HOME:-$HOME/.local/share}
 LOOKUP_DIR=${LOOKUP_DIR:-$SYS_DATA_DIR/lookup}
 
-readonly -A plugins=(
+readonly -A resources=(
 	[tldr]="https://github.com/tldr-pages/tldr.git"
 	[eg]="https://github.com/srsudar/eg.git"
 	[cheatsheets]="https://github.com/cheat/cheatsheets.git"
@@ -41,7 +41,7 @@ USAGE:
 OPTIONS:
     -h, --help              Prints help information
     -u --update             Update databases
-    --init                  [Re]Initilize \`lookup\`
+    --init                  Initilize \`lookup\`
 
 FLAG:
     -b, -bro                Query data from http://bropages.org/
@@ -53,31 +53,43 @@ FLAG:
 EFO
 }
 
+lookup::exec_all_resources() {
+	cd "$LOOKUP_DIR"
+
+	for plugin in "${!resources[@]}"; do
+		$1 "$plugin" "${resources[$plugin]}"
+	done
+
+	# shellcheck disable=2103
+	cd - 1> /dev/null
+}
+
 lookup::init() {
 	if [ ! -d "$LOOKUP_DIR" ]; then
 		mkdir -p "$LOOKUP_DIR"
 	fi
 
-	if lookup::is_init; then
+	if lookup::is_initialized; then
 		echo "Already initialized!"
 	else
 		(
-			cd "$LOOKUP_DIR"
-
-			for plugin in "${!plugins[@]}"; do
-				if ! lookup::has_plugin "$plugin" "${plugins[$plugin]}"; then
-					git clone --progress "${plugins[$plugin]}" &
+			call_back() {
+				if ! lookup::is_plugin "$1" "$2"; then
+					git clone "$2" &
 				fi
-			done
+			}
+			
+			lookup::exec_all_resources call_back
 
 			wait < <(jobs -p)
 
 			echo
-		)
+		)		
+		
 	fi
 }
 
-lookup::has_plugin() {
+lookup::is_plugin() {
 	(
 		cd "$LOOKUP_DIR/$1" 2> /dev/null || return 1
 
@@ -87,36 +99,35 @@ lookup::has_plugin() {
 	return $?
 }
 
-lookup::is_init() {
+lookup::is_initialized() {
 	local exit_code=0
 
-	for plugin in "${!plugins[@]}"; do
-		if ! lookup::has_plugin "$plugin" "${plugins[$plugin]}"; then
+	call_back() {
+		if ! lookup::is_plugin "$1" "$2"; then
 			exit_code=$((exit_code += 1))
 		fi
-	done
+	}
+
+	lookup::exec_all_resources call_back
 
 	return $exit_code
 }
 
 lookup::update() {
-	(
-		cd "$LOOKUP_DIR"
+	if lookup::is_initialized; then
+		call_back() {
+			(
+				cd "$plugin"; echo "Updating '$plugin'"
+				git pull 1> /dev/null &
+			)
+		}
+		
+		lookup::exec_all_resources call_back
 
-		if lookup::is_init; then
-			for plugin in "${!plugins[@]}"; do
-				(
-					cd "$plugin"; echo "Updating '$plugin'"
-
-					git pull 1> /dev/null &
-				)
-			done
-
-			wait < <(jobs -p)
-		else
-			echo "lookup is not initialized, please run \`lookup --init\`"
-		fi
-	)
+		wait < <(jobs -p)
+	else
+		echo "lookup is not initialized, please run \`lookup --init\`"
+	fi
 }
 
 lookup::not_found() {
@@ -211,15 +222,13 @@ lookup::cheatsheets() {
 }
 
 lookup::main() {
-	if ! lookup::is_init; then
-		echo "lookup hasn't been initialized, initilizing..."
-		lookup::init
+	if [[ $1 == "--help" ]] || [[ $1 == "-h" ]]; then
 		lookup::usage
 		return 0
 	fi
 
-	if [[ $1 == "--help" ]] || [[ $1 == "-h" ]]; then
-		lookup::usage
+	if [[ ! $1 == "--init" ]] && [[ ! $(lookup::is_initialized) ]]; then
+		echo "lookup hasn't been initialized, please run \`lookup --init\`"
 		return 0
 	fi
 
