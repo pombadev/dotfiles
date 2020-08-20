@@ -1,31 +1,29 @@
-### Personal `bashrc`, `bash_aliases` and some shortcuts.
+# ~/dotfiles
 
-Requires [incron](http://inotify.aiken.cz/?section=incron&page=about&lang=en) to watch for file events.
+# Requirements
 
-    sudo apt-get install incron
+- zsh/bash shell
+- git
 
-Helpful incron guide:
 
-    https://www.howtoforge.com/tutorial/trigger-commands-on-file-or-directory-changes-with-incron/
+# Install
 
-Sample incron job
+```shell
+git clone --recursive git@github.com:pjmp/dotfiles.git
+```
 
-    $HOME/.bash_aliases IN_MODIFY /bin/bash $HOME/dotfiles/backup.sh $@
-    $HOME/.bashrc IN_MODIFY /bin/bash $HOME/dotfiles/backup.sh $@
+# Setup
 
-Watched files/directories:
+> Remember to back up your .zshrc or .bashrc before this if you think you'll need them later.
 
-- .bashrc
-- .bash_aliases
-- .zshrc
-- .vimrc
-- .... and more
+- zsh
 
-`backup.sh` will be added to a incron job and executed in case watched file(s) are modified.
+```shell
+ln -s $PATH_TO_REPO/zsh/.zshrc ~/.zshrc
+```
 
-Cheatsheets:
+- bash
 
-- https://github.com/hubsmoke/bro
-- https://github.com/tldr-pages/tldr
-- https://github.com/chubin/cheat.sh
-- https://github.com/srsudar/eg
+```shell
+ln -s $PATH_TO_REPO/bash/.bashrc ~/.bashrc
+```

@@ -10,4 +10,7 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH=$PATH:$HOME/go/bin
 export RUST_SRC_PATH=$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src
 export EDITOR=nano
-export RUSTC_WRAPPER=sccache
+
+if sh -c 'which --skip-alias sccache' &> /dev/null; then
+	export RUSTC_WRAPPER=$(which sccache)
+fi
