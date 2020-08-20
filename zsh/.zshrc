@@ -64,7 +64,7 @@ source "$HOME/dotfiles/aliases.sh"
 alias history='history 1'
 
 # allow packages downgrade
-if [[ $(lsb_release --id | sed 's/Distributor ID:\s//g') == "ManjaroLinux" ]]; then
+if [[ $(grep -P '^ID=' /etc/os-release) == *manjaro ]]; then
     # shellcheck disable=SC2034
     DOWNGRADE_FROM_ALA=1
 fi
