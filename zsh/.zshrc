@@ -71,10 +71,21 @@ if [[ $(lsb_release --id | sed 's/Distributor ID:\s//g') == "ManjaroLinux" ]]; t
     DOWNGRADE_FROM_ALA=1
 fi
 
+# make keymap nicer
+if [ -f "$DOTFILES_ROOT/zsh/key-bindings.zsh" ]; then
+    source "$DOTFILES_ROOT/zsh/key-bindings.zsh"
+fi
+
+if [ -f "$DOTFILES_ROOT/zsh/completion.zsh" ]; then
+    source "$DOTFILES_ROOT/zsh/completion.zsh"
+fi
+
+# fish shell like suggestion
 if [ -f "$DOTFILES_ROOT/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
     source "$DOTFILES_ROOT/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
+# theme
 if [ -f "$DOTFILES_ROOT/zsh/sublime/sublime.zsh" ]; then
     source "$DOTFILES_ROOT/zsh/sublime/sublime.zsh"
 fi
