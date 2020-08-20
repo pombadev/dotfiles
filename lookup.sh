@@ -5,7 +5,6 @@
 SYS_DATA_DIR=${XDG_DATA_HOME:-$HOME/.local/share}
 LOOKUP_DIR=${LOOKUP_DIR:-$SYS_DATA_DIR/lookup}
 
-
 # create necessary directory
 if [ ! -d "$LOOKUP_DIR" ]; then
 	mkdir -p "$LOOKUP_DIR"
@@ -28,17 +27,17 @@ lookup::print() {
 }
 
 lookup::get_os() {
-	 case $(uname -s) in
-		Darwin)					echo "osx"		;;
-		Linux)					echo "linux"	;;
-		SunOS)					echo "sunos"	;;
-		CYGWIN*|MINGW32*|MSYS*) echo "windows"	;;
-		*)						echo "common"	;;
+	case $(uname -s) in
+		Darwin) echo "osx" ;;
+		Linux) echo "linux" ;;
+		SunOS) echo "sunos" ;;
+		CYGWIN* | MINGW32* | MSYS*) echo "windows" ;;
+		*) echo "common" ;;
 	esac
 }
 
 lookup::usage() {
-	cat <<EFO
+	cat << EFO
 lookup v0.2
 
 USAGE:
@@ -80,14 +79,14 @@ lookup::init() {
 					git clone "$2" &
 				fi
 			}
-			
+
 			lookup::exec_all_resources call_back
 
 			wait < <(jobs -p)
 
 			echo
-		)		
-		
+		)
+
 	fi
 }
 
@@ -119,11 +118,12 @@ lookup::update() {
 	if lookup::is_initialized; then
 		call_back() {
 			(
-				cd "$plugin"; echo "Updating '$plugin'"
+				cd "$plugin"
+				echo "Updating '$plugin'"
 				git pull 1> /dev/null &
 			)
 		}
-		
+
 		lookup::exec_all_resources call_back
 
 		wait < <(jobs -p)
@@ -187,8 +187,8 @@ lookup::bropages() {
 			else
 				# best effort conver json to proper format, won't deal well with escaped stuffs
 				output="$(
-					grep -Poe 'msg":".*?,' <<< "$output" |\
-					 sed -e '
+					grep -Poe 'msg":".*?,' <<< "$output" \
+						| sed -e '
 						# consume "msg:":"
 						s/msg":"//g;
 						# transform ", to newline
@@ -267,12 +267,30 @@ lookup::main() {
 
 	while getopts "tecbCx" arg; do
 		case $arg in
-			t) provider=tldr; shift ;;
-			b) provider=bro; shift ;;
-			e) provider=eg; shift ;;
-			c) provider=cht.sh; shift ;;
-			C) provider=commandlinefu; shift ;;
-			x) provider=cheatsheets; shift ;;
+			t)
+				provider=tldr
+				shift
+				;;
+			b)
+				provider=bro
+				shift
+				;;
+			e)
+				provider=eg
+				shift
+				;;
+			c)
+				provider=cht.sh
+				shift
+				;;
+			C)
+				provider=commandlinefu
+				shift
+				;;
+			x)
+				provider=cheatsheets
+				shift
+				;;
 			*) return 1 ;;
 		esac
 	done

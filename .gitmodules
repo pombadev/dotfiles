@@ -1,3 +1,9 @@
 [submodule "bash/ble.sh"]
 	path = bash/ble.sh
 	url = https://github.com/akinomyoga/ble.sh.git
+[submodule "zsh/zsh-autosuggestions"]
+	path = zsh/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions.git
+[submodule "zsh/sublime"]
+	path = zsh/sublime
+	url = git@github.com:pjmp/sublime.git
