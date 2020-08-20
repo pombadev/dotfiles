@@ -57,11 +57,9 @@ autoload -Uz promptinit && promptinit
 # faux autocomplete menu
 # setopt menucomplete
 
-DOTFILES_ROOT="$(cd "$(dirname "$(realpath "$0")")" && git rev-parse --show-toplevel)"
-
 # source my specific stuffs
-source "$DOTFILES_ROOT/exports.sh"
-source "$DOTFILES_ROOT/aliases.sh"
+source "$HOME/dotfiles/exports.sh"
+source "$HOME/dotfiles/aliases.sh"
 
 alias history='history 1'
 
@@ -72,20 +70,20 @@ if [[ $(lsb_release --id | sed 's/Distributor ID:\s//g') == "ManjaroLinux" ]]; t
 fi
 
 # make keymap nicer
-if [ -f "$DOTFILES_ROOT/zsh/key-bindings.zsh" ]; then
-    source "$DOTFILES_ROOT/zsh/key-bindings.zsh"
+if [ -f "$HOME/dotfiles/zsh/key-bindings.zsh" ]; then
+    source "$HOME/dotfiles/zsh/key-bindings.zsh"
 fi
 
-if [ -f "$DOTFILES_ROOT/zsh/completion.zsh" ]; then
-    source "$DOTFILES_ROOT/zsh/completion.zsh"
+if [ -f "$HOME/dotfiles/zsh/completion.zsh" ]; then
+    source "$HOME/dotfiles/zsh/completion.zsh"
 fi
 
 # fish shell like suggestion
-if [ -f "$DOTFILES_ROOT/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
-    source "$DOTFILES_ROOT/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if [ -f "$HOME/dotfiles/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+    source "$HOME/dotfiles/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 # theme
-if [ -f "$DOTFILES_ROOT/zsh/sublime/sublime.zsh" ]; then
-    source "$DOTFILES_ROOT/zsh/sublime/sublime.zsh"
+if [ -f "$HOME/dotfiles/zsh/sublime/sublime.zsh" ]; then
+    source "$HOME/dotfiles/zsh/sublime/sublime.zsh"
 fi
