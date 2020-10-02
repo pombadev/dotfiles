@@ -44,10 +44,9 @@ setopt nobeep
 setopt histignorealldups
 
 # required for completions
-
 autoload -Uz compinit && compinit
-# required for prompts
 
+# required for prompts
 autoload -Uz promptinit && promptinit
 
 # not good enough
@@ -57,9 +56,24 @@ autoload -Uz promptinit && promptinit
 # faux autocomplete menu
 # setopt menucomplete
 
+# DOTFILES_SRC="$(cd "$(dirname "$(readlink -f "${(%):-%x}")")" && git rev-parse --show-toplevel)"
+# DOTFILES_SRC="$(git -C "$(dirname "$(readlink -f "${(%):-%x}")")" rev-parse --show-toplevel)"
+DOTFILES_SRC=$(
+    current_file="${(%):-%x}"
+    original_file=$(readlink -f "$current_file")
+    file_directory=$(dirname "$original_file")
+    cmd="git -C '$file_directory' rev-parse"
+
+    if [ -z "$(eval "$cmd" --show-superproject-working-tree)" ]; then
+        eval "$cmd" --show-toplevel
+    else
+        eval "$cmd" --show-superproject-working-tree
+    fi
+)
+
 # source my specific stuffs
-source "$HOME/dotfiles/exports.sh"
-source "$HOME/dotfiles/aliases.sh"
+source "$DOTFILES_SRC/exports.sh"
+source "$DOTFILES_SRC/aliases.sh"
 
 alias history='history 1'
 
@@ -70,20 +84,28 @@ if [[ $(grep -P '^ID=' /etc/os-release) == *manjaro ]]; then
 fi
 
 # make keymap nicer
-if [ -f "$HOME/dotfiles/zsh/key-bindings.zsh" ]; then
-    source "$HOME/dotfiles/zsh/key-bindings.zsh"
+if [ -f "$DOTFILES_SRC/zsh/key-bindings.zsh" ]; then
+    source "$DOTFILES_SRC/zsh/key-bindings.zsh"
 fi
 
-if [ -f "$HOME/dotfiles/zsh/completion.zsh" ]; then
-    source "$HOME/dotfiles/zsh/completion.zsh"
+if [ -f "$DOTFILES_SRC/zsh/completion.zsh" ]; then
+    source "$DOTFILES_SRC/zsh/completion.zsh"
 fi
 
 # fish shell like suggestion
-if [ -f "$HOME/dotfiles/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
-    source "$HOME/dotfiles/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if [ -f "$DOTFILES_SRC/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+    source "$DOTFILES_SRC/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 # theme
-if [ -f "$HOME/dotfiles/zsh/sublime/sublime.zsh" ]; then
-    source "$HOME/dotfiles/zsh/sublime/sublime.zsh"
+if [ -f "$DOTFILES_SRC/zsh/sublime/sublime.zsh" ]; then
+    source "$DOTFILES_SRC/zsh/sublime/sublime.zsh"
+fi
+
+if [ -d "$DOTFILES_SRC/zsh/zsh-completions" ]; then
+    # $fpath cant cant be quoted
+    # shellcheck disable=SC2206
+    fpath=("$DOTFILES_SRC/zsh/zsh-completions/src" $fpath)
+    # re-init compleations
+    compinit
 fi

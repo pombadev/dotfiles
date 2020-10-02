@@ -33,21 +33,27 @@ gsm() {
 
 stash-explore() {
     # git stash list | cut -d \  -f1 | grep -Eo 'stash@{[0-9]{1,}}' | fzf --reverse --preview-window=70% --preview 'git stash show -p {} | diff-so-fancy'
-    git stash list |
-        fzf --reverse --preview-window=70% --preview 'git stash show -p $(echo {} | grep -Eo "stash@{[0-9]{1,}}") | diff-so-fancy' |
-        grep --color=none -Eo 'stash@{[0-9]{1,}}'
+    # git stash list |
+    #    fzf --reverse --preview-window=70% --preview 'bat -l diff <<< $(git stash show -p $(echo {} | grep -Eo "stash@{[0-9]{1,}}"))' |
+    #    grep --color=none -Eo 'stash@{[0-9]{1,}}'
+    git stash list | cut -d \  -f1 | grep -Eo 'stash@{[0-9]{1,}}' | fzf --reverse --preview-window=70% --preview 'bat --color=always <<< `git stash show -p {}`'
 }
 
 clean-git-branches() {
-    git branch | grep -E -v "(^\s+dev$|^\s+master|^\*.+$)" | xargs git branch -D
+    git branch | grep -E -v "(^\s+dev$|^\s+master|^\*.+$)" | xargs --no-run-if-empty git branch -D
 }
 
 # gcp - git commit with previews
 gcp() {
     local _gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
-    local _viewGitLogLine="$_gitLogLineToHash | xargs -I % sh -c 'git show --color=always % | diff-so-fancy'"
+    local _viewGitLogLine="$_gitLogLineToHash | xargs --no-run-if-empty -I % sh -c"
+    local differ="git show --color=always %"
 
-    git log --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr% C(auto)%an" "$@" | fzf --no-sort --reverse --tiebreak=index --no-multi --ansi --preview "$_viewGitLogLine"
+    if command -v &> /dev/null; then
+        differ=" | diff-so-fancy"
+    fi
+
+    git log --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr% C(auto)%an" "$@" | fzf --no-sort --reverse --tiebreak=index --no-multi --ansi --preview "$_viewGitLogLine '$differ'"
 }
 
 qs() {
@@ -158,11 +164,11 @@ fkill() {
                 --prompt='⚙ ' \
                 --reverse \
                 --multi \
-                --preview 'echo {} | column -t | cut -d\  -f 3 | xargs pstree -h ' |
+                --preview 'echo {} | column -t | cut -d\  -f 3 | xargs --no-run-if-empty pstree -h ' |
             awk '{print $2}'
     )
 
-    [[ -n $PID ]] && echo "$PID" | xargs kill -SIGTERM
+    [[ -n $PID ]] && echo "$PID" | xargs --no-run-if-empty kill -SIGTERM
 }
 
 fzf:preview:file() {
@@ -192,7 +198,7 @@ npm-scripts() {
     if command -v jq &> /dev/null; then
         script=$(jq --monochrome-output --raw-output '.scripts | keys[]' package.json | fzf --reverse)
     else
-        script=$(node -e "try { Object.keys(require('./package.json').scripts).forEach(script => console.log(script)) } catch (e) {console.log(e.message)}" | fzf --reverse)
+        script=$(node -e "try { Object.keys(require('./package.json').scripts).forEach(script => console.log(script)) } catch {}" | fzf --reverse)
     fi
 
     local pkg_man_with_cmd="npm run"
@@ -238,25 +244,25 @@ man2pdf() {
 }
 
 update-pkgs() {
-    if \which --skip-alias --skip-functions yay &> /dev/null; then
+    if \command -v yay &> /dev/null; then
         yay -Syu --noconfirm
     fi
 
-    if \which --skip-alias --skip-functions snap &> /dev/null; then
+    if \command -v snap &> /dev/null; then
         sudo snap refresh
     fi
 
-    if \which --skip-alias --skip-functions flatpak &> /dev/null; then
+    if \command -v flatpak &> /dev/null; then
         flatpak update --noninteractive
     fi
 }
 
 purge-pkgs() {
-    if \which --skip-alias --skip-functions flatpak &> /dev/null; then
+    if \command -v flatpak &> /dev/null; then
         flatpak uninstall --unused
     fi
 
-    if \which --skip-alias --skip-functions snap &> /dev/null; then
+    if \command -v snap &> /dev/null; then
         snap list --all | while read -r snapname _ rev _ _ notes; do
             if [[ $notes == *disabled* ]]; then
                 sudo snap remove "$snapname" --revision="$rev"
@@ -264,9 +270,28 @@ purge-pkgs() {
         done
     fi
 
-    if \which --skip-alias --skip-functions pacman &> /dev/null; then
-        sudo pacman -Rnsc "$(pacman -Qttdq)"
+    if \command -v pacman &> /dev/null; then
+        sudo pacman -Rnsc $(pacman -Qttdq)
     fi
+}
+
+rscript() {
+    temp_file=$(mktemp)
+
+    cat << EOF > "$temp_file"
+fn main() {
+    $1;
+}
+EOF
+
+    new_temp=$(mktemp)
+
+    # rustc --verbose -C opt-level=z -C panic=abort -C lto -C codegen-units=1 "$temp_file" -o "$new_temp"
+    rustc "$temp_file" -o "$new_temp"
+
+    (cd /tmp && "$new_temp")
+
+    rm "$temp_file" "$new_temp"
 }
 
 alias bat='bat --color=always'
@@ -291,5 +316,8 @@ alias ls='ls --color=auto -hls'
 alias more=less
 alias open='xdg-open'
 alias v='git branch -vv'
-alias xcopy='xclip -in -selection clipboard'
-alias xpaste='xclip -out -selection clipboard'
+
+if command -v xclip &> /dev/null; then
+    alias xcopy='xclip -in -selection clipboard'
+    alias xpaste='xclip -out -selection clipboard'
+fi
