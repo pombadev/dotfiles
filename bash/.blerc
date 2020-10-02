@@ -1,7 +1,6 @@
 # Pick from here.
 # https://github.com/akinomyoga/ble.sh/blob/master/blerc
 
-
 bleopt history_share=1
 
 bind 'set completion-ignore-case on'
@@ -9,4 +8,3 @@ bind 'set completion-ignore-case on'
 ble-color-setface auto_complete fg=gray
 
 bleopt exec_errexit_mark=
-
