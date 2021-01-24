@@ -55,14 +55,12 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'mhinz/vim-startify'
 Plug 'rhysd/git-messenger.vim'
 Plug 'Townk/vim-autoclose'
-Plug 'arcticicestudio/nord-vim'
 Plug 'junegunn/fzf.vim'
 Plug 'morhetz/gruvbox'
-" Plug 'chriskempson/base16-vim'
 
 call plug#end()
 
-colorscheme onedark
+colorscheme gruvbox
 
 " Use tab for trigger completion with characters ahead and navigate.
 " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.

@@ -14,3 +14,5 @@ export EDITOR=nano
 if sh -c 'which --skip-alias sccache' &> /dev/null; then
 	export RUSTC_WRAPPER=$(which sccache)
 fi
+
+DOWNGRADE_FROM_ALA=1

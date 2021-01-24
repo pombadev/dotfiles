@@ -1,0 +1,28 @@
+[user]
+	signingkey = AE0D2AAD54E6CB83
+[gpg]
+	program = gpg2
+[commit]
+	gpgsign = true
+[pager]
+	branch = false
+[pull]
+	ff = only
+
+[core]
+	pager = delta
+
+[delta]
+	line-numbers = true
+	side-by-side = true
+	features = side-by-side line-numbers decorations
+
+[interactive]
+	diffFilter = delta --color-only
+
+[diff]
+	colorMoved = default
+[protocol]
+	version = 2
+[alias]
+	profile = !~/dotfiles/git-profile

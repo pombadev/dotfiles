@@ -1,3 +1,5 @@
+# shellcheck disable=SC1090
+
 # History command configuration
 [ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"
 # How many lines of history to keep in memory
@@ -109,3 +111,5 @@ if [ -d "$DOTFILES_SRC/zsh/zsh-completions" ]; then
     # re-init compleations
     compinit
 fi
+
+source "$DOTFILES_SRC/common.sh"
