@@ -1,0 +1,39 @@
+[
+	{
+		"keys": [
+			"ctrl+\\"
+		],
+		"command": "toggle_side_bar"
+	},
+	{
+		"keys": [
+			"ctrl+m"
+		],
+		"command": "toggle_minimap"
+	},
+	{
+		"keys": [
+			"ctrl+."
+		],
+		"command": "lsp_code_actions"
+	},
+	{
+		"keys": [
+			"shift+alt+s"
+		],
+		"command": "save_all"
+	},
+	{
+		"command": "lsp_symbol_rename",
+		"keys": [
+			"shift+f2"
+		],
+		"context": [
+			{
+				"key": "lsp.session_with_capability",
+				"operator": "equal",
+				"operand": "renameProvider"
+			}
+		]
+	},
+]

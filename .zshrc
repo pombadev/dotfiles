@@ -52,6 +52,9 @@ setopt nobeep
 # If a new command is a duplicate, remove the older one
 setopt histignorealldups
 
+# required for completions
+autoload -Uz compinit && compinit
+
 # required for prompts
 autoload -Uz promptinit && promptinit
 
@@ -74,12 +77,6 @@ DOTFILES_SRC=$(
         eval "$cmd" --show-superproject-working-tree
     fi
 )
-
-fpath+=$DOTFILES_SRC/zsh/zfunc
-
-# required for completions
-autoload -Uz compinit && compinit
-
 
 # source my specific stuffs
 source "$DOTFILES_SRC/exports.sh"

@@ -1,0 +1,27 @@
+{
+	"lsp_format_on_save": true,
+	"lsp_code_actions_on_save": {
+		"source.organizeImports": true
+	},
+	"clients": {
+		"bashls": {
+			"command": [
+				"~/.npm/packages/bin/bash-language-server"
+			],
+			"enabled": true
+		},
+		"rust-analyzer": {
+			"enabled": true,
+			"settings": {
+				"cargo": {
+					"allFeatures": true,
+					"noSysroot": true,
+				},
+			},
+			"command": [
+				// "~/.config/Code/User/globalStorage/matklad.rust-analyzer/rust-analyzer-x86_64-unknown-linux-gnu"
+				"/usr/bin/rust-analyzer"
+			]
+		}
+	}
+}

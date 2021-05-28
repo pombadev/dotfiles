@@ -16,7 +16,7 @@ else
 	echo "Licenses list exist in cache directory: $cache_dir/licenses.json"
 fi
 
-license=$(jq --raw-output '.[].key' "$cache_dir/licenses.json" | fzf)
+license=$(jq --raw-output '.[].key' "$cache_dir/licenses.json" | fzf --tac --multi --reverse)
 
 if [ -z "$license" ]; then
 	echo "License not selected, cannot procceed forward"

@@ -1,0 +1,10 @@
+.git
+*.sh
+*.md
+/zsh
+/bash
+/.idea
+/.vscode
+.git*
+.ignore
+
