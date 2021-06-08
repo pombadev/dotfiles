@@ -6,7 +6,7 @@
 ## Other options are unset by default.  To make sure that an option
 ## is disabled, you can use "unset <option>".
 
-set smooth
+# set smooth
 
 ## Make the 'nextword' function (Ctrl+Right) stop at word ends
 ## instead of at beginnings.
@@ -289,3 +289,8 @@ bind ^S savefile main
 #bind ^U undo main
 #bind ^E redo main
 #set multibuffer
+
+set softwrap
+set minibar
+set magic
+
