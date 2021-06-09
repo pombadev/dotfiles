@@ -27,3 +27,6 @@ ln -s $PATH_TO_REPO/zsh/.zshrc ~/.zshrc
 ```shell
 ln -s $PATH_TO_REPO/bash/.bashrc ~/.bashrc
 ```
+
+# .ignore file
+Put files you don't want to be symlinked in the `.ignore` file.

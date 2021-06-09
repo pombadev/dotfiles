@@ -1,10 +1,8 @@
-.git
-*.sh
-*.md
-/zsh
-/bash
-/.idea
-/.vscode
-.git*
-.ignore
+# ignore all
+*
 
+# don't ignore these
+!.bashrc
+!.config/
+!.git_profiles
+!.zshrc
