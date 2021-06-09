@@ -78,9 +78,11 @@ DOTFILES_SRC=$(
     fi
 )
 
+fpath+=$DOTFILES_SRC/zsh/zfunc
+
 # source my specific stuffs
-source "$DOTFILES_SRC/exports.sh"
-source "$DOTFILES_SRC/aliases.sh"
+source "$DOTFILES_SRC/scripts/exports.sh"
+source "$DOTFILES_SRC/scripts/aliases.sh"
 
 alias history='history 1'
 
@@ -109,10 +111,6 @@ if [ -f "$DOTFILES_SRC/zsh/powerlevel10k/powerlevel10k.zsh-theme" ]; then
     source "$DOTFILES_SRC/zsh/powerlevel10k/powerlevel10k.zsh-theme"
 fi
 
-# if [ -f "$DOTFILES_SRC/zsh/sublime/sublime.zsh" ]; then
-#     source "$DOTFILES_SRC/zsh/sublime/sublime.zsh"
-# fi
-
 if [ -d "$DOTFILES_SRC/zsh/zsh-completions" ]; then
     # $fpath cant cant be quoted
     # shellcheck disable=SC2206
@@ -121,7 +119,7 @@ if [ -d "$DOTFILES_SRC/zsh/zsh-completions" ]; then
     compinit
 fi
 
-source "$DOTFILES_SRC/common.sh"
+source "$DOTFILES_SRC/scripts/common.sh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
