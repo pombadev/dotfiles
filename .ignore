@@ -1,8 +1,9 @@
-# ignore all
-*
-
-# don't ignore these
-!.bashrc
-!.config/
-!.git_profiles
-!.zshrc
+.git
+.gitignore
+.gitmodules
+.ignore
+*.md
+bash
+scripts
+zsh
+Makefile

@@ -246,7 +246,7 @@ man2pdf() {
 update-pkgs() {
     if \command -v yay &> /dev/null; then
         yay -Syu --noconfirm
-        
+
     elif \command -v paru &> /dev/null; then
         paru -Syu --noconfirm
     fi
