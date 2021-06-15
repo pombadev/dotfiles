@@ -2,7 +2,7 @@
 
 # nodejs stuffs
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-export PATH="$HOME/.npm/packages/bin"
+export PATH="$HOME/.npm/packages/bin:$PATH"
 
 # rust stuffs
 export PATH="$HOME/.cargo/bin:$PATH"
