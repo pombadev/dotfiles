@@ -111,10 +111,10 @@ st() {
 
 # restart network manager
 rnet() {
-    distro=$(lsb_release -i | column -t | cut -d\  -f5 | tr '[:upper:]' '[:lower:]')
+    distro=$(grep -e '^NAME=' /etc/os-release | cut -d '=' -f2 | sed s/\"//g | tr '[:upper:]' '[:lower:]')
 
     case $distro in
-        manjarolinux)
+        'manjaro linux' | 'arch linux')
             sudo -k systemctl restart NetworkManager.service
             ;;
 
