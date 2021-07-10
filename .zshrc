@@ -8,13 +8,13 @@ fi
 # shellcheck disable=SC1090
 
 # History command configuration
-[ -z "$HISTFILE" ] && HISTFILE="$HOME/.zhistory"
+[ -z "$HISTFILE" ] && HISTFILE="$HOME/.shell_history"
 # How many lines of history to keep in memory
-HISTSIZE=10000000
+HISTSIZE=999999999999999999
 
 # Number of history entries to save to disk
 # shellcheck disable=SC2034
-SAVEHIST=10000000
+SAVEHIST=999999999999999999
 
 # ignore commands that start with space
 setopt histignorespace
@@ -25,8 +25,8 @@ setopt histignoredups
 # delete duplicates first when HISTFILE size exceeds HISTSIZE
 setopt hist_expire_dups_first
 
-# record timestamp of command in HISTFILE
-setopt extended_history
+# bash history compatibility
+unsetopt extended_history
 
 # show command with history expansion to user before running it
 setopt hist_verify
@@ -93,12 +93,12 @@ if [[ $(grep -P '^ID=' /etc/os-release) == *manjaro ]]; then
 fi
 
 # make keymap nicer
-if [ -f "$DOTFILES_SRC/zsh/key-bindings.zsh" ]; then
-    source "$DOTFILES_SRC/zsh/key-bindings.zsh"
+if [ -f "$DOTFILES_SRC/zsh/ohmyzsh/lib/key-bindings.zsh" ]; then
+    source "$DOTFILES_SRC/zsh/ohmyzsh/lib/key-bindings.zsh"
 fi
 
-if [ -f "$DOTFILES_SRC/zsh/completion.zsh" ]; then
-    source "$DOTFILES_SRC/zsh/completion.zsh"
+if [ -f "$DOTFILES_SRC/zsh/ohmyzsh/lib/completion.zsh" ]; then
+    source "$DOTFILES_SRC/zsh/ohmyzsh/lib/completion.zsh"
 fi
 
 # fish shell like suggestion
@@ -123,3 +123,4 @@ source "$DOTFILES_SRC/scripts/common.sh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+

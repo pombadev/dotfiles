@@ -1,0 +1,4 @@
+[pull]
+	rebase = false
+[user]
+	signingkey = C054105C45C3D033
