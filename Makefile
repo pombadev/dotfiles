@@ -5,7 +5,8 @@ home: dirs preferences deps
 
 dirs:
 	@echo "Creating folders"
-	mkdir -p ~/Projects ~/Work ~/.npm/packages/bin
+	mkdir -p ~/Projects ~/Work ~/.npm/packages/bin ~/.pub-cache/bin
+
 
 preferences:
 	@echo "Applying gnome settings"
@@ -18,13 +19,12 @@ preferences:
 	gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll false
 	gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
 	gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
-	gsettings set org.gnome.desktop.wm.preferences action-double-click-titlebar "['<Shift><Super>Tab']"
+	gsettings set org.gnome.desktop.wm.keybindings show-desktop "['<Super>d']"
+	gsettings set org.gnome.desktop.wm.keybindings switch-applications "['<Alt>Tab']"
+	gsettings set org.gnome.desktop.wm.keybindings switch-applications-backward "['<Shift><Alt>Tab']"
+	gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Super>Tab']"
+	gsettings set org.gnome.desktop.wm.keybindings switch-windows-backward "['<Shift><Super>Tab']"
 	gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
-	gsettings set org.gnome.desktop.wm.preferences show-desktop "['<Super>d']"
-	gsettings set org.gnome.desktop.wm.preferences switch-applications "['<Alt>Tab']"
-	gsettings set org.gnome.desktop.wm.preferences switch-applications-backwards "['<Shift><Alt>Tab']"
-	gsettings set org.gnome.desktop.wm.preferences switch-windows "['<Super>Tab']"
-	gsettings set org.gnome.desktop.wm.preferences switch-windows-backwards "['<Shift><Super>Tab']"
 
 .ONESHELL:
 deps:
@@ -36,7 +36,7 @@ deps:
 		cmake \
 		firefox \
 		guake \
-		nodejs-lts-erbium \
+		nodejs \
 		noto-fonts \
 		noto-fonts-cjk \
 		noto-fonts-emoji \
@@ -72,7 +72,7 @@ deps:
 		makepkg -si
 	)
 
-	cargo install bat cargo-edit cargo-expand cargo-watch evcxr exa git-profile
+	cargo install bat cargo-edit cargo-expand cargo-watch evcxr exa git-profile configman
 
 	paru -Syu --needed snapd chrome-gnome-shell google-chrome zoom shellcheck-bin
 
@@ -80,3 +80,7 @@ deps:
 	sudo systemctl enable --now snapd.socket
 	sudo snap install code --classic
 	sudo snap install pycharm-community --classic
+
+	@echo "Linking config files"
+
+	configman --src=. --dest=~

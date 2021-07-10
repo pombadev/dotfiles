@@ -11,10 +11,12 @@ export RUST_SRC_PATH=$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/li
 # misc
 export EDITOR=nano
 
-if sh -c 'which --skip-alias sccache' &> /dev/null; then
+if sh -c 'which --skip-alias sccache' &>/dev/null; then
 	RUSTC_WRAPPER=$(which sccache)
 	export RUSTC_WRAPPER
 fi
 
 # manjaro (downgrader)
 export DOWNGRADE_FROM_ALA=1
+
+export PATH="$PATH:$HOME/.pub-cache/bin"
