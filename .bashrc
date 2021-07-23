@@ -4,18 +4,7 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-DOTFILES_SRC=$(
-    current_file="${(%):-%x}"
-    original_file=$(readlink -f "$current_file")
-    file_directory=$(dirname "$original_file")
-    cmd="git -C '$file_directory' rev-parse"
-
-    if [ -z "$(eval "$cmd" --show-superproject-working-tree)" ]; then
-        eval "$cmd" --show-toplevel
-    else
-        eval "$cmd" --show-superproject-working-tree
-    fi
-)
+DOTFILES_SRC=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 
 shopt -s globstar #  pattern ** used in a path name expansion
 shopt -s autocd
