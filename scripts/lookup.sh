@@ -19,25 +19,25 @@ readonly -A resources=(
 lookup::print() {
 	local lang=${2:-bash}
 
-	if command -v bat &> /dev/null; then
-		bat --style plain --language "$lang" <<< "$1"
+	if command -v bat &>/dev/null; then
+		bat --style plain --language "$lang" <<<"$1"
 	else
-		cat <<< "$1" | command less -RFE
+		cat <<<"$1" | command less -RFE
 	fi
 }
 
 lookup::get_os() {
 	case $(uname -s) in
-		Darwin) echo "osx" ;;
-		Linux) echo "linux" ;;
-		SunOS) echo "sunos" ;;
-		CYGWIN* | MINGW32* | MSYS*) echo "windows" ;;
-		*) echo "common" ;;
+	Darwin) echo "osx" ;;
+	Linux) echo "linux" ;;
+	SunOS) echo "sunos" ;;
+	CYGWIN* | MINGW32* | MSYS*) echo "windows" ;;
+	*) echo "common" ;;
 	esac
 }
 
 lookup::usage() {
-	cat << EFO
+	cat <<EFO
 lookup v0.2
 
 USAGE:
@@ -46,7 +46,7 @@ USAGE:
 OPTIONS:
     -h, --help              Prints help information
     -u --update             Update databases
-    --init                  Initilize \`lookup\`
+    --init                  Initialize \`lookup\`
 
 FLAG:
     -b, -bro                Query data from http://bropages.org/
@@ -66,7 +66,7 @@ lookup::exec_all_resources() {
 	done
 
 	# shellcheck disable=2103
-	cd - 1> /dev/null
+	cd - 1>/dev/null
 }
 
 lookup::init() {
@@ -92,9 +92,9 @@ lookup::init() {
 
 lookup::is_plugin() {
 	(
-		cd "$LOOKUP_DIR/$1" 2> /dev/null || return 1
+		cd "$LOOKUP_DIR/$1" 2>/dev/null || return 1
 
-		test "$(git config --get remote.origin.url 2> /dev/null)" == "$2" || return 1
+		test "$(git config --get remote.origin.url 2>/dev/null)" == "$2" || return 1
 	)
 
 	return $?
@@ -120,7 +120,7 @@ lookup::update() {
 			(
 				cd "$plugin"
 				echo "Updating '$plugin'"
-				git pull 1> /dev/null &
+				git pull 1>/dev/null &
 			)
 		}
 
@@ -182,13 +182,13 @@ lookup::bropages() {
 		if [[ -z $output ]]; then
 			lookup::not_found "$*"
 		else
-			if command -v jq &> /dev/null; then
-				output="$(jq -r '.[] | .msg' <<< "$output")"
+			if command -v jq &>/dev/null; then
+				output="$(jq -r '.[] | .msg' <<<"$output")"
 			else
-				# best effort conver json to proper format, won't deal well with escaped stuffs
+				# best effort convert json to proper format, won't deal well with escaped stuffs
 				output="$(
-					grep -Poe 'msg":".*?,' <<< "$output" \
-						| sed -e '
+					grep -Poe 'msg":".*?,' <<<"$output" |
+						sed -e '
 						# consume "msg:":"
 						s/msg":"//g;
 						# transform ", to newline
@@ -237,7 +237,7 @@ lookup::cheatsheets() {
 		result="$(find . -iname "$1")"
 
 		if [[ -n "$result" ]]; then
-			lookup::print "$(sed -E '/---/d' <<< "$(sed -E '/tags: \[.+\]/d' "$result")")"
+			lookup::print "$(sed -E '/---/d' <<<"$(sed -E '/tags: \[.+\]/d' "$result")")"
 		else
 			lookup::not_found "$*"
 		fi
@@ -267,31 +267,31 @@ lookup::main() {
 
 	while getopts "tecbCx" arg; do
 		case $arg in
-			t)
-				provider=tldr
-				shift
-				;;
-			b)
-				provider=bro
-				shift
-				;;
-			e)
-				provider=eg
-				shift
-				;;
-			c)
-				provider=cht.sh
-				shift
-				;;
-			C)
-				provider=commandlinefu
-				shift
-				;;
-			x)
-				provider=cheatsheets
-				shift
-				;;
-			*) return 1 ;;
+		t)
+			provider=tldr
+			shift
+			;;
+		b)
+			provider=bro
+			shift
+			;;
+		e)
+			provider=eg
+			shift
+			;;
+		c)
+			provider=cht.sh
+			shift
+			;;
+		C)
+			provider=commandlinefu
+			shift
+			;;
+		x)
+			provider=cheatsheets
+			shift
+			;;
+		*) return 1 ;;
 		esac
 	done
 

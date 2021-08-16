@@ -16,6 +16,6 @@
 [submodule "zsh/ohmyzsh"]
 	path = zsh/ohmyzsh
 	url = https://github.com/ohmyzsh/ohmyzsh.git
-[submodule "bash/--force"]
-	path = bash/--force
-	url = /home/pm/Projects/simple-prompt
+[submodule "bash/simple"]
+	path = bash/simple
+	url = https://github.com/pjmp/simple.git

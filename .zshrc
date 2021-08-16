@@ -115,7 +115,7 @@ if [ -d "$DOTFILES_SRC/zsh/zsh-completions" ]; then
     # $fpath cant cant be quoted
     # shellcheck disable=SC2206
     fpath=("$DOTFILES_SRC/zsh/zsh-completions/src" $fpath)
-    # re-init compleations
+    # re-init completions
     compinit
 fi
 
@@ -123,4 +123,3 @@ source "$DOTFILES_SRC/scripts/common.sh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-

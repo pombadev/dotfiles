@@ -2,30 +2,16 @@
 
 # Requirements
 
-- zsh/bash shell
-- git
-
+- Arch linux based distro
+- Gnome DE
+- I manage my dotfiles using my symlink manager [configman](https://github.com/pjmp/configman).
 
 # Install
 
-```shell
-git clone --recursive git@github.com:pjmp/dotfiles.git
-```
-
-# Setup
-
-> Remember to back up your .zshrc or .bashrc before this if you think you'll need them later.
-
-- zsh
-
-```shell
-ln -s $PATH_TO_REPO/zsh/.zshrc ~/.zshrc
-```
-
-- bash
-
-```shell
-ln -s $PATH_TO_REPO/bash/.bashrc ~/.bashrc
+```bash
+git clone --recursive https://github.com/pjmp/dotfiles.git
+cd dotfiles
+make home
 ```
 
 # .ignore file
