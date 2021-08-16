@@ -11,40 +11,35 @@ fi
 
 if [[ ! -f "$cache_dir/licenses.json" ]]; then
 	echo "Fetching available licenses list"
-	curl -s https://api.github.com/licenses > "$cache_dir/licenses.json"
+	curl -s https://api.github.com/licenses >"$cache_dir/licenses.json"
 else
 	echo "Licenses list exist in cache directory: $cache_dir/licenses.json"
 fi
 
-license=$(jq --raw-output '.[].key' "$cache_dir/licenses.json" | fzf --tac --multi --reverse)
+licenses=$(jq --raw-output '.[].key' "$cache_dir/licenses.json" | fzf --tac --multi --reverse)
 
-if [ -z "$license" ]; then
-	echo "License not selected, cannot procceed forward"
+if [ -z "$licenses" ]; then
+	echo "License(s) not selected, cannot proceed forward"
 	exit 1
 fi
 
-echo "Selected license: ${license^^}"
+printf "Selected license(s):\n%s" "${licenses^^}"
 
-if [[ ! -f "$cache_dir/$license.json" ]]; then
-	echo "Fetching ${license^^}"
-	curl -s "https://api.github.com/licenses/$license" > "$cache_dir/$license.json"
-else
-	echo "${license^^} exist in cache"
-fi
-
-license_contents=$(jq --raw-output '.body' "$cache_dir/$license.json")
-
-if [ "$license_contents" == "null" ]; then
-	echo "License contents missing, please delete $cache_dir and try again"
-else
-
-	if [ "$1" == "--write-to-stdout" ]; then
-		# todo remove debugging logs
-		# because they are also being recirectet
-		echo "$license_contents"
+for license in $licenses; do
+	if [[ ! -f "$cache_dir/$license.json" ]]; then
+		echo "Fetching ${license^^}"
+		curl -s "https://api.github.com/licenses/$license" >"$cache_dir/$license.json"
 	else
-		echo "Writing 'LICENSE-${license^^}.md' to '$(pwd)'"
-		echo "$license_contents" > "LICENSE-${license^^}".md
+		echo "${license^^} exist in cache"
 	fi
 
-fi
+	license_contents=$(jq --raw-output '.body' "$cache_dir/$license.json")
+
+	if [ "$license_contents" == "null" ]; then
+		echo "License contents missing, please delete $cache_dir and try again"
+	else
+		echo "Writing 'LICENSE-${license^^}' to '$(pwd)'"
+		echo "$license_contents" >"LICENSE-${license^^}"
+
+	fi
+done

@@ -48,7 +48,8 @@ deps:
 		vlc \
 		vim \
 		neovim \
-		libreoffice-fresh
+		libreoffice-fresh \
+		git-delta
 
 	@echo "Installing sublime"
 	curl -O https://download.sublimetext.com/sublimehq-pub.gpg
