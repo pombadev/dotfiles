@@ -20,3 +20,4 @@ fi
 export DOWNGRADE_FROM_ALA=1
 
 export PATH="$PATH:$HOME/.pub-cache/bin"
+export PATH=$HOME/.local/bin:$PATH

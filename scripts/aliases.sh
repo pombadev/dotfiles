@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/usr/env bash
+
 # linting via shellcheck
 # shellcheck disable=SC2096
 
@@ -36,7 +37,7 @@ stash-explore() {
 	# git stash list |
 	#    fzf --reverse --preview-window=70% --preview 'bat -l diff <<< $(git stash show -p $(echo {} | grep -Eo "stash@{[0-9]{1,}}"))' |
 	#    grep --color=none -Eo 'stash@{[0-9]{1,}}'
-	git stash list | cut -d \  -f1 | grep -Eo 'stash@{[0-9]{1,}}' | fzf --reverse --preview-window=70% --preview 'bat --color=always <<< `git stash show -p {}`'
+	git stash list | cut -d \  -f1 | grep -Eo 'stash@{[0-9]{1,}}' | fzf --reverse --preview-window=70% --preview 'bat --color=always --style=numbers <<< `git stash show -p {}`'
 }
 
 clean-git-branches() {
@@ -236,12 +237,29 @@ print-colors() {
 }
 
 man2pdf() {
+	local app=$1
 	local DEST=${2:-$HOME/Documents}
 
-	if command man -w "$1" 1>/dev/null; then
-		command man -Tpdf "$1" >"$DEST/$1.pdf"
+	if command man -w "$app" 1>/dev/null; then
+		command man -Tpdf "$app" >"$DEST/$app.pdf"
 
-		printf "'%s' saved in '%s' \n" "$1.pdf" "$DEST"
+		printf "'%s' saved in '%s' \n" "$app.pdf" "$DEST"
+
+	else
+		echo -n "Do you want to generate pdf from '$app --help'\n"
+
+		select yn in "y" "n"; do
+			case $yn in
+			y)
+				echo "Running: 'man -Tpdf -l - <<< rg --help > ~/$DEST/$app.pdf'"
+				man -Tpdf -l - <<<"$($app --help)" >"$DEST/$app.pdf"
+				break
+				;;
+			n)
+				break
+				;;
+			esac
+		done
 	fi
 }
 
@@ -276,7 +294,15 @@ purge-pkgs() {
 	fi
 
 	if \command -v pacman &>/dev/null; then
-		sudo pacman -Rnsc $(pacman -Qttdq)
+		# shellcheck disable=SC2155
+		local pkgs=$(pacman -Qttdq)
+		if [[ -n $pkgs ]]; then
+			# quoting will break things
+			# shellcheck disable=SC2046
+			sudo pacman -Rnsc $(tr '\n' ' ' <<<"$pkgs")
+		else
+			echo "No packages to remove"
+		fi
 	fi
 }
 
@@ -327,14 +353,14 @@ if command -v xclip &>/dev/null; then
 fi
 
 if command -v delta &>/dev/null; then
-	alias gd="GIT_PAGER='delta --line-numbers --navigate --keep-plus-minus-markers --hyperlinks --side-by-side --theme=1337 --width=250' git diff"
+	alias gd="GIT_PAGER='delta --line-numbers --navigate --keep-plus-minus-markers --hyperlinks --side-by-side' git diff"
 else
 	alias gd='git diff'
 fi
 
 if go env &>/dev/null; then
 	boot() {
-		GOPATH=$(go env | grep GOPATH | grep -o '"[^"]\+"' | sed -e 's/"//g')
+		local GOPATH=$(go env | grep GOPATH | grep -o '"[^"]\+"' | sed -e 's/"//g')
 
 		if [ -d "$GOPATH" ]; then
 			export PATH="$PATH:$GOPATH/bin"
@@ -372,6 +398,7 @@ if go env &>/dev/null; then
 	}
 	boot
 	unset -f boot
+	unset GOPATH
 fi
 
 update-git-submodules() {

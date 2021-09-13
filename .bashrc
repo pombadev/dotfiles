@@ -30,7 +30,17 @@ source "$DOTFILES_SRC/scripts/exports.sh"
 source "$DOTFILES_SRC/scripts/aliases.sh"
 source "$DOTFILES_SRC/scripts/common.sh"
 
+# syntax highlight & fish shell like autocomplete support
+if [[ ! -d "$DOTFILES_SRC/bash/ble.sh/out" ]]; then
+	make -C "$DOTFILES_SRC/bash/ble.sh" 1>/dev/null
+	source "$DOTFILES_SRC/bash/ble.sh/out/ble.sh"
+elif [[ -f "$DOTFILES_SRC/bash/ble.sh/out/ble.sh" ]]; then
+	source "$DOTFILES_SRC/bash/ble.sh/out/ble.sh"
+fi
+
 # apply theme
 if [[ -f $DOTFILES_SRC/bash/simple/prompt.sh ]]; then
 	source "$DOTFILES_SRC/bash/simple/prompt.sh"
 fi
+
+unset DOTFILES_SRC
