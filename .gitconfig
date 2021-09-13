@@ -2,3 +2,6 @@
 	rebase = false
 [user]
 	signingkey = C054105C45C3D033
+[includeIf "gitdir:~/Work/"]
+	path = ~/Work/.gitconfig
+
