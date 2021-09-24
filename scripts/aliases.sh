@@ -301,7 +301,7 @@ purge-pkgs() {
 			# shellcheck disable=SC2046
 			sudo pacman -Rnsc $(tr '\n' ' ' <<<"$pkgs")
 		else
-			echo "No packages to remove"
+			echo "pacman: No packages to remove"
 		fi
 	fi
 }
@@ -346,6 +346,7 @@ alias ls='ls --color=auto -hls'
 alias more=less
 alias open='xdg-open'
 alias v='git branch -vv'
+alias less='less --LINE-NUMBERS --use-color --status-column --quit-at-eof --incsearch --mouse'
 
 if command -v xclip &>/dev/null; then
 	alias xcopy='xclip -in -selection clipboard'
