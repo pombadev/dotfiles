@@ -36,4 +36,10 @@
 			}
 		]
 	},
+	{
+		"keys": [
+			"ctrl+escape"
+		],
+		"command": "toggle_terminus_panel"
+	},
 ]

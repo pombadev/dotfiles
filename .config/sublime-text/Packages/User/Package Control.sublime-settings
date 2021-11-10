@@ -5,7 +5,8 @@
 	],
 	"installed_packages":
 	[
-		"FileIcons",
+		"A File Icon",
+		"ayu",
 		"Generic Config",
 		"GitGutter",
 		"LSP",
@@ -14,6 +15,7 @@
 		"LSP-elm",
 		"LSP-eslint",
 		"LSP-json",
+		"LSP-lua",
 		"LSP-pyright",
 		"LSP-typescript",
 		"Origami",
@@ -21,6 +23,7 @@
 		"SublimeLinter",
 		"SublimeLinter-shellcheck",
 		"Terminus",
+		"Theme - One",
 		"TOML",
 	],
 }
