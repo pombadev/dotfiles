@@ -7,7 +7,6 @@ dirs:
 	@echo "Creating folders"
 	mkdir -p ~/Projects ~/Work ~/.npm/packages/bin ~/.pub-cache/bin
 
-
 preferences:
 	@echo "Applying gnome settings"
 	gsettings set org.gnome.desktop.datetime automatic-timezone true
@@ -35,7 +34,7 @@ deps:
 		git \
 		cmake \
 		firefox \
-		guake \
+		tilix \
 		nodejs \
 		noto-fonts \
 		noto-fonts-cjk \
@@ -45,25 +44,33 @@ deps:
 		rustup \
 		zsh \
 		zsh-completions \
-		vlc \
-		vim \
 		neovim \
 		libreoffice-fresh \
-		git-delta
+		bash-completion \
+		dart \
+		dotnet-sdk \
+		go \
+		man-db \
+		man-pages
 
-	@echo "Installing sublime"
-	curl -O https://download.sublimetext.com/sublimehq-pub.gpg
-	sudo pacman-key --add sublimehq-pub.gpg
-	sudo pacman-key --lsign-key 8A8F901A
-	rm sublimehq-pub.gpg
-	echo -e "\n[sublime-text]\nServer = https://download.sublimetext.com/arch/stable/x86_64" | sudo tee -a /etc/pacman.conf
-	sudo pacman -Syu --needed sublime-text sublime-merge
+	# curl \
+	# 	--fail \
+	# 	--no-progress-meter \
+	# 	--show-error \
+	# 	--output-dir zsh \
+	# 	--remote-name-all  "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/lib/{key-bindings,completion}.zsh"
 
 	@echo "Set up rust compiler & its components"
 	rustup toolchain install stable
-	rustup set profile complete
+	rustup set profile default
 	cargo install sccache
+	export PATH="$PATH:$HOME/.cargo/bin"
 	export RUSTC_WRAPPER=$(which sccache)
+	cargo install configman
+
+	@echo "Linking config files"
+
+	configman --src=. --dest=~
 
 	(
 		# installing AUR helper
@@ -73,15 +80,20 @@ deps:
 		makepkg -si
 	)
 
-	cargo install bat cargo-edit cargo-expand cargo-watch evcxr exa git-profile configman
+	cargo install bat cargo-edit cargo-expand cargo-watch evcxr exa git-profile
 
-	paru -Syu --needed snapd chrome-gnome-shell google-chrome zoom shellcheck-bin
 
-	@echo "Installing snaps"
+	paru -Syu --needed snapd chrome-gnome-shell google-chrome zoom shellcheck-bin ttf-ms-fonts
+
+
+	@echo "Installing snaps packages"
 	sudo systemctl enable --now snapd.socket
+
+	if [[ ! -d /snap ]]; then
+		sudo ln -s /var/lib/snapd/snap /snap
+	fi
+
+	sleep 10s
+
 	sudo snap install code --classic
 	sudo snap install pycharm-community --classic
-
-	@echo "Linking config files"
-
-	configman --src=. --dest=~
