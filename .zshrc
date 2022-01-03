@@ -86,12 +86,6 @@ source "$DOTFILES_SRC/scripts/aliases.sh"
 
 alias history='history 1'
 
-# allow packages downgrade
-if [[ $(grep -P '^ID=' /etc/os-release) == *manjaro ]]; then
-    # shellcheck disable=SC2034
-    DOWNGRADE_FROM_ALA=1
-fi
-
 # make keymap nicer
 if [ -f "$DOTFILES_SRC/zsh/ohmyzsh/lib/key-bindings.zsh" ]; then
     source "$DOTFILES_SRC/zsh/ohmyzsh/lib/key-bindings.zsh"
@@ -118,8 +112,6 @@ if [ -d "$DOTFILES_SRC/zsh/zsh-completions" ]; then
     # re-init completions
     compinit
 fi
-
-source "$DOTFILES_SRC/scripts/common.sh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

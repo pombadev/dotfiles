@@ -1,13 +1,13 @@
 #!/usr/env bash
 
 generate::gitignore::main() {
-	local header="Accept: application/vnd.github.v3+json"
-	local url="https://api.github.com/gitignore/templates"
+	local base_url="https://www.toptal.com/developers/gitignore/api"
+	local list_url="$base_url/list?format=lines"
 
-	local selections=$(curl -s -H "$header" "$url" | jq --raw-output '.[]' | fzf --reverse --multi --preview "curl -s -H $header $url/{} | jq --raw-output '.source'")
+	local selections=$(curl -s "$list_url" | fzf --reverse --multi --preview "curl -s $base_url/{}")
 
 	for selection in $selections; do
-		curl -s -H "$header" "$url/$selection" | jq --raw-output '.source' >> .gitignore
+		curl -s "$base_url/$selection" >> .gitignore
 	done
 }
 
