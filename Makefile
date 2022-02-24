@@ -64,9 +64,9 @@ deps:
 	rustup toolchain install stable
 	rustup set profile default
 	cargo install sccache
-	export PATH="$PATH:$HOME/.cargo/bin"
+	export PATH=$$PATH:$$HOME/.cargo/bin
 	export RUSTC_WRAPPER=$(which sccache)
-	cargo install configman
+	cargo install --locked --jobs=3 configman
 
 	@echo "Linking config files"
 
@@ -80,10 +80,11 @@ deps:
 		makepkg -si
 	)
 
-	cargo install bat cargo-edit cargo-expand cargo-watch evcxr exa git-profile
+	cargo install gprofile
 
+	paru -Syu --needed snapd chrome-gnome-shell zoom shellcheck-bin ttf-ms-fonts
 
-	paru -Syu --needed snapd chrome-gnome-shell google-chrome zoom shellcheck-bin ttf-ms-fonts
+	# cargo install bat cargo-edit cargo-expand cargo-watch evcxr_repl exa
 
 
 	@echo "Installing snaps packages"

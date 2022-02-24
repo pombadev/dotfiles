@@ -118,3 +118,8 @@ fi
 
 # opam configuration
 [[ ! -r /home/pm/.opam/opam-init/init.zsh ]] || source /home/pm/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+
+# if zellij -V | grep -w zellij &> /dev/null; then
+#     typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
+#     zellij
+# fi

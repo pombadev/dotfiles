@@ -364,46 +364,39 @@ else
 fi
 
 if go env &>/dev/null; then
-	boot() {
-		local GOPATH=$(go env | grep GOPATH | grep -o '"[^"]\+"' | sed -e 's/"//g')
+	GO_PATH=$(go env | grep GOPATH | grep -o '"[^"]\+"' | sed -e 's/"//g')
 
-		if [ -d "$GOPATH" ]; then
-			export PATH="$PATH:$GOPATH/bin"
-		else
-			return 1
-		fi
+	if [ -d "$GO_PATH" ]; then
+		export PATH="$PATH:$GO_PATH/bin"
+	fi
 
-		gobin() {
-			case $1 in
-			l | list)
-				find "$GOPATH"/bin -type f -exec basename {} \;
-				;;
+	gobin() {
+		case $1 in
+		l | list)
+			find "$GO_PATH"/bin -type f -exec basename {} \;
+			;;
 
-			r | remove)
-				if [ -z "$2" ]; then
-					echo "value cannot be empty"
-					return 1
-				fi
-
-				local BIN="$GOPATH/bin/$2"
-
-				if [ -f "$BIN" ]; then
-					rm "$BIN"
-				else
-					echo "$BIN does not exist"
-				fi
-
-				;;
-			*)
-				printf "gobin: unknown command\navailable commands:\n  list\n  remove\n"
+		r | remove)
+			if [ -z "$2" ]; then
+				echo "value cannot be empty"
 				return 1
-				;;
-			esac
-		}
+			fi
+
+			local BIN="$GO_PATH/bin/$2"
+
+			if [ -f "$BIN" ]; then
+				rm "$BIN"
+			else
+				echo "$BIN does not exist"
+			fi
+
+			;;
+		*)
+			printf "gobin: unknown command\navailable commands:\n  list\n  remove\n"
+			return 1
+			;;
+		esac
 	}
-	boot
-	unset -f boot
-	unset GOPATH
 fi
 
 update-git-submodules() {
