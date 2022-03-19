@@ -83,6 +83,7 @@ fpath+=$DOTFILES_SRC/zsh/zfunc
 # source my specific stuffs
 source "$DOTFILES_SRC/scripts/exports.sh"
 source "$DOTFILES_SRC/scripts/aliases.sh"
+source "$DOTFILES_SRC/scripts/funcs.sh"
 
 alias history='history 1'
 
