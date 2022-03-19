@@ -5,8 +5,7 @@
 	],
 	"installed_packages":
 	[
-		"A File Icon",
-		"ayu",
+		"FileIcons Mono",
 		"Generic Config",
 		"GitGutter",
 		"LSP",
@@ -23,7 +22,6 @@
 		"SublimeLinter",
 		"SublimeLinter-shellcheck",
 		"Terminus",
-		"Theme - One",
 		"TOML",
 	],
 }
