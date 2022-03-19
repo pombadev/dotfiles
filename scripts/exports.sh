@@ -17,8 +17,8 @@ __PATH__+=":$HOME/.local/bin"
 
 # allow packages downgrade
 if [[ $(grep -P '^ID=' /etc/os-release) == *manjaro ]]; then
-    # shellcheck disable=SC2034
-    DOWNGRADE_FROM_ALA=1
+	# shellcheck disable=SC2034
+	DOWNGRADE_FROM_ALA=1
 fi
 
 # dart
@@ -32,9 +32,12 @@ __PATH__+=":$DENO_INSTALL/bin"
 [ -f ~/.ghcup/env ] && source ~/.ghcup/env
 
 # dotnet
-export DOTNET_ROOT="$HOME/.dotnet"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
-__PATH__+=":$DOTNET_ROOT:$DOTNET_ROOT/tools"
+
+if [[ $(which dotnet) != "/usr/bin/dotnet" ]]; then
+	export DOTNET_ROOT="$HOME/.dotnet"
+	__PATH__+=":$DOTNET_ROOT:$DOTNET_ROOT/tools"
+fi
 
 # ocaml
 if command -v opam &>/dev/null; then

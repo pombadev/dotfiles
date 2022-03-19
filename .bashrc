@@ -28,6 +28,7 @@ export HISTSIZE=
 # source my specific stuffs
 source "$DOTFILES_SRC/scripts/exports.sh"
 source "$DOTFILES_SRC/scripts/aliases.sh"
+source "$DOTFILES_SRC/scripts/funcs.sh"
 
 # syntax highlight & fish shell like autocomplete support
 if [[ ! -d "$DOTFILES_SRC/bash/ble.sh/out" ]]; then
