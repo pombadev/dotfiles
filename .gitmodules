@@ -16,6 +16,3 @@
 [submodule "bash/simple"]
 	path = bash/simple
 	url = https://github.com/pjmp/simple-bash-prompt.git
-[submodule "zsh/ohmyzsh"]
-	path = zsh/ohmyzsh
-	url = https://github.com/pjmp/ohmyzsh.git
