@@ -7,9 +7,6 @@
 [submodule "zsh/sublime"]
 	path = zsh/sublime
 	url = https://github.com/pjmp/sublime.git
-[submodule "zsh/zsh-completions"]
-	path = zsh/zsh-completions
-	url = git://github.com/zsh-users/zsh-completions.git
 [submodule "zsh/powerlevel10k"]
 	path = zsh/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
@@ -19,3 +16,6 @@
 [submodule "ohmyzsh"]
 	path = zsh/ohmyzsh
 	url = https://github.com/pjmp/ohmyzsh.git
+[submodule "zsh-completions"]
+	path = zsh/zsh-completions
+	url = https://github.com/zsh-users/zsh-completions.git
