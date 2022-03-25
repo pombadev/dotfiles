@@ -303,35 +303,34 @@ EOF
 	rm "$temp_file" "$new_temp"
 }
 
-
 if go env &>/dev/null; then
 	gobin() {
 		local GO_PATH=$(go env | grep GOPATH | grep -o '"[^"]\+"' | sed -e 's/"//g')
-		
+
 		case $1 in
-			l | list)
-				find "$GO_PATH"/bin -type f -exec basename {} \;
-				;;
+		l | list)
+			find "$GO_PATH"/bin -type f -exec basename {} \;
+			;;
 
-			r | remove)
-				if [ -z "$2" ]; then
-					echo "value cannot be empty"
-					return 1
-				fi
-
-				local BIN="$GO_PATH/bin/$2"
-
-				if [ -f "$BIN" ]; then
-					rm "$BIN"
-				else
-					echo "$BIN does not exist"
-				fi
-
-				;;
-			*)
-				printf "gobin: unknown command\navailable commands:\n  list\n  remove\n"
+		r | remove)
+			if [ -z "$2" ]; then
+				echo "value cannot be empty"
 				return 1
-				;;
+			fi
+
+			local BIN="$GO_PATH/bin/$2"
+
+			if [ -f "$BIN" ]; then
+				rm "$BIN"
+			else
+				echo "$BIN does not exist"
+			fi
+
+			;;
+		*)
+			printf "gobin: unknown command\navailable commands:\n  list\n  remove\n"
+			return 1
+			;;
 		esac
 	}
 fi
@@ -348,5 +347,5 @@ touch() {
 		mkdir -p "$parent_dir"
 	fi
 
-	/usr/bin/touch "$1"
+	$(which --skip-alias --skip-functions touch) "$1"
 }

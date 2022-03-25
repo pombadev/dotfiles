@@ -33,12 +33,3 @@ if command -v delta &>/dev/null; then
 else
 	alias gd='git diff'
 fi
-
-
-if go env &>/dev/null; then
-	GO_PATH=$(go env | grep GOPATH | grep -o '"[^"]\+"' | sed -e 's/"//g')
-
-	if [ -d "$GO_PATH" ]; then
-		export PATH="$PATH:$GO_PATH/bin"
-	fi
-fi

@@ -84,6 +84,7 @@ fpath+=$DOTFILES_SRC/zsh/zfunc
 source "$DOTFILES_SRC/scripts/exports.sh"
 source "$DOTFILES_SRC/scripts/aliases.sh"
 source "$DOTFILES_SRC/scripts/funcs.sh"
+source "$DOTFILES_SRC/scripts/packages_bootstraper.sh"
 
 alias history='history 1'
 
@@ -124,3 +125,10 @@ fi
 #     typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 #     zellij
 # fi
+
+if [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    export HOMEBREW_NO_ANALYTICS=1
+fi
+
+unset DOTFILES_SRC
