@@ -4,3 +4,5 @@
 	path = ~/Work/.gitconfig
 [init]
 	defaultBranch = main
+[credential]
+	helper = pass-git-helper
