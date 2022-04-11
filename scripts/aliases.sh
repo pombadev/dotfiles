@@ -21,15 +21,27 @@ alias ls='ls --color=auto -hls'
 alias more=less
 alias open='xdg-open'
 alias v='git branch -vv'
-alias less='less --LINE-NUMBERS --use-color --status-column --quit-at-eof --incsearch --mouse'
+alias gd='git diff'
+
+less() {
+	local OPTS='--use-color --status-column --quit-at-eof --incsearch --mouse'
+
+	# https://serverfault.com/a/156510
+	# detect not piped
+	if [[ -t 0 ]]; then
+		command less "$OPTS" --LINE-NUMBERS "$@"
+	else
+		command less "$OPTS" "$@"
+	fi
+}
 
 if command -v xclip &>/dev/null; then
 	alias xcopy='xclip -in -selection clipboard'
 	alias xpaste='xclip -out -selection clipboard'
 fi
 
-if command -v delta &>/dev/null; then
-	alias gd="GIT_PAGER='delta --line-numbers --navigate --keep-plus-minus-markers --hyperlinks --side-by-side' git diff"
-else
-	alias gd='git diff'
-fi
+# if command -v delta &>/dev/null; then
+# 	alias gd="GIT_PAGER='delta --line-numbers --navigate --keep-plus-minus-markers --hyperlinks --side-by-side' git diff"
+# else
+# 	alias gd='git diff'
+# fi
