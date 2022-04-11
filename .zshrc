@@ -84,7 +84,7 @@ fpath+=$DOTFILES_SRC/zsh/zfunc
 source "$DOTFILES_SRC/scripts/exports.sh"
 source "$DOTFILES_SRC/scripts/aliases.sh"
 source "$DOTFILES_SRC/scripts/funcs.sh"
-source "$DOTFILES_SRC/scripts/packages_bootstraper.sh"
+source "$DOTFILES_SRC/scripts/bootstraper.sh"
 
 alias history='history 1'
 
@@ -117,18 +117,5 @@ fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# opam configuration
-[[ ! -r /home/pm/.opam/opam-init/init.zsh ]] || source /home/pm/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
-
-# if zellij -V | grep -w zellij &> /dev/null; then
-#     typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
-#     zellij
-# fi
-
-if [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    export HOMEBREW_NO_ANALYTICS=1
-fi
 
 unset DOTFILES_SRC
