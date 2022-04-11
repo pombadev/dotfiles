@@ -78,7 +78,7 @@ export PATH="$__PATH__"
 # NOTE: CALL THIS BLOCK OF CODE ONLY AFTER EXPORTING PATH
 # since fedora takes forever to update packages and some are
 # straight-up unavailable eg: dart-lang, so i'm forced to use Homebrew
-if [ -f ~/linuxbrew/.linuxbrew/bin/brew ]; then
+if [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
     export HOMEBREW_NO_ANALYTICS=1
-    eval "$(~/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
