@@ -24,7 +24,7 @@ alias v='git branch -vv'
 alias gd='git diff'
 
 less() {
-	local OPTS='--use-color --status-column --quit-at-eof --incsearch --mouse'
+	local OPTS='--use-color --status-column --QUIT-AT-EOF --quit-if-one-screen --incsearch --mouse'
 
 	# https://serverfault.com/a/156510
 	# detect not piped
