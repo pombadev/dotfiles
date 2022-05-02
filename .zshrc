@@ -119,3 +119,17 @@ fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 unset DOTFILES_SRC
+
+if command -v fzf &> /dev/null; then
+    ctrl-r-widget() {
+        export FZF_DEFAULT_OPTS=' --multi --sort --reverse --info=inline'
+        # setting BUFFER will update line editor's buffer
+        BUFFER=$(fc -r -l -n 1 | fzf --bind 'ctrl-l:clear-query,ctrl-k:clear-selection' --header 'Press CTRL-L to clear query & CTRL-K to clear selection')
+        zle end-of-buffer-or-history
+        unset FZF_DEFAULT_OPTS
+    }
+
+    zle -N ctrl-r-widget
+
+    bindkey '^R' ctrl-r-widget
+fi
