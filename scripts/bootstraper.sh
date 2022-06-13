@@ -49,9 +49,20 @@ if command -v dotnet &>/dev/null; then
     unset DOTNET_PATH
 fi
 
+export PATH="$__PATH__"
+
+# NOTE: PLACE CODE IF SOURCE/EXPORT DOESN'T WORK BEFORE EXPORT
+
+# since fedora takes forever to update packages and some are
+# straight-up unavailable eg: dart-lang, so i'm forced to use Homebrew
+if [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
+    # export HOMEBREW_NO_ANALYTICS=1
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
 # ocaml
 if command -v opam &>/dev/null; then
-    shell_type=$(ps $$ | tail -n1 | awk -F' ' '{print $NF}')
+    shell_type=$(ps -p $$ | tail -n1 | awk -F' ' '{print $NF}')
     ocaml_init_file="$HOME/.opam/opam-init/init.$shell_type"
 
     if [[ -f $ocaml_init_file ]]; then
@@ -62,23 +73,14 @@ if command -v opam &>/dev/null; then
     unset ocaml_init_file
 fi
 
+
 # go
-if command -v go &>/dev/null; then
+if command -v go &> /dev/null; then
     GO_PATH=$(go env | grep GOPATH | grep -o '"[^"]\+"' | sed -e 's/"//g')
 
     if [ -d "$GO_PATH" ]; then
-        __PATH__+="$PATH:$GO_PATH/bin"
+        export PATH="$PATH:$GO_PATH/bin"
     fi
 
     unset GO_PATH
-fi
-
-export PATH="$__PATH__"
-
-# NOTE: CALL THIS BLOCK OF CODE ONLY AFTER EXPORTING PATH
-# since fedora takes forever to update packages and some are
-# straight-up unavailable eg: dart-lang, so i'm forced to use Homebrew
-if [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
-    # export HOMEBREW_NO_ANALYTICS=1
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
