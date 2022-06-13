@@ -202,11 +202,6 @@ serve() {
 	fi
 }
 
-d() {
-	# history -1 | fzf --tac --bind 'enter:execute(echo {} | sed -r "s/ *[0-9]*\*? *//")+abort'
-	print -z "$(history -1 | fzf --reverse --tac | sed -r 's/ *[0-9]*\*? *//' | sed -r 's/\\/\\\\/g')"
-}
-
 print-colors() {
 	for i in {0..256}; do
 		printf "%s %s" "$(tput setaf "$i")" "$i"
@@ -348,4 +343,17 @@ touch() {
 	fi
 
 	$(which --skip-alias --skip-functions touch) "$1"
+}
+
+top-commands() {
+	count=${1:-20}
+	fc -l 1 | awk '($2 !~ "^\\./") { CMD[$2]++; count++; } END { for (a in CMD) { printf ("%4d %5.1f%% %s\n",CMD[a],CMD[a]/count*100,a); } }' | sort -nr | head -n"$count" | nl 
+}
+
+d() {
+	cd "$1" || return 1
+
+	if [ -d "_opam" ] || [ -d "esy.lock" ] && [ -f "dune" ] || [ -f "dune-project" ] ; then
+		eval "$(opam env)"
+	fi
 }
