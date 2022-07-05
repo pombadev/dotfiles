@@ -40,8 +40,13 @@ elif [[ -f "$DOTFILES_SRC/bash/ble.sh/out/ble.sh" ]]; then
 fi
 
 # apply theme
-if [[ -f $DOTFILES_SRC/bash/simple/prompt.sh ]]; then
-	source "$DOTFILES_SRC/bash/simple/prompt.sh"
-fi
+# if [[ -f $DOTFILES_SRC/bash/simple/prompt.sh ]]; then
+# 	source "$DOTFILES_SRC/bash/simple/prompt.sh"
+# fi
 
 unset DOTFILES_SRC
+
+
+if command -v starship &> /dev/null; then
+    eval "$(starship init bash)"
+fi

@@ -347,13 +347,25 @@ touch() {
 
 top-commands() {
 	count=${1:-20}
-	fc -l 1 | awk '($2 !~ "^\\./") { CMD[$2]++; count++; } END { for (a in CMD) { printf ("%4d %5.1f%% %s\n",CMD[a],CMD[a]/count*100,a); } }' | sort -nr | head -n"$count" | nl 
+	fc -l 1 | awk '($2 !~ "^\\./") { CMD[$2]++; count++; } END { for (a in CMD) { printf ("%4d %5.1f%% %s\n",CMD[a],CMD[a]/count*100,a); } }' | sort -nr | head -n"$count" | nl
 }
 
 d() {
 	cd "$1" || return 1
 
-	if [ -d "_opam" ] || [ -d "esy.lock" ] && [ -f "dune" ] || [ -f "dune-project" ] ; then
+	if [ -d "_opam" ] || [ -d "esy.lock" ] && [ -f "dune" ] || [ -f "dune-project" ]; then
 		eval "$(opam env)"
+	fi
+}
+
+less() {
+	local OPTS='--use-color --status-column --QUIT-AT-EOF --quit-if-one-screen --incsearch --mouse'
+
+	# https://serverfault.com/a/156510
+	# detect not piped
+	if [[ -t 0 ]]; then
+		command less "$OPTS" --LINE-NUMBERS "$@"
+	else
+		command less "$OPTS" "$@"
 	fi
 }

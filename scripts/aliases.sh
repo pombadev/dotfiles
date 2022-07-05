@@ -23,18 +23,6 @@ alias open='xdg-open'
 alias v='git branch -vv'
 alias gd='git diff'
 
-less() {
-	local OPTS='--use-color --status-column --QUIT-AT-EOF --quit-if-one-screen --incsearch --mouse'
-
-	# https://serverfault.com/a/156510
-	# detect not piped
-	if [[ -t 0 ]]; then
-		command less "$OPTS" --LINE-NUMBERS "$@"
-	else
-		command less "$OPTS" "$@"
-	fi
-}
-
 if command -v xclip &>/dev/null; then
 	alias xcopy='xclip -in -selection clipboard'
 	alias xpaste='xclip -out -selection clipboard'

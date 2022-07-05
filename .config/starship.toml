@@ -1,2 +1,7 @@
-[nodejs]
-symbol = '⎔ '
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# prompt for multi-line editor
+continuation_prompt = ":: "
+
+[battery]
+disabled = true
