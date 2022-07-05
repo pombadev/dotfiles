@@ -1,0 +1,5 @@
+profile = default
+version = 0.21.0
+break-infix = fit-or-vertical
+break-cases = toplevel
+if-then-else = fit-or-vertical
