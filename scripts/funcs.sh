@@ -370,18 +370,18 @@ less() {
 	fi
 }
 
-jrepl () {
+jrepl() {
 	if [[ -t 0 ]]; then
 		echo '' | fzf --disabled --print-query --preview "jq --color-output {q} $1" --preview-window='up:99%'
 	else
 		temp=$(mktemp)
-		cat "$@" | tee "$temp" &> /dev/null
+		cat "$@" | tee "$temp" &>/dev/null
 		echo '' | fzf --disabled --print-query --preview "jq --color-output {q} $temp" --preview-window='up:99%'
 		rm "$temp"
 	fi
 }
 
-generate-license () {
+generate-license() {
 	local cache_dir="$HOME/.cache/licenses_generator"
 
 	if [[ ! -d "$cache_dir" ]]; then
@@ -402,7 +402,7 @@ generate-license () {
 
 	if [ -z "$licenses" ]; then
 		echo "License(s) not selected, cannot proceed forward"
-		exit 1
+		return 1
 	fi
 
 	printf "Selected license(s):\n%s" "${licenses^^}"
@@ -434,6 +434,6 @@ generate-gitignore() {
 	local selections=$(curl -s "$list_url" | fzf --reverse --multi --preview "curl -s $base_url/{}")
 
 	for selection in $selections; do
-		curl -s "$base_url/$selection" >> .gitignore
+		curl -s "$base_url/$selection" >>.gitignore
 	done
 }
