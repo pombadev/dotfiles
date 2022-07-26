@@ -49,6 +49,12 @@ if command -v dotnet &>/dev/null; then
     unset DOTNET_PATH
 fi
 
+if [ -f "$HOME/.deno/bin/deno" ]; then
+    export DENO_INSTALL="$HOME/.deno"
+    __PATH__+=":$DENO_INSTALL/bin"
+
+fi
+
 export PATH="$__PATH__"
 
 # NOTE: PLACE CODE IF SOURCE/EXPORT DOESN'T WORK BEFORE EXPORT
@@ -73,9 +79,8 @@ if command -v opam &>/dev/null; then
     unset ocaml_init_file
 fi
 
-
 # go
-if command -v go &> /dev/null; then
+if command -v go &>/dev/null; then
     GO_PATH=$(go env | grep GOPATH | grep -o '"[^"]\+"' | sed -e 's/"//g')
 
     if [ -d "$GO_PATH" ]; then
