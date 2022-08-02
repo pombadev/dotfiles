@@ -52,8 +52,9 @@ fi
 if [ -f "$HOME/.deno/bin/deno" ]; then
     export DENO_INSTALL="$HOME/.deno"
     __PATH__+=":$DENO_INSTALL/bin"
-
 fi
+
+export PATH="$HOME/.poetry/bin:$PATH"
 
 export PATH="$__PATH__"
 
