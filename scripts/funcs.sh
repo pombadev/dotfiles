@@ -280,22 +280,30 @@ purge-pkgs() {
 }
 
 rscript() {
-	temp_file=$(mktemp)
+	temp_dir=$(mktemp -d -t "XXXXX.$(cat /usr/share/dict/words | shuf | head -n1)")
 
-	cat <<EOF >"$temp_file"
+	(
+		builtin cd "$temp_dir" || return 1
+
+		pkg_name="$(cut -d. -f2 <<<"$temp_dir" | tr '[:upper:]' '[:lower:]')"
+
+		cargo init -q --name "$pkg_name"
+
+		cat <<EOF >src/main.rs
+#![allow(redundant_semicolons, unused, non_snake_case)]
+
 fn main() {
     $1;
 }
 EOF
+		# `RUSTC_BOOTSTRAP` enable nightly in stable
+		# `RUSTFLAGS` configs for faster compile times
+		RUSTC_BOOTSTRAP=1 \
+		RUSTFLAGS='-Ccodegen-units=256 -Clink-arg=-fuse-ld=lld -Clto=off -Copt-level=0 -Zshare-generics=y -Clinker=clang' \
+		cargo run -q
+	)
 
-	new_temp=$(mktemp)
-
-	# rustc --verbose -C opt-level=z -C panic=abort -C lto -C codegen-units=1 "$temp_file" -o "$new_temp"
-	rustc "$temp_file" -o "$new_temp"
-
-	(cd /tmp && "$new_temp")
-
-	rm "$temp_file" "$new_temp"
+	rm -rf "$temp_dir"
 }
 
 if go env &>/dev/null; then
