@@ -1,4 +1,4 @@
-# ❤️ is where $HOME is
+# $HOME is where dotfiles are ❤️
 
 ## Setup
 
