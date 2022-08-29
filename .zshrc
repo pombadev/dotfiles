@@ -1,0 +1,1 @@
+/home/pjmp/Codes/dotfiles/.zshrc

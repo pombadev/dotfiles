@@ -1,0 +1,1 @@
+/home/pjmp/Codes/dotfiles/.config/argos/wttr.30m.sh
