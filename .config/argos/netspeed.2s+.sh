@@ -5,20 +5,36 @@ setting="${0%/*}/.argos-netspeed-setting"
 DEVICE=$(<"$setting")
 DEVICE=${DEVICE:-all}
 
-declare -A SPEED
+declare INSPEED
+declare OUTSPEED
 
-update-current-speed() {
+updateUpDown() {
     local LINE
+    local RECEIVED_OLD
+    local TRANSMITTED_OLD
+    local RECEIVED_NEW
+    local TRANSMITTED_NEW
+
     LINE=$(grep "$1" /proc/net/dev | sed s/.*://)
-    SPEED[DOWN]=$(echo "$LINE" | awk '{print $1}')
-    SPEED[UP]=$(echo "$LINE" | awk '{print $9}')
+    RECEIVED_OLD=$(echo "$LINE" | awk '{print $1}')
+    TRANSMITTED_OLD=$(echo "$LINE" | awk '{print $9}')
+
+    sleep 1s
+
+    LINE=$(grep "$1" /proc/net/dev | sed s/.*://)
+    RECEIVED_NEW=$(echo "$LINE" | awk '{print $1}')
+    TRANSMITTED_NEW=$(echo "$LINE" | awk '{print $9}')
+
+    INSPEED=$((("$RECEIVED_NEW" - "$RECEIVED_OLD")))
+    OUTSPEED=$((("$TRANSMITTED_NEW" - "$TRANSMITTED_OLD")))
 }
 
-sub-menu-item() {
+
+subMenuItem() {
     echo "-- $1 | terminal=false bash='echo $1 > $setting' refresh=true"
 }
 
-main-menu-item() {
+mainMenuItem() {
     # numfmt is available from coreutils ≥ 8.24
     # https://www.gnu.org/software/coreutils/manual/html_node/numfmt-invocation.html
     echo "↑ $(numfmt --to=si "$1") ↓ $(numfmt --to=si "$2")"
@@ -31,49 +47,16 @@ main-menu-item() {
 }
 
 main() {
-    local RECEIVED_OLD
-    local RECEIVED_NEW
-    local TRANSMITTED_OLD
-    local TRANSMITTED_NEW
-    local INSPEED
-    local OUTSPEED
-
     if [[ $1 == "all" ]]; then
         while read -r interface; do
-            update-current-speed "$interface"
-
-            RECEIVED_OLD=${SPEED[DOWN]}
-            TRANSMITTED_OLD=${SPEED[UP]}
-
-            sleep 1s
-
-            update-current-speed "$interface"
-
-            RECEIVED_NEW=${SPEED[DOWN]}
-            TRANSMITTED_NEW=${SPEED[UP]}
-
-            INSPEED=$((("$RECEIVED_NEW" - "$RECEIVED_OLD")))
-            OUTSPEED=$((("$TRANSMITTED_NEW" - "$TRANSMITTED_OLD")))
+            updateUpDown "$interface"
         done < <(grep ":" /proc/net/dev | awk '{print $1}' | sed 's/:.*//')
 
-        main-menu-item $INSPEED $OUTSPEED
+        mainMenuItem $INSPEED $OUTSPEED
     else
-        update-current-speed "$1"
+        updateUpDown "$1"
 
-        RECEIVED_OLD=${SPEED[DOWN]}
-        TRANSMITTED_OLD=${SPEED[UP]}
-
-        sleep 1s
-
-        update-current-speed "$1"
-
-        RECEIVED_NEW=${SPEED[DOWN]}
-        TRANSMITTED_NEW=${SPEED[UP]}
-
-        INSPEED=$((("$RECEIVED_NEW" - "$RECEIVED_OLD")))
-        OUTSPEED=$((("$TRANSMITTED_NEW" - "$TRANSMITTED_OLD")))
-
-        main-menu-item $INSPEED $OUTSPEED
+        mainMenuItem $INSPEED $OUTSPEED
     fi
 
     echo "---"
@@ -84,7 +67,7 @@ main() {
     interfaces="$(grep ":" /proc/net/dev | awk '{print $1}' | sed 's/:.*//') all"
 
     for interface in $interfaces; do
-        sub-menu-item "$interface"
+        subMenuItem "$interface"
     done
 }
 
