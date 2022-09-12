@@ -5,6 +5,7 @@
 	],
 	"installed_packages":
 	[
+		"Case Conversion",
 		"FileIcons Mono",
 		"Generic Config",
 		"GitGutter",
