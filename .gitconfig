@@ -1,1 +1,8 @@
-/home/pjmp/Codes/dotfiles/.gitconfig
+[pull]
+	rebase = false
+[includeIf "gitdir:~/Work/"]
+	path = ~/Work/.gitconfig
+[init]
+	defaultBranch = main
+[credential]
+	helper = pass-git-helper
