@@ -8,18 +8,19 @@ DEVICE=${DEVICE:-all}
 declare INSPEED
 declare OUTSPEED
 
-updateUpDown() {
+update() {
     local LINE
     local RECEIVED_OLD
     local TRANSMITTED_OLD
     local RECEIVED_NEW
     local TRANSMITTED_NEW
+    local delay=${2:-1}
 
     LINE=$(grep "$1" /proc/net/dev | sed s/.*://)
     RECEIVED_OLD=$(echo "$LINE" | awk '{print $1}')
     TRANSMITTED_OLD=$(echo "$LINE" | awk '{print $9}')
 
-    sleep 1s
+    sleep "$delay"s
 
     LINE=$(grep "$1" /proc/net/dev | sed s/.*://)
     RECEIVED_NEW=$(echo "$LINE" | awk '{print $1}')
@@ -28,7 +29,6 @@ updateUpDown() {
     INSPEED=$((("$RECEIVED_NEW" - "$RECEIVED_OLD")))
     OUTSPEED=$((("$TRANSMITTED_NEW" - "$TRANSMITTED_OLD")))
 }
-
 
 subMenuItem() {
     echo "-- $1 | terminal=false bash='echo $1 > $setting' refresh=true"
@@ -43,28 +43,35 @@ mainMenuItem() {
     #     # else
     #     # echo "Net speed"
     # fi
+}
 
+getInterfaces() {
+    grep ":" /proc/net/dev | awk '{print $1}' | sed 's/:.*//'
 }
 
 main() {
     if [[ $1 == "all" ]]; then
         while read -r interface; do
-            updateUpDown "$interface"
-        done < <(grep ":" /proc/net/dev | awk '{print $1}' | sed 's/:.*//')
+            update "$interface"
+        done < <(getInterfaces)
 
         mainMenuItem $INSPEED $OUTSPEED
     else
-        updateUpDown "$1"
+        update "$1"
 
         mainMenuItem $INSPEED $OUTSPEED
     fi
 
     echo "---"
 
-    echo "Display"
+    echo "Selected interface: $1"
+
+    echo "---"
+
+    echo "Available Interfaces"
 
     local interfaces
-    interfaces="$(grep ":" /proc/net/dev | awk '{print $1}' | sed 's/:.*//') all"
+    interfaces="$(getInterfaces) all"
 
     for interface in $interfaces; do
         subMenuItem "$interface"
