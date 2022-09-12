@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 
-curl 'wttr.in?format=3'
+weather=$(curl -s "wttr.in?format=%c^%t^%C^%l")
+
+condition=$(cut -d'^' -f1 <<<"$weather")
+icon=$(cut -d'^' -f2 <<<"$weather")
+
+printf '%s %s\n' "$icon" "$condition"
+
+echo '---'
+
+echo "${weather//^/ }"
 
 echo '---'
 
