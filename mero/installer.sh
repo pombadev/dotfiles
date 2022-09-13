@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+shopt -s expand_aliases
+
 alias cm='git --git-dir=$HOME/dotfiles --work-tree=$HOME'
 
 cd ~ || return
