@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
 shopt -s expand_aliases
 
 alias cm='git --git-dir=$HOME/dotfiles --work-tree=$HOME'
