@@ -4,6 +4,7 @@ shopt -s expand_aliases
 
 alias cm='git --git-dir=$HOME/dotfiles --work-tree=$HOME'
 
+(
 cd ~ || return
 
 # note: `--recurse-submodules` doesn't work with `--bare` option
@@ -15,3 +16,4 @@ cm submodule update --init --recursive
 cm checkout -f
 
 # restart shell
+)
