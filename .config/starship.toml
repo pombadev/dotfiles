@@ -5,3 +5,7 @@ continuation_prompt = ":: "
 
 [battery]
 disabled = true
+
+[directory]
+truncation_length = 10
+truncate_to_repo = false
