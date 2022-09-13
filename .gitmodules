@@ -1,0 +1,15 @@
+[submodule "mero/zsh/ohmyzsh"]
+	path = mero/zsh/ohmyzsh
+	url = https://github.com/pombadev/ohmyzsh.git
+[submodule "mero/zsh/powerlevel10k"]
+	path = mero/zsh/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
+[submodule "mero/zsh/zsh-completions"]
+	path = mero/zsh/zsh-completions
+	url = https://github.com/zsh-users/zsh-completions.git
+[submodule "mero/zsh/zsh-autosuggestions"]
+	path = mero/zsh/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions.git
+[submodule "mero/zsh/sublime"]
+	path = mero/zsh/sublime
+	url = https://github.com/pombadev/sublime.git
