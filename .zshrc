@@ -65,54 +65,46 @@ autoload -Uz promptinit && promptinit
 # faux autocomplete menu
 # setopt menucomplete
 
-DOTFILES_SRC=$(
-    current_file="${(%):-%x}"
-    original_file=$(readlink -f "$current_file")
-    file_directory=$(dirname "$original_file")
-    cmd="git -C '$file_directory' rev-parse"
+DOTFILES_SRC=$(dirname "${(%):-%x}")
+DOTFILES_ROOT=$DOTFILES_SRC/mero
+DOTFILES_ZSH=$DOTFILES_SRC/mero/zsh
 
-    if [ -z "$(eval "$cmd" --show-superproject-working-tree)" ]; then
-        eval "$cmd" --show-toplevel
-    else
-        eval "$cmd" --show-superproject-working-tree
-    fi
-)
-
-fpath+=$DOTFILES_SRC/zsh/zfunc
+fpath+=$DOTFILES_ZSH/zfunc
 
 # source my specific stuffs
-source "$DOTFILES_SRC/scripts/exports.sh"
-source "$DOTFILES_SRC/scripts/aliases.sh"
-source "$DOTFILES_SRC/scripts/funcs.sh"
+source "$DOTFILES_ROOT/scripts/exports.sh"
+source "$DOTFILES_ROOT/scripts/aliases.sh"
+source "$DOTFILES_ROOT/scripts/funcs.sh"
+
 alias history='history 1'
 
 # make keymap nicer
-if [ -f "$DOTFILES_SRC/zsh/ohmyzsh/lib/key-bindings.zsh" ]; then
-    source "$DOTFILES_SRC/zsh/ohmyzsh/lib/key-bindings.zsh"
+if [ -f "$DOTFILES_ZSH/ohmyzsh/lib/key-bindings.zsh" ]; then
+    source "$DOTFILES_ZSH/ohmyzsh/lib/key-bindings.zsh"
 fi
 
-if [ -f "$DOTFILES_SRC/zsh/ohmyzsh/lib/completion.zsh" ]; then
-    source "$DOTFILES_SRC/zsh/ohmyzsh/lib/completion.zsh"
+if [ -f "$DOTFILES_ZSH/ohmyzsh/lib/completion.zsh" ]; then
+    source "$DOTFILES_ZSH/ohmyzsh/lib/completion.zsh"
 fi
 
 # fish shell like suggestion
-if [ -f "$DOTFILES_SRC/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
-    source "$DOTFILES_SRC/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if [ -f "$DOTFILES_ZSH/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+    source "$DOTFILES_ZSH/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 # theme
-# if [ -f "$DOTFILES_SRC/zsh/powerlevel10k/powerlevel10k.zsh-theme" ]; then
-#     source "$DOTFILES_SRC/zsh/powerlevel10k/powerlevel10k.zsh-theme"
+# if [ -f "$DOTFILES_ZSH/powerlevel10k/powerlevel10k.zsh-theme" ]; then
+#     source "$DOTFILES_ZSH/powerlevel10k/powerlevel10k.zsh-theme"
 # fi
 
 if command -v starship &> /dev/null; then
     eval "$(starship init zsh)"
 fi
 
-if [ -d "$DOTFILES_SRC/zsh/zsh-completions" ]; then
+if [ -d "$DOTFILES_ZSH/zsh-completions" ]; then
     # $fpath cant cant be quoted
     # shellcheck disable=SC2206
-    fpath=("$DOTFILES_SRC/zsh/zsh-completions/src" $fpath)
+    fpath=("$DOTFILES_ZSH/zsh-completions/src" $fpath)
     # re-init completions
     compinit
 fi
@@ -120,7 +112,7 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 # [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# unset DOTFILES_SRC
+# unset DOTFILES_ROOT
 
 if command -v fzf &> /dev/null; then
     ctrl-r-widget() {
@@ -136,4 +128,4 @@ if command -v fzf &> /dev/null; then
     bindkey '^R' ctrl-r-widget
 fi
 
-source "$DOTFILES_SRC/scripts/bootstraper.sh"
+source "$DOTFILES_ROOT/scripts/bootstraper.sh"
