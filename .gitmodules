@@ -13,3 +13,9 @@
 [submodule "mero/zsh/sublime"]
 	path = mero/zsh/sublime
 	url = https://github.com/pombadev/sublime.git
+[submodule "mero/bash/simple-bash-prompt"]
+	path = mero/bash/simple-bash-prompt
+	url = https://github.com/pombadev/simple-bash-prompt.git
+[submodule "mero/bash/ble.sh"]
+	path = mero/bash/ble.sh
+	url = https://github.com/akinomyoga/ble.sh.git
