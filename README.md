@@ -14,7 +14,7 @@ command `cx` is provided which is an alias for `git --git-dir=$HOME/dotfiles/ --
 ## Usage
 
 ```shell
-cm add .vimrc
-cm commit -m "Add vimrc"
-cm push
+cx add .vimrc
+cx commit -m "Add vimrc"
+cx push
 ```
