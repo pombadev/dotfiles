@@ -1,25 +1,35 @@
 #!/usr/bin/env bash
-set -x
+
 set -euo pipefail
 shopt -s expand_aliases
 
-alias cmx='git --git-dir=$(pwd)/dotfiles --work-tree=$(pwd)'
+alias cmx='git --git-dir=$HOME/dotfiles --work-tree=$HOME'
 
 (
-    # cd ~ || return
+    cd ~
 
-    echo "Cloning ..."
     # note: `--recurse-submodules` doesn't work with `--bare` option
     git clone --bare https://github.com/pombadev/.files.git dotfiles
 
-    echo "Fetch submodules ..."
-    sleep 5s
-    cmx submodule update --init --recursive
+    echo "WARNING! WILL OVERWRITE FILES ON LOCAL IF IT EXIST?"
+    echo "Select 1/2 to continue"
 
-    echo "Checkout ..."
-    # warning: will overwrites files on local
-    sleep 5s
-    cmx checkout -f
+    reply=""
 
-    # restart shell
+    while [ "$reply" == "" ]; do
+        select reply in yes no; do
+            if [ $reply == "yes" ]; then
+                cmx checkout -f
+
+                cmx submodule update --init --recursive --remote --force
+
+                echo "Restart shell to see changes"
+                exit 0
+            else
+                echo "cleaning up.."
+                rm -rf dotfiles
+                exit 1
+            fi
+        done
+    done
 )
