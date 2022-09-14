@@ -23,7 +23,13 @@ alias cmx='git --git-dir=$HOME/dotfiles --work-tree=$HOME'
 
                 cmx submodule update --init --recursive --remote --force
 
-                echo "Restart shell to see changes"
+                case $(ps -p $$ -ocomm=) in
+                bash) source ~/.bashrc ;;
+                zsh) source ~/.zshrc ;;
+                *) echo "Unsupported shell to auto reload" ;;
+                esac
+
+                echo "If you don't see any changes, restart shell to see changes"
                 exit 0
             else
                 echo "cleaning up.."
