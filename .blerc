@@ -1,0 +1,7 @@
+bleopt history_lazyload=1
+bleopt info_display=top
+bleopt history_share=1
+bleopt exec_errexit_mark=
+bleopt filename_ls_colors="$LS_COLORS"
+
+bind 'set completion-ignore-case on'
