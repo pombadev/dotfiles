@@ -1,0 +1,28 @@
+{
+	"bootstrapped": true,
+	"in_process_packages":
+	[
+	],
+	"installed_packages":
+	[
+		"Case Conversion",
+		"FileIcons Mono",
+		"Generic Config",
+		"GitGutter",
+		"LSP",
+		"LSP-bash",
+		"LSP-dockerfile",
+		"LSP-elm",
+		"LSP-eslint",
+		"LSP-json",
+		"LSP-lua",
+		"LSP-pyright",
+		"LSP-typescript",
+		"Origami",
+		"Package Control",
+		"SublimeLinter",
+		"SublimeLinter-shellcheck",
+		"Terminus",
+		"TOML",
+	],
+}
