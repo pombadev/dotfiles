@@ -1,38 +1,20 @@
 # $HOME is where dotfiles are ❤️
 
-## Setup
+Current I'm managing configs with [git bare](https://news.ycombinator.com/item?id=11071754) and help from [atlassian dotfiles tutorial](https://www..com/git/tutorials/dotfiles).
+
+## Installation
 
 ```shell
-git init --bare $HOME/dotfiles/
-alias config='git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
-config config --local status.showUntrackedFiles no
+curl -fsSLO https://raw.githubusercontent.com/pombadev/.files/main/mero/installer.sh
+bash ./installer.sh
 ```
+
+command `cx` is provided which is an alias for `git --git-dir=$HOME/dotfiles/ --work-tree=$HOME` to interface with git.
 
 ## Usage
 
 ```shell
-config status
-config add .vimrc
-config commit -m "Add vimrc"
-config add .config/redshift.conf
-config commit -m "Add redshift config"
-config push
+cm add .vimrc
+cm commit -m "Add vimrc"
+cm push
 ```
-
-## For new machine
-
-```shell
-git clone --separate-git-dir=~/dotfiles /path/to/repo ~
-```
-
-## If files already exist
-
-```shell
-git clone --separate-git-dir=$HOME/dotfiles /path/to/repo $HOME/myconf-tmp
-cp ~/myconf-tmp/.gitmodules ~  # If you use Git submodules
-rm -r ~/myconf-tmp/
-alias config='git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
-```
-
-
-> Taken all from: https://news.ycombinator.com/item?id=11071754

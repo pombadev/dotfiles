@@ -22,7 +22,7 @@ alias more=less
 alias open='xdg-open'
 alias v='git branch -vv'
 alias gd='git diff'
-alias cm='git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
+alias cx='git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
 
 if command -v xclip &>/dev/null; then
 	alias xcopy='xclip -in -selection clipboard'

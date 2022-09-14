@@ -5,9 +5,7 @@
 set -euo pipefail
 shopt -s expand_aliases
 
-cmx() {
-    git --git-dir="$HOME"/dotfiles --work-tree="$HOME" "$@"
-}
+alias cmx='git --git-dir=$HOME/dotfiles --work-tree=$HOME'
 
 (
     cd ~
@@ -24,6 +22,8 @@ cmx() {
         select reply in yes no; do
             if [ $reply == "yes" ]; then
                 cmx checkout -f
+
+                cmx config --local status.showUntrackedFiles no
 
                 cmx submodule update --init --recursive --remote --force
 
