@@ -1,18 +1,20 @@
-# ~/dotfiles
+# $HOME is where dotfiles are ❤️
 
-# Requirements
+Current I'm managing configs with [git bare](https://news.ycombinator.com/item?id=11071754) and help from [atlassian dotfiles tutorial](https://www..com/git/tutorials/dotfiles).
 
-- Arch linux based distro
-- Gnome DE
-- I manage my dotfiles using my symlink manager [configman](https://github.com/pjmp/configman).
+## Installation
 
-# Install
-
-```bash
-git clone --recursive https://github.com/pjmp/dotfiles.git
-cd dotfiles
-make home
+```shell
+curl -fsSLO https://raw.githubusercontent.com/pombadev/.files/main/mero/installer.sh
+bash ./installer.sh
 ```
 
-# .ignore file
-Put files you don't want to be symlinked in the `.ignore` file.
+command `cx` is provided which is an alias for `git --git-dir=$HOME/dotfiles/ --work-tree=$HOME` to interface with git.
+
+## Usage
+
+```shell
+cm add .vimrc
+cm commit -m "Add vimrc"
+cm push
+```
