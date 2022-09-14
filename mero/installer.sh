@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC1090
+
 set -euo pipefail
 shopt -s expand_aliases
 
-alias cmx='git --git-dir=$HOME/dotfiles --work-tree=$HOME'
+cmx() {
+    git --git-dir="$HOME"/dotfiles --work-tree="$HOME" "$@"
+}
 
 (
     cd ~
@@ -23,9 +27,10 @@ alias cmx='git --git-dir=$HOME/dotfiles --work-tree=$HOME'
 
                 cmx submodule update --init --recursive --remote --force
 
-                case $(ps -p $$ -ocomm=) in
-                bash) source ~/.bashrc ;;
-                zsh) source ~/.zshrc ;;
+                shell=$(ps -p $$ -ocomm=)
+
+                case $shell in
+                bash | zsh) source ~/."$shell"rc ;;
                 *) echo "Unsupported shell to auto reload" ;;
                 esac
 
