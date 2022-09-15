@@ -9,7 +9,9 @@ printf '%s %s\n' "$icon" "$condition"
 
 echo '---'
 
-echo "${weather//^/ }"
+weather="${weather//^/ }"
+
+echo "${weather:-No data}"
 
 echo '---'
 

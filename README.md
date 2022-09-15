@@ -5,8 +5,15 @@ Current I'm managing configs with [git bare](https://news.ycombinator.com/item?i
 ## Installation
 
 ```shell
-curl -fsSLO https://raw.githubusercontent.com/pombadev/.files/main/mero/installer.sh
-bash ./installer.sh
+curl -fsSLO https://raw.githubusercontent.com/pombadev/.files/main/mero/setup.sh
+bash ./setup.sh
+```
+
+## Uninstall
+
+```shell
+curl -fsSLO https://raw.githubusercontent.com/pombadev/.files/main/mero/setup.sh
+bash ./setup.sh --uninstall
 ```
 
 command `cx` is provided which is an alias for `git --git-dir=$HOME/dotfiles/ --work-tree=$HOME` to interface with git.
