@@ -5,13 +5,3 @@ dotfiles
 **/cache/**
 .cargo/
 !.cargo/config.toml
-.config/Code
-.config/Ferdi
-.config/GIMP
-.config/chromium
-.config/google-chrome
-.config/OCS-Store
-.config/balena-etcher-electron
-.config/sublime-text
-.esy
-.dotnet
