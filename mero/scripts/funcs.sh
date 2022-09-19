@@ -299,8 +299,8 @@ EOF
 		# `RUSTC_BOOTSTRAP` enable nightly in stable
 		# `RUSTFLAGS` configs for faster compile times
 		RUSTC_BOOTSTRAP=1 \
-		RUSTFLAGS='-Ccodegen-units=256 -Clink-arg=-fuse-ld=lld -Clto=off -Copt-level=0 -Zshare-generics=y -Clinker=clang' \
-		cargo run -q
+			RUSTFLAGS='-Ccodegen-units=256 -Clink-arg=-fuse-ld=lld -Clto=off -Copt-level=0 -Zshare-generics=y -Clinker=clang' \
+			cargo run -q
 	)
 
 	rm -rf "$temp_dir"

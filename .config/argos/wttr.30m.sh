@@ -5,6 +5,12 @@ weather=$(curl -s "wttr.in?format=%c^%t^%C^%l")
 condition=$(cut -d'^' -f1 <<<"$weather")
 icon=$(cut -d'^' -f2 <<<"$weather")
 
+if [ "$weather" == "" ]; then
+    echo "No data"
+else
+    printf '%s %s\n' "$icon" "$condition"
+fi
+
 printf '%s %s\n' "$icon" "$condition"
 
 echo '---'
