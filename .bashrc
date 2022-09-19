@@ -42,7 +42,6 @@ export HISTSIZE=
 source "$DOTFILES_ROOT/scripts/exports.sh"
 source "$DOTFILES_ROOT/scripts/aliases.sh"
 source "$DOTFILES_ROOT/scripts/funcs.sh"
-source "$DOTFILES_ROOT/scripts/bootstraper.sh"
 
 # apply theme
 # if [[ -f $DOTFILES_BASH/simple/prompt.sh ]]; then

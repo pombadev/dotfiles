@@ -127,5 +127,3 @@ if command -v fzf &> /dev/null; then
 
     bindkey '^R' ctrl-r-widget
 fi
-
-source "$DOTFILES_ROOT/scripts/bootstraper.sh"
