@@ -11,8 +11,6 @@ else
     printf '%s %s\n' "$icon" "$condition"
 fi
 
-printf '%s %s\n' "$icon" "$condition"
-
 echo '---'
 
 weather="${weather//^/ }"
