@@ -1,0 +1,30 @@
+2024/04/03 10:49:06 log.go:23: Protocol version: auto
+2024/04/03 10:49:06 log.go:23: Network: tcp
+2024/04/03 10:49:14 log.go:23: Protocol version: auto
+2024/04/03 10:49:14 log.go:23: Network: tcp
+2024/04/03 10:50:30 log.go:23: Protocol version: auto
+2024/04/03 10:50:30 log.go:23: Network: tcp
+2024/04/03 10:51:15 log.go:23: Protocol version: auto
+2024/04/03 10:51:15 log.go:23: Network: tcp
+2024/04/03 10:52:22 log.go:23: Protocol version: auto
+2024/04/03 10:52:22 log.go:23: Network: tcp
+2024/04/03 10:54:44 log.go:23: Protocol version: auto
+2024/04/03 10:54:44 log.go:23: Network: tcp
+2024/04/03 10:55:22 log.go:23: Protocol version: auto
+2024/04/03 10:55:22 log.go:23: Network: tcp
+2024/04/03 10:55:39 log.go:23: Protocol version: auto
+2024/04/03 10:55:39 log.go:23: Network: tcp
+2024/04/03 10:56:01 log.go:23: Protocol version: auto
+2024/04/03 10:56:01 log.go:23: Network: tcp
+2024/04/03 10:56:09 log.go:23: Protocol version: auto
+2024/04/03 10:56:09 log.go:23: Network: tcp
+2024/04/03 10:56:40 log.go:23: Protocol version: auto
+2024/04/03 10:56:40 log.go:23: Network: tcp
+2024/04/03 11:00:16 log.go:23: Protocol version: auto
+2024/04/03 11:00:16 log.go:23: Network: tcp
+2024/04/03 11:00:43 log.go:23: Protocol version: auto
+2024/04/03 11:00:43 log.go:23: Network: tcp
+2024/04/03 11:01:22 log.go:23: Protocol version: auto
+2024/04/03 11:01:22 log.go:23: Network: tcp
+2024/04/03 12:14:51 log.go:23: Protocol version: auto
+2024/04/03 12:14:51 log.go:23: Network: tcp

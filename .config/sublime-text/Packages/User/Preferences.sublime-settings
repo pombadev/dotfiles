@@ -1,8 +1,8 @@
 {
-	"ignored_packages": [
+	"ignored_packages":
+	[
 		"Vintage",
 	],
-	"theme": "Adaptive.sublime-theme",
-	"color_scheme": "Mariana.sublime-color-scheme",
-	"draw_white_space": "all",
+	"theme": "Rosé Pine.sublime-theme",
+	"color_scheme": "Rosé Pine.sublime-color-scheme",
 }

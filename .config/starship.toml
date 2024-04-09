@@ -1,11 +1,5 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# prompt for multi-line editor
-continuation_prompt = ":: "
-
-[battery]
-disabled = true
-
 [directory]
-truncation_length = 10
+truncation_length = 50 
 truncate_to_repo = false

@@ -71,6 +71,8 @@ DOTFILES_ZSH=$DOTFILES_SRC/mero/zsh
 
 fpath+=$DOTFILES_ZSH/zfunc
 
+source "$DOTFILES_ROOT/init.sh"
+
 # source my specific stuffs
 source "$DOTFILES_ROOT/scripts/exports.sh"
 source "$DOTFILES_ROOT/scripts/aliases.sh"
@@ -109,6 +111,14 @@ if [ -d "$DOTFILES_ZSH/zsh-completions" ]; then
     compinit
 fi
 
+. "$HOME/.asdf/asdf.sh"
+
+if [ -d "$ASDF_DIR" ]; then
+	#fpath=("$ASDF_DIR/completions" $fpath)
+	# re-init completions
+	# compinit
+fi
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 # [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
@@ -118,7 +128,7 @@ if command -v fzf &> /dev/null; then
     ctrl-r-widget() {
         export FZF_DEFAULT_OPTS=' --multi --sort --reverse --info=inline'
         # setting BUFFER will update line editor's buffer
-        BUFFER=$(fc -r -l -n 1 | fzf --bind 'ctrl-l:clear-query,ctrl-k:clear-selection' --header 'Press CTRL-L to clear query & CTRL-K to clear selection')
+        BUFFER=$(fc -r -l -n 1 | fzf --no-sort --bind 'ctrl-l:clear-query,ctrl-k:clear-selection' --header 'Press CTRL-L to clear query & CTRL-K to clear selection')
         zle end-of-buffer-or-history
         unset FZF_DEFAULT_OPTS
     }
@@ -127,3 +137,32 @@ if command -v fzf &> /dev/null; then
 
     bindkey '^R' ctrl-r-widget
 fi
+
+if command -v fnm &> /dev/null; then
+    eval "$(fnm env --use-on-cd)"
+fi
+
+if command -v opam &> /dev/null; then
+    eval "$(opam env)"
+fi
+
+if command -v direnv &> /dev/null; then
+    eval "$(direnv hook zsh)"
+fi
+
+if [ -d ~/.local/pkgman ]; then
+    PKGMAN_PATH="$(find ~/.local/pkgman -type f -executable -exec sh -c 'dirname $1 | tr "\n" ":"' shell {} \;)"
+
+    export PATH="$PATH:$PKGMAN_PATH"
+fi
+
+
+alias which='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot $@'
+
+# bun completions
+[ -s "/home/pjmp/.bun/_bun" ] && source "/home/pjmp/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
