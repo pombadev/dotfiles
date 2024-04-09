@@ -56,3 +56,11 @@ fi
 
 # needs to be in the end of the file
 [[ ${BLE_VERSION-} ]] && ble-attach
+
+eval "$(fnm env --use-on-cd)"
+
+. "$HOME/.cargo/env"
+
+. "$HOME/.asdf/asdf.sh"
+
+source /home/pjmp/.config/broot/launcher/bash/br

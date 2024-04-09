@@ -1,8 +1,21 @@
 [pull]
 	rebase = false
-[includeIf "gitdir:~/Work/"]
-	path = ~/Work/.gitconfig
+
 [init]
 	defaultBranch = main
+
+[user]
+	email = pomba.magar@gmail.com
+	name = pombadev
+
+[credential "https://dev.azure.com"]
+	useHttpPath = true
+
 [credential]
-	helper = pass-git-helper
+	helper = manager
+	credentialStore = secretservice
+
+; note: put this at the end so that the config can be overwritten 
+[includeIf "gitdir/i:~/Work/**"]
+	path = ~/Work/.gitconfig
+

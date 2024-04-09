@@ -1,0 +1,66 @@
+wtf:
+  colors:
+    background: black
+    border:
+      focusable: darkslateblue
+      focused: orange
+      normal: gray
+    checked: yellow
+    highlight:
+      fore: black
+      back: gray
+    rows:
+      even: yellow
+      odd: white
+  refreshInterval: 1
+  openFileUtil: "open"
+  mods:
+    prs:
+      type: cmdrunner
+      args: ["run", "-A", "/home/pjmp/.config/wtf/get.ts"]
+      cmd: "deno"
+      enabled: true
+      position:
+        top: 0
+        left: 0
+        height: 2
+        width: 2
+    timezones:
+      type: clocks
+      enabled: true
+      locations:
+        Nepal: "Asia/Kathmandu"
+        Myanmar: "Asia/Rangoon"
+        South Korea: "Asia/Seoul"
+        Thailand: "Asia/Bangkok"
+        Brazil: "America/Sao_Paulo"
+        India: "Asia/Kolkata"
+        Paraguay: "America/Asuncion"
+      position:
+        top: 0
+        left: 2
+        height: 1
+        width: 1
+      refreshInterval: 1
+      sort: "natural"
+      timeFormat: "3:04 PM"
+    resources:
+      type: resourceusage
+      enabled: true
+      position:
+        top: 0
+        left: 3
+        height: 1
+        width: 1
+      refreshInterval: 1
+    disks:
+      type: cmdrunner
+      cmd: "df"
+      args: ["-h"]
+      enabled: true
+      position:
+        top: 1
+        left: 2
+        height: 1
+        width: 2
+      refreshInterval: 3600

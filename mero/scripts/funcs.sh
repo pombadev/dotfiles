@@ -3,6 +3,10 @@
 # linting via shellcheck
 # shellcheck disable=SC2096,SC2155
 
+#git-today() {
+#	git log --author="$(git config --local user.name)" --oneline --since="yesterday" --no-merges --name-status
+#}
+
 branch() {
 	git rev-parse --abbrev-ref HEAD
 }
@@ -26,7 +30,7 @@ stash-explore() {
 }
 
 clean-git-branches() {
-	git branch | grep -E -v "(^\s+dev$|^\s+master|^\*.+$)" | xargs --no-run-if-empty git branch -D
+	git branch | grep -E -v "(^\s+dev$|^\s+master|develop|^\s+staging|^\*.+$)" | xargs --no-run-if-empty git branch -D
 }
 
 # gcp - git commit with previews
@@ -106,32 +110,35 @@ rnet() {
 }
 
 t() {
-	# GREP for string provided by user in a
-	# user defined or predefined directory
-	# First parameter string to search for
-	# Second parameter path to search in
-
 	# Exit if no/whitespace search string provided, exit.
 	# There's no point continuing.
 	if [[ -z $1 ]]; then
 		echo 'Required argument not provided, exiting...'
-		exit 1
-	fi
+	elif which rg &>/dev/null; then
+		local args="--with-filename --color=always --column --no-heading --mmap --hyperlink-format=vscode"
+		# if [[ -n $KITTY_PID ]]; then
+		# 	args+=" --hyperlink-format=vscode"
+		# elif ps x | grep -v grep | grep -w code &>/dev/null; then
+		# 	args+=" --hyperlink-format=vscode"
+		# fi
 
-	local DEFAULT_DIR=src/scripts/
-
-	GREP_ME() {
-		grep -E --exclude="yarn.lock" --exclude-dir={.git,.history,node_modules,bower_components,out,vendor,flow-typed,build,coverage} -irHn --color=auto "$1" "$2"
-	}
-
-	if [[ -z $2 ]]; then
-		if [[ -d $DEFAULT_DIR ]]; then
-			GREP_ME "$1" "$(pwd)/$DEFAULT_DIR"
-		else
-			GREP_ME "$1" "$(pwd)"
-		fi
+		eval "rg $args $*"
 	else
-		GREP_ME "$1" "$(pwd)/$2"
+		local DEFAULT_DIR=src/scripts/
+
+		GREP_ME() {
+			grep -E --exclude="yarn.lock" --exclude-dir={.git,.history,node_modules,bower_components,out,vendor,flow-typed,build,coverage} -irHn --color=auto "$1" "$2"
+		}
+
+		if [[ -z $2 ]]; then
+			if [[ -d $DEFAULT_DIR ]]; then
+				GREP_ME "$1" "$(pwd)/$DEFAULT_DIR"
+			else
+				GREP_ME "$1" "$(pwd)"
+			fi
+		else
+			GREP_ME "$1" "$(pwd)/$2"
+		fi
 	fi
 }
 
@@ -195,11 +202,7 @@ npm-scripts() {
 }
 
 serve() {
-	if [[ $(python -V) == Python[[:space:]]3.* ]]; then
-		python -m http.server
-	elif [[ $(python -V) == Python[[:space:]]2.* ]]; then
-		python -m SimpleHTTPServer
-	fi
+	python -m http.server "$@"
 }
 
 print-colors() {
@@ -343,15 +346,15 @@ update-git-submodules() {
 	git submodule foreach --recursive 'git checkout $(git remote show origin | grep -ie "HEAD branch:" | cut -d " " -f5); git pull; echo -e "\n"'
 }
 
-touch() {
-	local parent_dir=$(dirname "$1")
-
-	if ! [ -d "$parent_dir" ]; then
-		mkdir -p "$parent_dir"
-	fi
-
-	$(which --skip-alias --skip-functions touch) "$1"
-}
+#touch() {
+#    local parent_dir=$(dirname "$1")
+#
+#    if ! [ -d "$parent_dir" ]; then
+#        mkdir -p "$parent_dir"
+#    fi
+#
+#    $(which --skip-alias --skip-functions touch) "$1"
+#}
 
 top-commands() {
 	count=${1:-20}
@@ -444,4 +447,18 @@ generate-gitignore() {
 	for selection in $selections; do
 		curl -s "$base_url/$selection" >>.gitignore
 	done
+}
+
+rrepl() {
+	local RG='rg $(echo {q} | xargs)'
+
+	echo '' | fzf \
+		--bind "start:put(--pretty -i -C2 ),ctrl-l:clear-query,ctrl-h:change-preview(man rg),ctrl-x:change-preview($RG),change:transform-preview-label:echo [ rg {q} ]" \
+		--header 'Press Ctrl+h to see rg manpage, Ctrl+x to go to start, Ctrl+l to clear query' \
+		--preview-window='down:99%' \
+		--preview "$RG" \
+		--reverse \
+		--info=hidden \
+		--print-query \
+		--disabled
 }

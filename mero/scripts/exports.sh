@@ -71,6 +71,10 @@ __PATH__+=":$HOME/.poetry/bin"
 # erlang
 __PATH__+=":$HOME/.cache/rebar3/bin"
 
+export ANDROID_HOME="$HOME/Android/Sdk"
+__PATH__+=":$ANDROID_HOME/build-tools/34.0.0"
+__PATH__+=":$ANDROID_HOME/platform-tools"
+
 # ocaml
 if command -v opam &>/dev/null; then
     shell_type=$(ps -p $$ | tail -n1 | awk -F' ' '{print $NF}')
@@ -86,7 +90,7 @@ fi
 
 # golang
 if command -v go &>/dev/null; then
-    GO_PATH="$(go env | grep -w GOPATH | sed 's/GOPATH//g; s/=//g; s/"//g')"
+    GO_PATH="$(go env GOPATH)"
 
     if [ -d "$GO_PATH" ]; then
         __PATH__+=":$GO_PATH/bin"
@@ -96,3 +100,5 @@ if command -v go &>/dev/null; then
 fi
 
 export PATH="$__PATH__:$PATH"
+
+export EDITOR=nvim
