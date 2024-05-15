@@ -111,13 +111,13 @@ if [ -d "$DOTFILES_ZSH/zsh-completions" ]; then
     compinit
 fi
 
-. "$HOME/.asdf/asdf.sh"
-
-if [ -d "$ASDF_DIR" ]; then
-	#fpath=("$ASDF_DIR/completions" $fpath)
-	# re-init completions
-	# compinit
-fi
+# . "$HOME/.asdf/asdf.sh"
+#
+# if [ -d "$ASDF_DIR" ]; then
+# 	#fpath=("$ASDF_DIR/completions" $fpath)
+# 	# re-init completions
+# 	# compinit
+# fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 # [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
