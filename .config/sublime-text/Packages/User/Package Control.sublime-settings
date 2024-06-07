@@ -5,6 +5,8 @@
 	],
 	"installed_packages":
 	[
+		"LSP",
+		"LSP-typescript",
 		"Package Control",
 		"Theme - Rose Pine",
 	],

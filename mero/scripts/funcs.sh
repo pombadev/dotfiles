@@ -343,7 +343,8 @@ fi
 
 update-git-submodules() {
 	# shellcheck disable=SC2016
-	git submodule foreach --recursive 'git checkout $(git remote show origin | grep -ie "HEAD branch:" | cut -d " " -f5); git pull; echo -e "\n"'
+	git submodule foreach --recursive \
+		'BRANCH=$(git remote show origin | grep -ie "HEAD branch:" | cut -d " " -f5) && git checkout $BRANCH && git pull origin $BRANCH'
 }
 
 #touch() {

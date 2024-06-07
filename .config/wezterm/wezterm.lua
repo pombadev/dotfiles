@@ -20,7 +20,11 @@ config.keys = {
     mods = 'CTRL|ALT',
     action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
   },
-
+  {
+    key = 'd',
+    mods = 'CTRL|ALT',
+    action = wezterm.action.PopKeyTable
+  },
 }
 
 return config
