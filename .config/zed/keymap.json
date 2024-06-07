@@ -1,0 +1,13 @@
+[
+  {
+    "bindings": {
+      "ctrl-\\": "workspace::ToggleLeftDock",
+      "ctrl-m": "outline::Toggle",
+      "ctrl-z": "editor::Undo",
+      "ctrl-y": "editor::Redo",
+      "ctrl-k": "workspace::ToggleBottomDock",
+      "ctrl-up": "editor::MoveLineUp",
+      "ctrl-down": "editor::MoveLineDown"
+    }
+  }
+]

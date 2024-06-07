@@ -10,15 +10,34 @@ type Pulls = {
 };
 
 const json = async <R>(url: string): Promise<R> => {
+  const token =
+    Deno.env.get("GH_TOKEN") ??
+    prompt("GH_TOKEN env not found, provide a token");
+
   const options = {
     headers: {
       "X-GitHub-Api-Version": "2022-11-28",
       Accept: "application/vnd.github+json",
-      Authorization: `Bearer <personal_access_token>`,
+      Authorization: `Bearer ${token}`,
     },
   };
 
-  return await (await fetch(url, options)).json();
+  try {
+    let res = await fetch(url, options);
+
+    const status = res.status
+
+    if (status >= 400 && status <= 499) {
+      console.error("get repo:", status, res.statusText)
+      return ([] as any[]);
+    }
+
+    let xres = await res.json();
+
+    return xres;
+  } catch (error) {
+    console.error(error.message);
+  }
 };
 
 async function github(): Promise<void> {
@@ -28,21 +47,30 @@ async function github(): Promise<void> {
     orgs.map((org) => json<Org[]>(org.repos_url)),
   );
 
-  const pulls = (await Promise.all(
-    repos.flatMap((repo) => repo).map((repo) =>
-      json<Pulls[]>(`${repo.url}/pulls`)
-    ),
-  )).filter((pr) => pr.length).flatMap((pr) => pr);
+  const pulls = (
+    await Promise.all(
+      repos
+        .flatMap((repo) => repo)
+        .map((repo) => json<Pulls[]>(`${repo.url}/pulls`)),
+    )
+  )
+    .filter((pr) => pr.length)
+    .flatMap((pr) => pr);
 
-  const groupByRepo = pulls.reduce((init, pr) => {
-    init[pr.head.repo.full_name] ??= [];
+  const groupByRepo = pulls.reduce(
+    (init, pr) => {
+      init[pr.head.repo.full_name] ??= [];
 
-    init[pr.head.repo.full_name].push(pr);
+      init[pr.head.repo.full_name].push(pr);
 
-    return init;
-  }, {} as { [key: string]: Pulls[] });
+      return init;
+    },
+    {} as { [key: string]: Pulls[] },
+  );
 
   const grouppedList = Object.entries(groupByRepo);
+
+  console.info("pulls", pulls);
 
   grouppedList.forEach(([key, prs], index) => {
     console.info(key);

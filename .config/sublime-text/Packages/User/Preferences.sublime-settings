@@ -3,6 +3,9 @@
 	[
 		"Vintage",
 	],
-	"theme": "Rosé Pine.sublime-theme",
-	"color_scheme": "Rosé Pine.sublime-color-scheme",
+	"theme": "Adaptive.sublime-theme",
+	"color_scheme": "auto",
+	"index_files": true,
+	"dark_color_scheme": "Mariana.sublime-color-scheme",
+	"light_color_scheme": "Breakers.sublime-color-scheme",
 }

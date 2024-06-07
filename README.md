@@ -5,14 +5,14 @@ Current I'm managing configs with [git bare](https://news.ycombinator.com/item?i
 ## Installation
 
 ```shell
-curl -fsSLO https://raw.githubusercontent.com/pombadev/.files/main/mero/setup.sh
+curl -fsSLO https://raw.githubusercontent.com/pombadev/dotfiles/master/mero/setup.sh
 bash ./setup.sh
 ```
 
 ## Uninstall
 
 ```shell
-curl -fsSLO https://raw.githubusercontent.com/pombadev/.files/main/mero/setup.sh
+curl -fsSLO https://raw.githubusercontent.com/pombadev/dotfiles/master/mero/setup.sh  
 bash ./setup.sh --uninstall
 ```
 
