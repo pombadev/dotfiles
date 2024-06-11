@@ -7,21 +7,26 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "tab_bar": {
+    "show_nav_history_buttons": false
+  },
   "features": {
     "copilot": false
   },
-  "theme": "Warp One Dark",
-  "ui_font_size": 15,
-  "buffer_font_size": 15,
+  "auto_update": false,
+  "theme": "One Dark",
+  "ui_font_size": 14,
+  "buffer_font_size": 14,
   "show_whitespaces": "all",
   // "vim_mode": true,
   "preview_tabs": {
     "enabled": false
   },
-  "ui_font_family": "JetBrains Mono",
+  "buffer_font_family": "0xProto",
+  "ui_font_family": "0xProto",
   "terminal": {
     "font_size": 14,
-    "font_family": "JetBrains Mono"
+    "font_family": "Source Code Pro"
   },
   "assistant": {
     "version": "1",
@@ -38,5 +43,12 @@
   },
   "indent_guides": {
     "enabled": true
+  },
+  "tabs": {
+    "git_status": true
+  },
+  "toolbar": {
+    "breadcrumbs": false,
+    "quick_actions": false
   }
 }
