@@ -126,9 +126,8 @@ fi
 
 if command -v fzf &> /dev/null; then
     ctrl-r-widget() {
-        export FZF_DEFAULT_OPTS=' --multi --sort --reverse --info=inline'
         # setting BUFFER will update line editor's buffer
-        BUFFER=$(fc -r -l -n 1 | fzf --no-sort --bind 'ctrl-l:clear-query,ctrl-k:clear-selection' --header 'Press CTRL-L to clear query & CTRL-K to clear selection')
+        BUFFER=$(fc -r -l -n 1 | fzf --multi --reverse --info=inline --no-sort --bind 'ctrl-l:clear-query,ctrl-k:clear-selection' --header 'Press CTRL-L to clear query & CTRL-K to clear selection')
         zle end-of-buffer-or-history
         unset FZF_DEFAULT_OPTS
     }
@@ -166,3 +165,11 @@ alias which='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+
+# pnpm
+export PNPM_HOME="/home/pjmp/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

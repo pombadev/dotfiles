@@ -5,9 +5,9 @@
 	],
 	"installed_packages":
 	[
+		"FSharp",
 		"LSP",
 		"LSP-typescript",
 		"Package Control",
-		"Theme - Rose Pine",
 	],
 }

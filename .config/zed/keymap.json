@@ -7,7 +7,9 @@
       "ctrl-y": "editor::Redo",
       "ctrl-k": "workspace::ToggleBottomDock",
       "ctrl-up": "editor::MoveLineUp",
-      "ctrl-down": "editor::MoveLineDown"
+      "ctrl-down": "editor::MoveLineDown",
+      "ctrl-d": "editor::SelectNext",
+      "ctrl-?": null
     }
   }
 ]

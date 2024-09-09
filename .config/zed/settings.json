@@ -7,12 +7,7 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "tab_bar": {
-    "show_nav_history_buttons": false
-  },
-  "features": {
-    "copilot": false
-  },
+  "base_keymap": "SublimeText",
   "auto_update": false,
   "theme": "One Dark",
   "ui_font_size": 14,
@@ -28,27 +23,29 @@
     "font_size": 14,
     "font_family": "Source Code Pro"
   },
-  "assistant": {
-    "version": "1",
-    "enabled": false
-  },
-  "assistant_v2": {
-    "enabled": false
-  },
-  "chat_panel": {
-    "button": false
-  },
-  "collaboration_panel": {
-    "button": false
+  "buffer_font_features": {
+    "calt": false,
+    "cv01": 7
   },
   "indent_guides": {
     "enabled": true
   },
   "tabs": {
-    "git_status": true
+    "git_status": true,
+    "file_icons": true
   },
-  "toolbar": {
-    "breadcrumbs": false,
-    "quick_actions": false
+  "soft_wrap": "editor_width",
+  "file_types": {
+    "FSharp": ["fsx"]
+  },
+  "languages": {
+    "Dune": {
+      "formatter": {
+        "external": {
+          "command": "dune",
+          "arguments": ["format-dune-file"]
+        }
+      }
+    }
   }
 }
