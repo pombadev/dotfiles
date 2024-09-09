@@ -1,0 +1,7 @@
+{
+  "Mime module": {
+    "prefix": "mi",
+    "description": "Mime module",
+    "body": "module $1 = Mime.Make(struct\n  let extension = \"$2\"\n\n  let mime = \"audio/$3\"\n\n   let test chan =\n    if Byte.(lt chan $4) then false\nelse\n  let buf = Byte.(nth chan) in\nByte.(equal \"$5\" (buf $6))\nend)"
+  }
+}

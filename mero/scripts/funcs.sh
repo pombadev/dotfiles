@@ -30,7 +30,7 @@ stash-explore() {
 }
 
 clean-git-branches() {
-	git branch | grep -E -v "(^\s+dev$|^\s+master|develop|^\s+staging|^\*.+$)" | xargs --no-run-if-empty git branch -D
+	git branch | grep -E -v "^(\* )|^  ((dev(elop)?)|master|staging|main)$" | xargs --no-run-if-empty git branch -D
 }
 
 # gcp - git commit with previews
