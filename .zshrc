@@ -111,12 +111,12 @@ if [ -d "$DOTFILES_ZSH/zsh-completions" ]; then
     compinit
 fi
 
-# . "$HOME/.asdf/asdf.sh"
-#
+. "$HOME/.asdf/asdf.sh"
+
 # if [ -d "$ASDF_DIR" ]; then
-# 	#fpath=("$ASDF_DIR/completions" $fpath)
-# 	# re-init completions
-# 	# compinit
+# 	fpath=("$ASDF_DIR/completions" $fpath)
+# 	re-init completions
+# 	compinit
 # fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
@@ -165,3 +165,5 @@ alias which='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+export PATH="/home/pjmp/.config/herd-lite/bin:$PATH"
+export PHP_INI_SCAN_DIR="/home/pjmp/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"

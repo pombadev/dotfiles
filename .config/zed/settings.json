@@ -7,9 +7,22 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "features": {
+    "inline_completion_provider": "supermaven"
+  },
+  "assistant": {
+    "default_model": {
+      "provider": "google",
+      "model": "gemini-1.5-flash"
+    },
+    "version": "2"
+  },
+  "scrollbar": {
+    "show": "system"
+  },
   "base_keymap": "SublimeText",
   "auto_update": false,
-  "theme": "One Dark",
+  "theme": "One Dark Pro",
   "ui_font_size": 14,
   "buffer_font_size": 14,
   "show_whitespaces": "all",
@@ -17,15 +30,10 @@
   "preview_tabs": {
     "enabled": false
   },
-  "buffer_font_family": "0xProto",
   "ui_font_family": "0xProto",
+  "buffer_font_family": "0xProto",
   "terminal": {
-    "font_size": 14,
     "font_family": "Source Code Pro"
-  },
-  "buffer_font_features": {
-    "calt": false,
-    "cv01": 7
   },
   "indent_guides": {
     "enabled": true
@@ -36,9 +44,28 @@
   },
   "soft_wrap": "editor_width",
   "file_types": {
-    "FSharp": ["fsx"]
+    "FSharp": ["*.fsx"],
+    "Blade": ["*.blade.php"]
+  },
+  "lsp": {
+    "golangci-lint": {
+      "initialization_options": {
+        "command": [
+          "golangci-lint",
+          "run",
+          // "--enable-all",
+          "lll",
+          "--out-format",
+          "json",
+          "--issues-exit-code=1"
+        ]
+      }
+    }
   },
   "languages": {
+    "Go": {
+      "language_servers": ["gopls", "golangci-lint"]
+    },
     "Dune": {
       "formatter": {
         "external": {
