@@ -122,7 +122,7 @@ t() {
 		# 	args+=" --hyperlink-format=vscode"
 		# fi
 
-		eval "rg $args $*"
+		rg --with-filename --color=always --column --no-heading --mmap --hyperlink-format=vscode "$@"
 	else
 		local DEFAULT_DIR=src/scripts/
 
