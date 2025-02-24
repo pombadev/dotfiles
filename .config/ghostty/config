@@ -1,0 +1,11 @@
+background-opacity = 0.8
+gtk-titlebar = false
+font-size = 10
+background = #000000
+theme = Wez
+bold-is-bright = true
+
+# disable font ligatures
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig

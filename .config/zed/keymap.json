@@ -5,11 +5,16 @@
       "ctrl-m": "outline::Toggle",
       "ctrl-z": "editor::Undo",
       "ctrl-y": "editor::Redo",
-      "ctrl-k": "workspace::ToggleBottomDock",
       "ctrl-up": "editor::MoveLineUp",
       "ctrl-down": "editor::MoveLineDown",
       "ctrl-d": "editor::SelectNext",
-      "ctrl-?": null
+      "ctrl-?": null,
+      "ctrl-.": "editor::ToggleCodeActions",
+      "ctrl-k": "workspace::ToggleBottomDock",
+      "ctrl-shift-s": "workspace::SaveAll",
+      "alt-f2": "editor::Rename",
+      "ctrl-tab": "pane::ActivateNextItem",
+      "ctrl-shift-tab": "pane::ActivatePrevItem"
     }
   }
 ]
