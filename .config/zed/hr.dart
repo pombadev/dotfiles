@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-main() async {
+main(List<String> args) async {
   final process = await Process.start(
     "flutter",
     ["run"],
@@ -11,9 +11,14 @@ main() async {
   process.stdout.transform(utf8.decoder).forEach(stdout.write);
   stdin.transform(utf8.decoder).forEach(process.stdin.write);
 
-  final dir = Directory("./lib");
+  final projectRoot = (args.firstOrNull ?? ".");
+
+  print(projectRoot);
+
+  final dir = Directory(projectRoot);
 
   dir.watch(recursive: true).listen((event) {
+    print(event);
     if (event.path.endsWith(".dart")) {
       process.stdin.write("r");
     }

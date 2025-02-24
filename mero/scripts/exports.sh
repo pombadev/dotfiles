@@ -72,8 +72,10 @@ __PATH__+=":$HOME/.poetry/bin"
 __PATH__+=":$HOME/.cache/rebar3/bin"
 
 export ANDROID_HOME="$HOME/Android/Sdk"
-__PATH__+=":$ANDROID_HOME/build-tools/34.0.0"
+__PATH__+=":$ANDROID_HOME/build-tools/35.0.0"
 __PATH__+=":$ANDROID_HOME/platform-tools"
+__PATH__+=":$ANDROID_HOME/cmdline-tools/latest/bin"
+
 
 # ocaml
 if command -v opam &>/dev/null; then
@@ -110,3 +112,4 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
