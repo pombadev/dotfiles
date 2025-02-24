@@ -10,6 +10,8 @@
 [credential]
 	helper = manager
 	credentialStore = secretservice
+	helper = 
+	helper = /usr/local/bin/git-credential-manager
 
 ; note: put this at the end so that the config can be overwritten 
 [includeIf "gitdir/i:~/Work/**"]
