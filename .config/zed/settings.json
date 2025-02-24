@@ -7,6 +7,11 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "vim_mode": false,
+  "telemetry": {
+    "metrics": false,
+    "diagnostics": false
+  },
   "features": {
     // "edit_prediction_provider": "supermaven"
   },
@@ -22,7 +27,7 @@
   },
   "base_keymap": "SublimeText",
   "auto_update": false,
-  "theme": "One Dark",
+  "theme": "One Dark Pro",
   "ui_font_size": 14,
   "buffer_font_size": 14,
   "show_whitespaces": "all",

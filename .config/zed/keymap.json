@@ -14,7 +14,9 @@
       "ctrl-shift-s": "workspace::SaveAll",
       "alt-f2": "editor::Rename",
       "ctrl-tab": "pane::ActivateNextItem",
-      "ctrl-shift-tab": "pane::ActivatePrevItem"
+      "ctrl-shift-tab": "pane::ActivatePrevItem",
+      "ctrl-shift-x": "pane::TogglePinTab",
+      "ctrl-alt-2": "pane::SplitRight"
     }
   }
 ]

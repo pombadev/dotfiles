@@ -9,3 +9,9 @@ bold-is-bright = true
 font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
+
+clipboard-paste-protection = false
+
+window-decoration = false
+
+# link-url=

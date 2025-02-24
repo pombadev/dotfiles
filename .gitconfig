@@ -18,3 +18,5 @@
 [includeIf "gitdir/i:~/Codes/**"]
 	path = ~/Codes/.gitconfig
 
+[core]
+	compression = 0
