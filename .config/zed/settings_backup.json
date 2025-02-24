@@ -8,12 +8,12 @@
 // from the command palette or from `Zed` application menu.
 {
   "features": {
-    // "edit_prediction_provider": "supermaven"
+    "inline_completion_provider": "supermaven"
   },
   "assistant": {
     "default_model": {
-      "provider": "copilot_chat",
-      "model": "gpt-4o"
+      "provider": "google",
+      "model": "gemini-2.0-flash-exp"
     },
     "version": "2"
   },
@@ -22,7 +22,7 @@
   },
   "base_keymap": "SublimeText",
   "auto_update": false,
-  "theme": "One Dark",
+  "theme": "One Dark Pro",
   "ui_font_size": 14,
   "buffer_font_size": 14,
   "show_whitespaces": "all",
@@ -75,22 +75,13 @@
       }
     },
     "TypeScript": {
-      "language_servers": [
-        "node_modules/typescript/bin/tsserver",
-        "typescript-language-server"
-      ]
+      "language_servers": ["node_modules/typescript/bin/tsserver", "typescript-language-server"]
     },
     "TSX": {
-      "language_servers": [
-        "node_modules/typescript/bin/tsserver",
-        "typescript-language-server"
-      ]
+      "language_servers": ["node_modules/typescript/bin/tsserver", "typescript-language-server"]
     },
     "JavaScript": {
-      "language_servers": [
-        "node_modules/typescript/bin/tsserver",
-        "typescript-language-server"
-      ]
+      "language_servers": ["node_modules/typescript/bin/tsserver", "typescript-language-server"]
     }
   }
 }
