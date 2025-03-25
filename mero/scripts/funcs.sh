@@ -202,7 +202,11 @@ npm-scripts() {
 }
 
 serve() {
-    python -m http.server "$@"
+    if command -v uvx &>/dev/null; then
+        uvx livereload "$@"
+    else
+        python -m http.server "$@"
+    fi
 }
 
 print-colors() {
@@ -462,4 +466,8 @@ rrepl() {
         --info=hidden \
         --print-query \
         --disabled
+}
+
+mtmp() {
+    cd "$(mktemp -t mtmp.XXX -d)"
 }

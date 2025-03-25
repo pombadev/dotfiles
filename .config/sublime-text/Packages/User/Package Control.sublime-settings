@@ -5,8 +5,11 @@
 	],
 	"installed_packages":
 	[
+		"Dockerfile Syntax Highlighting",
+		"DotENV",
 		"FSharp",
 		"LSP",
+		"LSP-dockerfile",
 		"LSP-typescript",
 		"Package Control",
 	],
