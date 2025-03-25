@@ -7,11 +7,13 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "icon_theme": "Colored Zed Icons Theme Dark",
   "vim_mode": false,
   "telemetry": {
     "metrics": false,
     "diagnostics": false
   },
+  "use_autoclose": true,
   "features": {
     // "edit_prediction_provider": "supermaven"
   },
@@ -50,9 +52,17 @@
   "soft_wrap": "editor_width",
   "file_types": {
     "FSharp": ["*.fsx"],
-    "Blade": ["*.blade.php"]
+    "Blade": ["*.blade.php"],
+    "ini": [".npmrc"]
   },
   "lsp": {
+    "cargotom": {
+      "initialization_options": {
+        "offline": false,
+        "stable": false,
+        "per_page_web": 10
+      }
+    },
     "golangci-lint": {
       "initialization_options": {
         "command": [
