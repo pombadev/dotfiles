@@ -13,7 +13,7 @@ alias gll="git log --pretty=format:'%Cred%h%Creset -%C(white bold) %s %Cgreen(%c
 alias gp='git pull origin $(branch)'
 alias gps='git push origin $(branch)'
 alias grep='grep --color=always'
-alias ls='ls --color=always --hyperlink=always -FAgh'
+alias ls='ls --color=always -FAgh'
 alias open='xdg-open'
 alias v='git branch -vv'
 alias gd='git diff'

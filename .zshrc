@@ -65,13 +65,16 @@ autoload -Uz promptinit && promptinit
 # faux autocomplete menu
 # setopt menucomplete
 
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+
 DOTFILES_SRC=$(dirname "${(%):-%x}")
 DOTFILES_ROOT=$DOTFILES_SRC/mero
 DOTFILES_ZSH=$DOTFILES_SRC/mero/zsh
 
 fpath+=$DOTFILES_ZSH/zfunc
 
-source "$DOTFILES_ROOT/init.sh"
+# source "$DOTFILES_ROOT/init.sh"
 
 # source my specific stuffs
 source "$DOTFILES_ROOT/scripts/exports.sh"
@@ -101,6 +104,8 @@ fi
 
 if command -v starship &> /dev/null; then
     eval "$(starship init zsh)"
+else
+    echo "no space"
 fi
 
 if [ -d "$DOTFILES_ZSH/zsh-completions" ]; then
@@ -111,7 +116,7 @@ if [ -d "$DOTFILES_ZSH/zsh-completions" ]; then
     compinit
 fi
 
-. "$HOME/.asdf/asdf.sh"
+# . "$HOME/.asdf/asdf.sh"
 
 # if [ -d "$ASDF_DIR" ]; then
 # 	fpath=("$ASDF_DIR/completions" $fpath)
@@ -155,8 +160,8 @@ if [ -d ~/.local/pkgman ]; then
     export PATH="$PATH:$PKGMAN_PATH"
 fi
 
-
-alias which='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot $@'
+# doesnt work on mac
+# alias which='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot $@'
 
 # bun completions
 [ -s "/home/pjmp/.bun/_bun" ] && source "/home/pjmp/.bun/_bun"
@@ -167,3 +172,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 export PATH="/home/pjmp/.config/herd-lite/bin:$PATH"
 export PHP_INI_SCAN_DIR="/home/pjmp/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
+export PATH="/opt/homebrew/opt/php@8.3/bin:$PATH"
+export PATH="/opt/homebrew/opt/php@8.3/sbin:$PATH"
+export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+export PATH="/opt/homebrew/lib/ruby/gems/3.4.0/bin:$PATH"

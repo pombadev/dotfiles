@@ -5,3 +5,4 @@ dotfiles
 **/cache/**
 .cargo/
 !.cargo/config.toml
+.qodo
