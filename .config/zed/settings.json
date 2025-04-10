@@ -7,6 +7,8 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "ui_font_family": "FiraMono Nerd Font",
+  "buffer_font_family": "FiraMono Nerd Font",
   "icon_theme": "Colored Zed Icons Theme Dark",
   "vim_mode": false,
   "telemetry": {
@@ -15,12 +17,12 @@
   },
   "use_autoclose": true,
   "features": {
-    // "edit_prediction_provider": "supermaven"
+    "edit_prediction_provider": "copilot"
   },
   "assistant": {
     "default_model": {
       "provider": "copilot_chat",
-      "model": "gpt-4o"
+      "model": "gpt-3.5-turbo"
     },
     "version": "2"
   },
@@ -36,11 +38,6 @@
   // "vim_mode": true,
   "preview_tabs": {
     "enabled": false
-  },
-  "ui_font_family": "0xProto",
-  "buffer_font_family": "0xProto",
-  "terminal": {
-    "font_family": "Source Code Pro"
   },
   "indent_guides": {
     "enabled": true
@@ -88,24 +85,6 @@
           "arguments": ["format-dune-file"]
         }
       }
-    },
-    "TypeScript": {
-      "language_servers": [
-        "node_modules/typescript/bin/tsserver",
-        "typescript-language-server"
-      ]
-    },
-    "TSX": {
-      "language_servers": [
-        "node_modules/typescript/bin/tsserver",
-        "typescript-language-server"
-      ]
-    },
-    "JavaScript": {
-      "language_servers": [
-        "node_modules/typescript/bin/tsserver",
-        "typescript-language-server"
-      ]
     }
   }
 }
