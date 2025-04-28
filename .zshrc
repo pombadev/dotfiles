@@ -97,15 +97,8 @@ if [ -f "$DOTFILES_ZSH/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
     source "$DOTFILES_ZSH/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
-# theme
-# if [ -f "$DOTFILES_ZSH/powerlevel10k/powerlevel10k.zsh-theme" ]; then
-#     source "$DOTFILES_ZSH/powerlevel10k/powerlevel10k.zsh-theme"
-# fi
-
 if command -v starship &> /dev/null; then
     eval "$(starship init zsh)"
-else
-    echo "no space"
 fi
 
 if [ -d "$DOTFILES_ZSH/zsh-completions" ]; then
@@ -116,16 +109,14 @@ if [ -d "$DOTFILES_ZSH/zsh-completions" ]; then
     compinit
 fi
 
-# . "$HOME/.asdf/asdf.sh"
+if command -v asdf &> /dev/null; then
+    export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
-# if [ -d "$ASDF_DIR" ]; then
-# 	fpath=("$ASDF_DIR/completions" $fpath)
-# 	re-init completions
-# 	compinit
-# fi
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-# [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+    # append completions to fpath
+    fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
+    # initialise completions with ZSH's compinit
+    autoload -Uz compinit && compinit
+fi
 
 # unset DOTFILES_ROOT
 
@@ -170,9 +161,27 @@ fi
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-export PATH="/home/pjmp/.config/herd-lite/bin:$PATH"
-export PHP_INI_SCAN_DIR="/home/pjmp/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
-export PATH="/opt/homebrew/opt/php@8.3/bin:$PATH"
-export PATH="/opt/homebrew/opt/php@8.3/sbin:$PATH"
-export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
-export PATH="/opt/homebrew/lib/ruby/gems/3.4.0/bin:$PATH"
+if command -v brew &> /dev/null; then
+    export PATH="/opt/homebrew/opt/php@8.3/bin:$PATH"
+    export PATH="/opt/homebrew/opt/php@8.3/sbin:$PATH"
+    export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+    export PATH="/opt/homebrew/lib/ruby/gems/3.4.0/bin:$PATH"
+fi
+
+# for mac
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+# fnm
+FNM_PATH="$HOME/Library/Application Support/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$HOME/Library/Application Support/fnm:$PATH"
+  eval "`fnm env`"
+fi
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/pomba/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
