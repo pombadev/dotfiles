@@ -3,15 +3,9 @@
 
 [init]
 	defaultBranch = main
-
-[credential "https://dev.azure.com"]
-	useHttpPath = true
-
 [credential]
+	credentialStore = keychain
 	helper = manager
-	credentialStore = secretservice
-	helper = 
-	helper = /usr/local/bin/git-credential-manager
 
 ; note: put this at the end so that the config can be overwritten 
 [includeIf "gitdir/i:~/Work/**"]
@@ -32,3 +26,5 @@
 [user]
 	name = pombadev
 	email = 11157420+pombadev@users.noreply.github.com
+[credential "https://dev.azure.com"]
+	useHttpPath = true
