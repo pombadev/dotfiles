@@ -7,9 +7,9 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "ui_font_family": "FiraMono Nerd Font",
-  "buffer_font_family": "FiraMono Nerd Font",
-  "icon_theme": "Colored Zed Icons Theme Dark",
+  "ui_font_family": "FiraCode Nerd Font",
+  "buffer_font_family": "FiraCode Nerd Font",
+  "icon_theme": "VSCode Great Icons Theme",
   "vim_mode": false,
   "telemetry": {
     "metrics": false,
@@ -21,8 +21,8 @@
   },
   "assistant": {
     "default_model": {
-      "provider": "copilot_chat",
-      "model": "gpt-3.5-turbo"
+      "provider": "google",
+      "model": "gemini-2.0-flash"
     },
     "version": "2"
   },
