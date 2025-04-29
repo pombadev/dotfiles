@@ -3,28 +3,22 @@
 
 [init]
 	defaultBranch = main
-[credential]
-	credentialStore = keychain
-	helper = manager
-
-; note: put this at the end so that the config can be overwritten 
-[includeIf "gitdir/i:~/Work/**"]
-	path = ~/Work/.gitconfig
-
-[includeIf "gitdir/i:~/Codes/**"]
-	path = ~/Codes/.gitconfig
 
 [core]
 	compression = 0
 	excludesfile = /Users/pomba/.gitignore_global
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
+
 [user]
 	name = pombadev
 	email = 11157420+pombadev@users.noreply.github.com
+
+[credential]
+	credentialStore = keychain
+	helper = manager
+
 [credential "https://dev.azure.com"]
 	useHttpPath = true
+
+; note: put this at the end so that the config can be overwritten
+[includeIf "gitdir/i:~/Work/**"]
+	path = ~/Work/.gitconfig
