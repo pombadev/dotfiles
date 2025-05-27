@@ -15,7 +15,8 @@
       "alt-f2": "editor::Rename",
       "ctrl-tab": "pane::ActivateNextItem",
       "ctrl-shift-x": "pane::TogglePinTab",
-      "ctrl-alt-2": "pane::SplitRight"
+      "ctrl-alt-2": "pane::SplitRight",
+      "cmd+1": "terminal_panel::ToggleFocus"
     }
   }
 ]
