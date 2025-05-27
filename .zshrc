@@ -185,3 +185,10 @@ fpath=(/Users/pomba/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
+
+#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+export COMPOSE_BAKE=true
+export COMPOSE_MENU=false
+
+export PATH="/opt/homebrew/opt/mysql-client@8.4/bin:$PATH"
