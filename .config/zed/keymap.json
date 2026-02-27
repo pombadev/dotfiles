@@ -1,22 +1,50 @@
 [
   {
     "bindings": {
-      "ctrl-\\": "workspace::ToggleLeftDock",
+      "cmd-\\": "workspace::ToggleLeftDock",
       "ctrl-m": "outline::Toggle",
-      "ctrl-z": "editor::Undo",
-      "ctrl-y": "editor::Redo",
+      "cmd-y": "editor::Redo",
       "ctrl-up": "editor::MoveLineUp",
       "ctrl-down": "editor::MoveLineDown",
       "ctrl-d": "editor::SelectNext",
       "ctrl-?": null,
       "ctrl-.": "editor::ToggleCodeActions",
-      "ctrl-k": "workspace::ToggleBottomDock",
+      "ctrl-1": "workspace::ToggleBottomDock",
       "ctrl-shift-s": "workspace::SaveAll",
       "alt-f2": "editor::Rename",
       "ctrl-tab": "pane::ActivateNextItem",
+      "ctrl-shift-tab": "pane::ActivatePreviousItem",
       "ctrl-shift-x": "pane::TogglePinTab",
-      "ctrl-alt-2": "pane::SplitRight",
-      "cmd+1": "terminal_panel::ToggleFocus"
+      "ctrl-alt-2": "pane::SplitRight"
+    }
+  },
+  {
+    "bindings": {
+      "ctrl-1": "workspace::ToggleBottomDock"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-\\": null
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-\\": null
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-k cmd-b": null
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-b": null
     }
   }
 ]

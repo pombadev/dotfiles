@@ -14,7 +14,6 @@ alias gp='git pull origin $(branch)'
 alias gps='git push origin $(branch)'
 alias grep='grep --color=always'
 alias ls='ls --color=always -FAgh'
-alias open='xdg-open'
 alias v='git branch -vv'
 alias gd='git diff'
 alias cx='git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
@@ -29,3 +28,7 @@ fi
 # else
 # 	alias gd='git diff'
 # fi
+
+if ! command -v open > /dev/null; then
+  alias open='xdg-open'
+fi
