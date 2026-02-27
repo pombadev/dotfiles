@@ -64,3 +64,8 @@ eval "$(fnm env --use-on-cd)"
 . "$HOME/.asdf/asdf.sh"
 
 source /home/pjmp/.config/broot/launcher/bash/br
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/pomba/.lmstudio/bin"
+# End of LM Studio CLI section
+

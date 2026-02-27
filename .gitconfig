@@ -4,13 +4,9 @@
 [init]
 	defaultBranch = main
 
-[core]
-	compression = 0
-	excludesfile = /Users/pomba/.gitignore_global
-
-# [user]
-# 	name = pombadev
-# 	email = 11157420+pombadev@users.noreply.github.com
+[user]
+	name = pombadev
+	email = 11157420+pombadev@users.noreply.github.com
 
 [credential]
 	credentialStore = keychain
@@ -19,18 +15,19 @@
 [credential "https://dev.azure.com"]
 	useHttpPath = true
 
-; note: put this at the end so that the config can be overwritten
-[includeIf "gitdir/i:~/Work/"]
-	path = ~/Work/.gitconfig
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+	path =
 [mergetool "sourcetree"]
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [credential "https://github.com"]
-	helper = 
+	helper =
 	helper = !/opt/homebrew/bin/gh auth git-credential
 [credential "https://gist.github.com"]
-	helper = 
+	helper =
 	helper = !/opt/homebrew/bin/gh auth git-credential
+
+; note: put this at the end so that the config can be overwritten
+[includeIf "gitdir/i:~/Work/"]
+	path = ~/Work/.gitconfig

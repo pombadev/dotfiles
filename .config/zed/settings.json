@@ -7,84 +7,196 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "ui_font_family": "FiraCode Nerd Font",
-  "buffer_font_family": "FiraCode Nerd Font",
-  "icon_theme": "VSCode Great Icons Theme",
+  "centered_layout": {
+    "right_padding": 0.2,
+    "left_padding": 0.2,
+  },
+  "diagnostics": {
+    "inline": {
+      "enabled": true,
+    },
+  },
+  "hover_popover_enabled": true,
+  "autoscroll_on_clicks": true,
+  "which_key": {
+    "enabled": true,
+  },
+  "text_rendering_mode": "platform_default",
+  "buffer_line_height": "standard",
+  "colorize_brackets": false,
+  "when_closing_with_no_tabs": "keep_window_open",
+  "use_system_window_tabs": false,
+  "bottom_dock_layout": "contained",
+  "title_bar": {
+    "show_sign_in": true,
+    "show_menus": true,
+    "show_branch_icon": true,
+  },
+  "terminal": {
+    "dock": "bottom",
+    "toolbar": {
+      "breadcrumbs": true,
+    },
+    "button": true,
+  },
+  "gutter": {
+    "line_numbers": true,
+  },
+  "status_bar": {
+    "cursor_position_button": true,
+    "active_language_button": true,
+  },
+  "project_panel": {
+    "hide_root": true,
+    "entry_spacing": "standard",
+    "auto_reveal_entries": true,
+    "button": true,
+  },
+  "lsp_document_colors": "inlay",
+  "inlay_hints": {
+    "show_other_hints": false,
+    "show_parameter_hints": true,
+    "show_type_hints": true,
+    "show_background": false,
+    "show_value_hints": true,
+    "enabled": false,
+  },
+  "toolbar": {
+    "code_actions": true,
+  },
+  "auto_signature_help": false,
+  "use_system_prompts": false,
+  "use_system_path_prompts": false,
+  "edit_predictions": {
+    "mode": "eager",
+    "copilot": {
+      "proxy": null,
+      "proxy_no_verify": null,
+      "enterprise_uri": null,
+    },
+    "enabled_in_text_threads": false,
+  },
+  "buffer_font_features": {
+    "calt": false,
+  },
+  "ui_font_family": "FiraCode Nerd Font Mono",
+  "buffer_font_family": "FiraCode Nerd Font Mono",
+  "icon_theme": {
+    "mode": "system",
+    "light": "Zed (Default)",
+    "dark": "Clean VSCode Icon Theme",
+  },
   "vim_mode": false,
   "telemetry": {
     "metrics": false,
-    "diagnostics": false
+    "diagnostics": false,
   },
   "use_autoclose": true,
-  "features": {
-    "edit_prediction_provider": "copilot"
-  },
-  "assistant": {
-    "default_model": {
-      "provider": "google",
-      "model": "gemini-2.5-pro-preview-03-25"
+  // "features": {
+  //   "edit_prediction_provider": "zed"
+  // },
+  "agent": {
+    "tool_permissions": {
+      "default": "allow",
     },
-    "version": "2"
+    "notify_when_agent_waiting": "all_screens",
+    "enable_feedback": false,
+    "default_profile": "write",
+    "default_model": {
+      "provider": "openai",
+      "model": "gpt-5.2-codex",
+    },
+    "commit_message_model": {
+      "provider": "openai",
+      "model": "gpt-5",
+    },
   },
   "scrollbar": {
-    "show": "system"
+    "show": "system",
   },
   "base_keymap": "SublimeText",
   "auto_update": false,
-  "theme": "One Dark Pro",
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "One Dark Pro",
+  },
   "ui_font_size": 14,
   "buffer_font_size": 14,
   "show_whitespaces": "all",
   // "vim_mode": true,
   "preview_tabs": {
-    "enabled": false
+    "enabled": false,
   },
   "indent_guides": {
-    "enabled": true
+    "background_coloring": "disabled",
+    "coloring": "indent_aware",
+    "enabled": true,
   },
   "tabs": {
+    "show_close_button": "always",
     "git_status": true,
-    "file_icons": true
+    "file_icons": true,
   },
   "soft_wrap": "editor_width",
   "file_types": {
     "FSharp": ["*.fsx"],
+    "JavaScript": ["*.mjsx"],
     "Blade": ["*.blade.php"],
-    "ini": [".npmrc"]
+    "ini": [".npmrc"],
   },
   "lsp": {
     "cargotom": {
       "initialization_options": {
         "offline": false,
         "stable": false,
-        "per_page_web": 10
-      }
+        "per_page_web": 10,
+      },
     },
     "golangci-lint": {
       "initialization_options": {
         "command": [
           "golangci-lint",
           "run",
+          "--output.json.path=stdout",
+          "--show-stats=false",
           // "--enable-all",
-          "lll",
-          "--out-format",
-          "json",
-          "--issues-exit-code=1"
-        ]
-      }
-    }
+          // "lll",
+          // "--out-format",
+          // "json",
+          // "--issues-exit-code=1"
+        ],
+      },
+    },
+    "yaml-language-server": {
+      "settings": {
+        "schemas": {
+          "https://api.bitbucket.org/schemas/pipelines-configuration": [
+            "/bitbucket-pipelines.yml",
+          ],
+        },
+      },
+    },
   },
   "languages": {
     "Go": {
-      "language_servers": ["gopls", "golangci-lint"]
+      "language_servers": ["gopls", "golangci-lint"],
     },
+    // "Caddyfile": {
+    //   "formatter": {
+    //     "external": {
+    //       "command": "caddy",
+    //       "arguments": ["fmt", "-w", "Caddyfile"]
+    //     }
+    //   }
+    // },
     "Dune": {
       "formatter": {
         "external": {
           "command": "dune",
-          "arguments": ["format-dune-file"]
-        }
-      }
-    }
-  }
+          "arguments": ["format-dune-file"],
+        },
+      },
+    },
+  },
 }

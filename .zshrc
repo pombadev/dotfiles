@@ -53,10 +53,16 @@ setopt nobeep
 setopt histignorealldups
 
 # required for completions
-autoload -Uz compinit && compinit
+autoload -Uz compinit
+if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)" ]; then
+    compinit
+else
+    compinit -C
+fi
 
 # required for prompts
 autoload -Uz promptinit && promptinit
+
 
 # not good enough
 # zmodload -i zsh/complist
@@ -98,6 +104,7 @@ if [ -f "$DOTFILES_ZSH/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
 fi
 
 if command -v starship &> /dev/null; then
+    export SPACESHIP_PROMPT_ASYNC=true
     eval "$(starship init zsh)"
 fi
 
@@ -162,8 +169,8 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 if command -v brew &> /dev/null; then
-    export PATH="/opt/homebrew/opt/php@8.3/bin:$PATH"
-    export PATH="/opt/homebrew/opt/php@8.3/sbin:$PATH"
+    export PATH="/opt/homebrew/opt/php@8.2/bin:$PATH"
+    export PATH="/opt/homebrew/opt/php@8.2/sbin:$PATH"
     export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
     export PATH="/opt/homebrew/lib/ruby/gems/3.4.0/bin:$PATH"
 fi
@@ -192,3 +199,25 @@ export COMPOSE_BAKE=true
 export COMPOSE_MENU=false
 
 export PATH="/opt/homebrew/opt/mysql-client@8.4/bin:$PATH"
+
+# dune
+source $HOME/.local/share/dune/env/env.zsh
+export PATH=$PATH:$HOME/.npm/packages/bin
+
+if command -v ollama > /dev/null; then
+ export OLLAMA_NUM_PARALLEL=10
+fi
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/pomba/.lmstudio/bin"
+# End of LM Studio CLI section
+
+
+# Added by Antigravity
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+
+export PATH=$HOME/Library/Android/sdk/cmdline-tools/bin:$PATH
+
+export PATH=$HOME/.composer/vendor/bin:$PATH
+
+

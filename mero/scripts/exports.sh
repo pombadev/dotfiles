@@ -103,7 +103,11 @@ fi
 
 export PATH="$__PATH__:$PATH"
 
-export EDITOR=nvim
+if command -v nvim &>/dev/null; then
+    export EDITOR=nvim
+else
+    export EDITOR=nano
+fi
 
 # pnpm
 export PNPM_HOME="/home/pjmp/.local/share/pnpm"

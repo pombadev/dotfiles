@@ -12,7 +12,11 @@ font-feature = -dlig
 
 clipboard-paste-protection = false
 
-# window-decoration = false
+window-decoration = true
 
 # link-url=
-# keybind = global:cmd+grave_accent=toggle_visibility
+keybind = global:cmd+digit_2=toggle_quick_terminal
+
+#background-blur = true
+split-divider-color = #FFFFFF
+macos-titlebar-style = tabs

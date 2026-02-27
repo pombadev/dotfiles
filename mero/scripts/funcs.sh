@@ -152,7 +152,7 @@ fkill() {
                 --prompt='⚙ ' \
                 --reverse \
                 --multi \
-                --preview 'echo {} | column -t | cut -d\  -f 3 | xargs --no-run-if-empty pstree -h ' |
+                --preview 'echo {} | column -t | cut -d\  -f 3 | xargs --no-run-if-empty pstree -p ' |
             awk '{print $2}'
     )
 
