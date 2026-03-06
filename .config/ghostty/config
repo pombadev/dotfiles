@@ -1,5 +1,4 @@
 background-opacity = 0.8
-gtk-titlebar = false
 #font-size = 10
 background = #000000
 theme = Wez
@@ -12,11 +11,17 @@ font-feature = -dlig
 
 clipboard-paste-protection = false
 
-window-decoration = true
+window-decoration = auto
 
-# link-url=
-keybind = global:cmd+digit_2=toggle_quick_terminal
+keybind = ctrl+shift+down=new_split:down
+keybind = ctrl+shift+up=new_split:up
+keybind = ctrl+shift+left=new_split:left
+keybind = ctrl+shift+right=new_split:right
 
 #background-blur = true
 split-divider-color = #FFFFFF
 macos-titlebar-style = tabs
+# scrollbar = system
+
+window-save-state = always
+

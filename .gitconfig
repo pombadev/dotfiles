@@ -7,6 +7,7 @@
 [user]
 	name = pombadev
 	email = 11157420+pombadev@users.noreply.github.com
+	signingkey = /home/pomba/.ssh/id_ed25519.pub
 
 [credential]
 	credentialStore = keychain
@@ -15,19 +16,18 @@
 [credential "https://dev.azure.com"]
 	useHttpPath = true
 
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path =
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
 [credential "https://github.com"]
 	helper =
-	helper = !/opt/homebrew/bin/gh auth git-credential
+	helper = !gh auth git-credential
+
 [credential "https://gist.github.com"]
 	helper =
-	helper = !/opt/homebrew/bin/gh auth git-credential
+	helper = !gh auth git-credential
 
 ; note: put this at the end so that the config can be overwritten
 [includeIf "gitdir/i:~/Work/"]
 	path = ~/Work/.gitconfig
+[gpg]
+	format = ssh
+[commit]
+	gpgsign = true
