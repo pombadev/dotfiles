@@ -201,7 +201,7 @@ export COMPOSE_MENU=false
 export PATH="/opt/homebrew/opt/mysql-client@8.4/bin:$PATH"
 
 # dune
-source $HOME/.local/share/dune/env/env.zsh
+#source $HOME/.local/share/dune/env/env.zsh
 export PATH=$PATH:$HOME/.npm/packages/bin
 
 if command -v ollama > /dev/null; then
@@ -221,3 +221,9 @@ export PATH=$HOME/Library/Android/sdk/cmdline-tools/bin:$PATH
 export PATH=$HOME/.composer/vendor/bin:$PATH
 
 
+
+# proto
+export PROTO_HOME="$HOME/.proto";
+export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
+
+#export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
