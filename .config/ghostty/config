@@ -21,7 +21,10 @@ keybind = ctrl+shift+right=new_split:right
 #background-blur = true
 split-divider-color = #FFFFFF
 macos-titlebar-style = tabs
-# scrollbar = system
-
+scrollbar = system
+scrollback-limit = 999999999999999999
 window-save-state = always
 
+cursor-style = underline
+cursor-style-blink = true
+shell-integration-features = no-cursor
