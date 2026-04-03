@@ -71,8 +71,10 @@ autoload -Uz promptinit && promptinit
 # faux autocomplete menu
 # setopt menucomplete
 
-export PATH="/opt/homebrew/bin:$PATH"
-export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+if [ -d "/opt/homebrew" ]; then
+    export PATH="/opt/homebrew/bin:$PATH"
+    export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+fi
 
 DOTFILES_SRC=$(dirname "${(%):-%x}")
 DOTFILES_ROOT=$DOTFILES_SRC/mero
@@ -162,7 +164,7 @@ fi
 # alias which='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot $@'
 
 # bun completions
-[ -s "/home/pjmp/.bun/_bun" ] && source "/home/pjmp/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -173,32 +175,36 @@ if command -v brew &> /dev/null; then
     export PATH="/opt/homebrew/opt/php@8.2/sbin:$PATH"
     export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
     export PATH="/opt/homebrew/lib/ruby/gems/3.4.0/bin:$PATH"
+    export PATH="/opt/homebrew/opt/mysql-client@8.4/bin:$PATH"
 fi
 
-# for mac
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/platform-tools
-
-# fnm
-FNM_PATH="$HOME/Library/Application Support/fnm"
-if [ -d "$FNM_PATH" ]; then
-  export PATH="$HOME/Library/Application Support/fnm:$PATH"
-  eval "`fnm env`"
+# mac only
+if [[ "$(uname)" == "Darwin" ]]; then
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+    export ANDROID_HOME=$HOME/Library/Android/sdk
+    export PATH=$PATH:$ANDROID_HOME/emulator
+    export PATH=$PATH:$ANDROID_HOME/platform-tools
 fi
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/pomba/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
-# End of Docker CLI completions
+
+# fnm on mac (Library/Application Support location)
+if [[ "$(uname)" == "Darwin" ]]; then
+    FNM_PATH="$HOME/Library/Application Support/fnm"
+    if [ -d "$FNM_PATH" ]; then
+      export PATH="$HOME/Library/Application Support/fnm:$PATH"
+      eval "$(fnm env)"
+    fi
+fi
+# Docker Desktop CLI completions (mac only)
+if [[ "$(uname)" == "Darwin" ]] && [ -d "$HOME/.docker/completions" ]; then
+    fpath=("$HOME/.docker/completions" $fpath)
+    autoload -Uz compinit
+    compinit
+fi
 
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 export COMPOSE_BAKE=true
 export COMPOSE_MENU=false
-
-export PATH="/opt/homebrew/opt/mysql-client@8.4/bin:$PATH"
 
 # dune
 #source $HOME/.local/share/dune/env/env.zsh
@@ -209,14 +215,16 @@ if command -v ollama > /dev/null; then
 fi
 
 # Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/pomba/.lmstudio/bin"
+export PATH="$PATH:$HOME/.lmstudio/bin"
 # End of LM Studio CLI section
 
 
 # Added by Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
-export PATH=$HOME/Library/Android/sdk/cmdline-tools/bin:$PATH
+if [[ "$(uname)" == "Darwin" ]]; then
+    export PATH=$HOME/Library/Android/sdk/cmdline-tools/bin:$PATH
+fi
 
 export PATH=$HOME/.composer/vendor/bin:$PATH
 
