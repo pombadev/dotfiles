@@ -57,16 +57,24 @@ fi
 # needs to be in the end of the file
 [[ ${BLE_VERSION-} ]] && ble-attach
 
-eval "$(fnm env --use-on-cd)"
+if command -v fnm &>/dev/null; then
+    eval "$(fnm env --use-on-cd)"
+fi
 
-. "$HOME/.cargo/env"
+if [ -f "$HOME/.cargo/env" ]; then
+    . "$HOME/.cargo/env"
+fi
 
-. "$HOME/.asdf/asdf.sh"
+if [ -f "$HOME/.asdf/asdf.sh" ]; then
+    . "$HOME/.asdf/asdf.sh"
+fi
 
-source /home/pjmp/.config/broot/launcher/bash/br
+if [ -f "$HOME/.config/broot/launcher/bash/br" ]; then
+    source "$HOME/.config/broot/launcher/bash/br"
+fi
 
 # Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/pomba/.lmstudio/bin"
+export PATH="$PATH:$HOME/.lmstudio/bin"
 # End of LM Studio CLI section
 
 
