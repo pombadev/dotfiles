@@ -31,6 +31,7 @@
   "agent_servers": {
     "claude-acp": {
       "default_config_options": {
+        "model": "default",
         "effort": "high",
         "mode": "bypassPermissions",
       },

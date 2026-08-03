@@ -1,10 +1,3 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-# fi
-
 # shellcheck disable=SC1090
 
 # History command configuration
@@ -52,7 +45,28 @@ setopt nobeep
 # If a new command is a duplicate, remove the older one
 setopt histignorealldups
 
+DOTFILES_SRC=$(dirname "${(%):-%x}")
+DOTFILES_ROOT=$DOTFILES_SRC/mero
+DOTFILES_ZSH=$DOTFILES_SRC/mero/zsh
+
 # required for completions
+fpath+=("$DOTFILES_ZSH/zfunc")
+
+if [ -d "$DOTFILES_ZSH/zsh-completions" ]; then
+    # $fpath cant be quoted
+    # shellcheck disable=SC2206
+    fpath=("$DOTFILES_ZSH/zsh-completions/src" $fpath)
+fi
+
+if command -v asdf &>/dev/null; then
+    export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+    fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
+fi
+
+if [[ "$(uname)" == "Darwin" ]] && [ -d "$HOME/.docker/completions" ]; then
+    fpath=("$HOME/.docker/completions" $fpath)
+fi
+
 autoload -Uz compinit
 if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)" ]; then
     compinit
@@ -62,27 +76,6 @@ fi
 
 # required for prompts
 autoload -Uz promptinit && promptinit
-
-
-# not good enough
-# zmodload -i zsh/complist
-# source /tmp/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-
-# faux autocomplete menu
-# setopt menucomplete
-
-if [ -d "/opt/homebrew" ]; then
-    export PATH="/opt/homebrew/bin:$PATH"
-    export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
-fi
-
-DOTFILES_SRC=$(dirname "${(%):-%x}")
-DOTFILES_ROOT=$DOTFILES_SRC/mero
-DOTFILES_ZSH=$DOTFILES_SRC/mero/zsh
-
-fpath+=$DOTFILES_ZSH/zfunc
-
-# source "$DOTFILES_ROOT/init.sh"
 
 # source my specific stuffs
 source "$DOTFILES_ROOT/scripts/exports.sh"
@@ -110,25 +103,6 @@ if command -v starship &> /dev/null; then
     eval "$(starship init zsh)"
 fi
 
-if [ -d "$DOTFILES_ZSH/zsh-completions" ]; then
-    # $fpath cant cant be quoted
-    # shellcheck disable=SC2206
-    fpath=("$DOTFILES_ZSH/zsh-completions/src" $fpath)
-    # re-init completions
-    compinit
-fi
-
-if command -v asdf &> /dev/null; then
-    export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
-
-    # append completions to fpath
-    fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
-    # initialise completions with ZSH's compinit
-    autoload -Uz compinit && compinit
-fi
-
-# unset DOTFILES_ROOT
-
 if command -v fzf &> /dev/null; then
     ctrl-r-widget() {
         # setting BUFFER will update line editor's buffer
@@ -142,10 +116,6 @@ if command -v fzf &> /dev/null; then
     bindkey '^R' ctrl-r-widget
 fi
 
-if command -v fnm &> /dev/null; then
-    eval "$(fnm env --use-on-cd)"
-fi
-
 if command -v opam &> /dev/null; then
     eval "$(opam env)"
 fi
@@ -154,97 +124,5 @@ if command -v direnv &> /dev/null; then
     eval "$(direnv hook zsh)"
 fi
 
-if [ -d ~/.local/pkgman ]; then
-    PKGMAN_PATH="$(find ~/.local/pkgman -type f -executable -exec sh -c 'dirname $1 | tr "\n" ":"' shell {} \;)"
-
-    export PATH="$PATH:$PKGMAN_PATH"
-fi
-
-# doesnt work on mac
-# alias which='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot $@'
-
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-if command -v brew &> /dev/null; then
-    export PATH="/opt/homebrew/opt/php@8.2/bin:$PATH"
-    export PATH="/opt/homebrew/opt/php@8.2/sbin:$PATH"
-    export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
-    export PATH="/opt/homebrew/lib/ruby/gems/3.4.0/bin:$PATH"
-    export PATH="/opt/homebrew/opt/mysql-client@8.4/bin:$PATH"
-fi
-
-# mac only
-if [[ "$(uname)" == "Darwin" ]]; then
-    export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
-    export ANDROID_HOME=$HOME/Library/Android/sdk
-    export PATH=$PATH:$ANDROID_HOME/emulator
-    export PATH=$PATH:$ANDROID_HOME/platform-tools
-fi
-
-# fnm on mac (Library/Application Support location)
-if [[ "$(uname)" == "Darwin" ]]; then
-    FNM_PATH="$HOME/Library/Application Support/fnm"
-    if [ -d "$FNM_PATH" ]; then
-      export PATH="$HOME/Library/Application Support/fnm:$PATH"
-      eval "$(fnm env)"
-    fi
-fi
-# Docker Desktop CLI completions (mac only)
-if [[ "$(uname)" == "Darwin" ]] && [ -d "$HOME/.docker/completions" ]; then
-    fpath=("$HOME/.docker/completions" $fpath)
-    autoload -Uz compinit
-    compinit
-fi
-
-#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-export COMPOSE_BAKE=true
-export COMPOSE_MENU=false
-
-# dune
-#source $HOME/.local/share/dune/env/env.zsh
-export PATH=$PATH:$HOME/.npm/packages/bin
-
-if command -v ollama > /dev/null; then
- export OLLAMA_NUM_PARALLEL=$(nproc)
-fi
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:$HOME/.lmstudio/bin"
-# End of LM Studio CLI section
-
-
-# Added by Antigravity
-export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-
-if [[ "$(uname)" == "Darwin" ]]; then
-    export PATH=$HOME/Library/Android/sdk/cmdline-tools/bin:$PATH
-fi
-
-export PATH=$HOME/.composer/vendor/bin:$PATH
-
-
-# proto
-export PROTO_HOME="$HOME/.proto";
-export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
-
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
-
-export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
-
-
-# Added by Antigravity CLI installer
-export PATH="/home/pomba/.local/bin:$PATH"
-
-export EGET_BIN="$HOME/.local/bin"
-
-
-# >>> croft zoxide (managed) >>>
-export PATH="$HOME/.local/bin:$PATH"
-eval "$(zoxide init zsh --cmd j)"
-# <<< croft zoxide (managed) <<<

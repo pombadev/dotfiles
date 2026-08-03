@@ -57,10 +57,6 @@ fi
 # needs to be in the end of the file
 [[ ${BLE_VERSION-} ]] && ble-attach
 
-if command -v fnm &>/dev/null; then
-    eval "$(fnm env --use-on-cd)"
-fi
-
 if [ -f "$HOME/.cargo/env" ]; then
     . "$HOME/.cargo/env"
 fi
@@ -72,11 +68,6 @@ fi
 if [ -f "$HOME/.config/broot/launcher/bash/br" ]; then
     source "$HOME/.config/broot/launcher/bash/br"
 fi
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:$HOME/.lmstudio/bin"
-# End of LM Studio CLI section
-
 
 # proto
 export PROTO_HOME="$HOME/.proto";

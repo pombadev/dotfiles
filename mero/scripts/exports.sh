@@ -3,15 +3,7 @@
 declare __PATH__
 
 __PATH__+=":$HOME/.local/bin"
-
-# allow packages downgrade
-# if [[ $(grep -P '^ID=' /etc/os-release) == *manjaro ]]; then
-#     export DOWNGRADE_FROM_ALA=1
-# fi
-
-if command -v difft &>/dev/null; then
-    export GIT_EXTERNAL_DIFF=difft
-fi
+__PATH__+=":$DOTFILES_ROOT/bin"
 
 # nodejs
 if command -v node &>/dev/null; then
@@ -101,6 +93,41 @@ if command -v go &>/dev/null; then
     unset GO_PATH
 fi
 
+# macOS-only paths
+if [[ "$(uname)" == "Darwin" ]]; then
+    if [ -d "/opt/homebrew" ]; then
+        __PATH__+=":/opt/homebrew/bin"
+        __PATH__+=":/opt/homebrew/opt/coreutils/libexec/gnubin"
+    fi
+
+    if command -v brew &>/dev/null; then
+        __PATH__+=":/opt/homebrew/opt/php@8.2/bin"
+        __PATH__+=":/opt/homebrew/opt/php@8.2/sbin"
+        __PATH__+=":/opt/homebrew/opt/ruby/bin"
+        __PATH__+=":/opt/homebrew/lib/ruby/gems/3.4.0/bin"
+        __PATH__+=":/opt/homebrew/opt/mysql-client@8.4/bin"
+    fi
+
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+    export ANDROID_HOME="$HOME/Library/Android/sdk"
+    __PATH__+=":$ANDROID_HOME/emulator"
+    __PATH__+=":$ANDROID_HOME/platform-tools"
+    __PATH__+=":$ANDROID_HOME/cmdline-tools/bin"
+
+    FNM_MAC_PATH="$HOME/Library/Application Support/fnm"
+    if [ -d "$FNM_MAC_PATH" ]; then
+        __PATH__+=":$FNM_MAC_PATH"
+    fi
+    unset FNM_MAC_PATH
+fi
+
+# executables dropped anywhere under ~/.local/pkgman
+if [ -d "$HOME/.local/pkgman" ]; then
+    PKGMAN_PATH="$(find "$HOME/.local/pkgman" -type f -executable -exec sh -c 'dirname "$1" | tr "\n" ":"' shell {} \;)"
+    __PATH__+=":${PKGMAN_PATH%:}"
+    unset PKGMAN_PATH
+fi
+
 export PATH="$__PATH__:$PATH"
 
 if command -v nvim &>/dev/null; then
@@ -116,3 +143,33 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# proto
+export PROTO_HOME="$HOME/.proto"
+export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH"
+
+export PATH="$HOME/.composer/vendor/bin:$PATH"
+
+export COMPOSE_BAKE=true
+export COMPOSE_MENU=false
+
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+
+export EGET_BIN="$HOME/.local/bin"
+
+if command -v ollama &>/dev/null; then
+    export OLLAMA_NUM_PARALLEL=$(nproc)
+fi
+
+# LM Studio CLI (lms)
+export PATH="$PATH:$HOME/.lmstudio/bin"
+
+if command -v fnm &>/dev/null; then
+    eval "$(fnm env --use-on-cd)"
+fi
