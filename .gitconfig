@@ -9,23 +9,33 @@
 	email = 11157420+pombadev@users.noreply.github.com
 	signingkey = ~/.ssh/id_ed25519.pub
 
-[credential]
-	credentialStore = keychain
-	helper = manager
+# [credential]
+# 	credentialStore = gpg
+# 	helper = manager
 
-[credential "https://dev.azure.com"]
-	useHttpPath = true
+# [credential "https://dev.azure.com"]
+# 	useHttpPath = true
 
 [credential "https://github.com"]
-	helper = !gh auth git-credential
+	helper = 
+	helper = !/home/pomba/.proto/tools/gh/2.87.3/gh_2.87.3_linux_amd64/bin/gh auth git-credential
 
 [credential "https://gist.github.com"]
-	helper = !gh auth git-credential
+	helper = 
+	helper = !/home/pomba/.proto/tools/gh/2.87.3/gh_2.87.3_linux_amd64/bin/gh auth git-credential
 
 ; note: put this at the end so that the config can be overwritten
 [includeIf "gitdir/i:~/Work/"]
 	path = ~/Work/.gitconfig
+
 [gpg]
 	format = ssh
+
 [commit]
 	gpgsign = true
+[core]
+	attributesfile = ~/.gitattributes
+# [alias]
+# 	diff-image = "!f() { cd -- \"${GIT_PREFIX:-.}\"; GIT_DIFF_IMAGE_ENABLED=1 git diff \"$@\"; }; f"
+# [diff "image"]
+# 	command = ~/.local/git-diff-image/git_diff_image

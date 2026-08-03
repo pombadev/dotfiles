@@ -1,7 +1,7 @@
 [
   {
     "bindings": {
-      "cmd-\\": "workspace::ToggleLeftDock",
+      "ctrl-\\": "workspace::ToggleLeftDock",
       "ctrl-m": "outline::Toggle",
       "cmd-y": "editor::Redo",
       "ctrl-up": "editor::MoveLineUp",
@@ -15,36 +15,66 @@
       "ctrl-tab": "pane::ActivateNextItem",
       "ctrl-shift-tab": "pane::ActivatePreviousItem",
       "ctrl-shift-x": "pane::TogglePinTab",
-      "ctrl-alt-2": "pane::SplitRight"
-    }
+      "ctrl-alt-2": "pane::SplitRight",
+      "ctrl-|": "multi_workspace::ToggleWorkspaceSidebar",
+    },
   },
   {
     "bindings": {
-      "ctrl-1": "workspace::ToggleBottomDock"
+      "ctrl-1": "workspace::ToggleBottomDock",
+    },
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-\\": null,
+    },
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-\\": null,
+    },
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-k cmd-b": null,
+    },
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-b": null,
+    },
+  },
+  {
+    "bindings": {
+      "ctrl-~": "terminal_panel::Toggle",
+    },
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "ctrl-`": "terminal_panel::Toggle",
+    },
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-|": "editor::MoveToEnclosingBracket"
     }
   },
   {
     "context": "Editor",
     "bindings": {
-      "cmd-\\": null
+      "ctrl-shift-d": "editor::DuplicateLineDown"
     }
   },
   {
     "context": "Editor",
-    "bindings": {
-      "cmd-\\": null
-    }
-  },
-  {
-    "context": "Workspace",
-    "bindings": {
-      "cmd-k cmd-b": null
-    }
-  },
-  {
-    "context": "Workspace",
-    "bindings": {
-      "cmd-b": null
+    "unbind": {
+      "ctrl-alt-shift-down": "editor::DuplicateLineDown"
     }
   }
 ]

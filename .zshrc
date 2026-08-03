@@ -205,7 +205,7 @@ export PATH="/opt/homebrew/opt/mysql-client@8.4/bin:$PATH"
 export PATH=$PATH:$HOME/.npm/packages/bin
 
 if command -v ollama > /dev/null; then
- export OLLAMA_NUM_PARALLEL=10
+ export OLLAMA_NUM_PARALLEL=$(nproc)
 fi
 
 # Added by LM Studio CLI (lms)
@@ -221,9 +221,22 @@ export PATH=$HOME/Library/Android/sdk/cmdline-tools/bin:$PATH
 export PATH=$HOME/.composer/vendor/bin:$PATH
 
 
-
 # proto
 export PROTO_HOME="$HOME/.proto";
 export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
 
-#export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+
+export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/pomba/.local/bin:$PATH"
+
+export EGET_BIN="$HOME/.local/bin"
+
+
+# >>> croft zoxide (managed) >>>
+export PATH="$HOME/.local/bin:$PATH"
+eval "$(zoxide init zsh --cmd j)"
+# <<< croft zoxide (managed) <<<
