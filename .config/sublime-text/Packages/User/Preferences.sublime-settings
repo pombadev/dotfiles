@@ -1,10 +1,11 @@
 {
 	"ignored_packages":
 	[
+		"0_package_control_loader",
 		"Vintage",
 	],
-	"theme": "Adaptive.sublime-theme",
-	"color_scheme": "auto",
+	"theme": "Default Dark.sublime-theme",
+	"color_scheme": "Mariana.sublime-color-scheme",
 	"index_files": true,
 	"dark_color_scheme": "Mariana.sublime-color-scheme",
 	"light_color_scheme": "Breakers.sublime-color-scheme",

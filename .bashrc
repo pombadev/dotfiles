@@ -74,3 +74,7 @@ export PATH="$PATH:/Users/pomba/.lmstudio/bin"
 export PROTO_HOME="$HOME/.proto";
 export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
 
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/pomba/.local/bin:$PATH"

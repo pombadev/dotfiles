@@ -7,6 +7,66 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "diff_view_style": "split",
+  "cli_default_open_behavior": "existing_window",
+  "hide_mouse": "never",
+  "outline_panel": {
+    "dock": "left",
+  },
+  "collaboration_panel": {
+    "dock": "right",
+  },
+  "git_panel": {
+    "dock": "left",
+  },
+  "context_servers": {
+    "postgres-context-server": {
+      "enabled": true,
+      "remote": false,
+      "settings": {
+        "database_url": "postgresql://myuser:mypassword@localhost:5432/mydatabase",
+      },
+    },
+  },
+  "agent_servers": {
+    "claude-acp": {
+      "default_config_options": {
+        "effort": "high",
+        "mode": "bypassPermissions",
+      },
+      "type": "registry",
+    },
+    "opencode": {
+      "type": "registry",
+    },
+    "github-copilot-cli": {
+      "favorite_config_option_values": {
+        "reasoning_effort": ["high"],
+      },
+      "default_config_options": {
+        "allow_all": "on",
+        "model": "auto",
+        "reasoning_effort": "xhigh",
+      },
+      "type": "registry",
+    },
+    "gemini": {
+      "type": "registry",
+    },
+  },
+  "git": {
+    "inline_blame": {
+      "enabled": true,
+    },
+  },
+  "sticky_scroll": {
+    "enabled": false,
+  },
+  "minimap": {
+    "show": "never",
+    "thumb": "always",
+  },
+  "buffer_font_fallbacks": ["Droid Sans Mono", "monospace"],
   "centered_layout": {
     "right_padding": 0.2,
     "left_padding": 0.2,
@@ -22,15 +82,15 @@
     "enabled": true,
   },
   "text_rendering_mode": "platform_default",
-  "buffer_line_height": "standard",
+  "buffer_line_height": "comfortable",
   "colorize_brackets": false,
   "when_closing_with_no_tabs": "keep_window_open",
   "use_system_window_tabs": false,
   "bottom_dock_layout": "contained",
   "title_bar": {
+    "show_branch_status_icon": true,
     "show_sign_in": true,
     "show_menus": true,
-    "show_branch_icon": true,
   },
   "terminal": {
     "dock": "bottom",
@@ -47,6 +107,7 @@
     "active_language_button": true,
   },
   "project_panel": {
+    "dock": "left",
     "hide_root": true,
     "entry_spacing": "standard",
     "auto_reveal_entries": true,
@@ -68,6 +129,7 @@
   "use_system_prompts": false,
   "use_system_path_prompts": false,
   "edit_predictions": {
+    "provider": "zed",
     "mode": "eager",
     "copilot": {
       "proxy": null,
@@ -80,11 +142,11 @@
     "calt": false,
   },
   "ui_font_family": "FiraCode Nerd Font Mono",
-  "buffer_font_family": "FiraCode Nerd Font Mono",
+  "buffer_font_family": "Monaspace Argon NF",
   "icon_theme": {
-    "mode": "system",
-    "light": "Zed (Default)",
-    "dark": "Clean VSCode Icon Theme",
+    "mode": "dark",
+    "light": "VSCode Icons for Zed (Dark)",
+    "dark": "VSCode Icons for Zed (Dark)",
   },
   "vim_mode": false,
   "telemetry": {
@@ -96,6 +158,8 @@
   //   "edit_prediction_provider": "zed"
   // },
   "agent": {
+    "dock": "right",
+    "show_turn_stats": true,
     "tool_permissions": {
       "default": "allow",
     },
@@ -103,23 +167,25 @@
     "enable_feedback": false,
     "default_profile": "write",
     "default_model": {
-      "provider": "openai",
-      "model": "gpt-5.2-codex",
+      "effort": "max",
+      "enable_thinking": true,
+      "provider": "zed.dev",
+      "model": "claude-sonnet-4-6",
     },
     "commit_message_model": {
-      "provider": "openai",
-      "model": "gpt-5",
+      "provider": "zed.dev",
+      "model": "claude-sonnet-4-6",
     },
   },
   "scrollbar": {
     "show": "system",
   },
-  "base_keymap": "SublimeText",
+  "base_keymap": "VSCode",
   "auto_update": false,
   "theme": {
-    "mode": "system",
+    "mode": "dark",
     "light": "One Light",
-    "dark": "One Dark Pro",
+    "dark": "One Dark Pro Vivid",
   },
   "ui_font_size": 14,
   "buffer_font_size": 14,
@@ -140,12 +206,28 @@
   },
   "soft_wrap": "editor_width",
   "file_types": {
+    "toml": [".prototools"],
     "FSharp": ["*.fsx"],
     "JavaScript": ["*.mjsx"],
     "Blade": ["*.blade.php"],
     "ini": [".npmrc"],
   },
   "lsp": {
+    "vtsls": {
+      "settings": {
+        "typescript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always",
+          },
+        },
+        "javascript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always",
+          },
+        },
+      },
+      "enable_lsp_tasks": true,
+    },
     "cargotom": {
       "initialization_options": {
         "offline": false,
@@ -170,16 +252,24 @@
     },
     "yaml-language-server": {
       "settings": {
-        "schemas": {
-          "https://api.bitbucket.org/schemas/pipelines-configuration": [
-            "/bitbucket-pipelines.yml",
-          ],
+        "yaml": {
+          "schemas": {
+            "https://raw.githubusercontent.com/moonrepo/moon/refs/heads/master/website/static/schemas/v2/project.json": "moon.yml",
+            // ".moon/cache/schemas/extensions.json": "moon.yml",
+            // ".moon/cache/schemas/tasks.json": "moon.yml",
+            // ".moon/cache/schemas/template-frontmatter.json": "moon.yml",
+            // ".moon/cache/schemas/template.json": "moon.yml",
+            // ".moon/cache/schemas/toolchains.json": "moon.yml",
+            // ".moon/cache/schemas/workspace.json": "moon.yml",
+            // ".moon/cache/schemas/project.json": "moon.yml",
+          },
         },
       },
     },
   },
   "languages": {
     "Go": {
+      "show_whitespaces": "all",
       "language_servers": ["gopls", "golangci-lint"],
     },
     // "Caddyfile": {
@@ -191,6 +281,7 @@
     //   }
     // },
     "Dune": {
+      "show_whitespaces": "all",
       "formatter": {
         "external": {
           "command": "dune",
@@ -199,4 +290,10 @@
       },
     },
   },
+  "language_servers": [
+    "!eslint",
+    "!vtsls",
+    "!typescript-language-server",
+    "...",
+  ],
 }
