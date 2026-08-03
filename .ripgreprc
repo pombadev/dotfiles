@@ -1,0 +1,8 @@
+--hidden
+
+# js
+--type-add
+js:*.{js,jsx,mjs,cjs}*
+
+
+--ignore-vcs
