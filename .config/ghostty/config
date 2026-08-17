@@ -17,7 +17,7 @@ keybind = ctrl+shift+down=new_split:down
 keybind = ctrl+shift+up=new_split:up
 keybind = ctrl+shift+left=new_split:left
 keybind = ctrl+shift+right=new_split:right
-#keybind = ctrl+`=toggle_quick_terminal
+keybind = global:super+e=toggle_quick_terminal
 
 #background-blur = true
 split-divider-color = #FFFFFF

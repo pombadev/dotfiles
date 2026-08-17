@@ -1,0 +1,314 @@
+#!/usr/bin/env python3
+"""niriquake — quake/drop-down mode for any app under the niri compositor.
+
+Zero dependencies beyond Python 3.8+ stdlib. Talks to $NIRI_SOCKET directly
+(niri's JSON IPC is stability-guaranteed; `niri msg` text output is not).
+
+How it works:
+  * toggle: if no window with --app-id exists  -> spawn it, wait for it on the
+            event stream, then float + size + position + focus it.
+            if it exists and is focused        -> stash it on the scratch
+            workspace (focus returns to your previous window).
+            if it exists but is hidden/unfocused -> pull it to the focused
+            workspace, float + size + position + focus it.
+
+Requires a named workspace in your niri config to act as the "scratchpad":
+
+    workspace "quake"
+
+Example binds (niri config.kdl):
+
+    Mod+Grave { spawn "niriquake" "--app-id" "quake.ghostty" "--" "ghostty" "--class=quake.ghostty"; }
+
+Works with any app that lets you set its Wayland app-id (ghostty --class,
+wezterm start --class, foot -a, kitty --class, alacritty --class, ...).
+For apps with a fixed app-id, just pass their real app-id and the command.
+"""
+
+import argparse
+import json
+import os
+import socket
+import subprocess
+import sys
+import time
+
+# --------------------------------------------------------------------------- #
+# IPC plumbing
+# --------------------------------------------------------------------------- #
+
+def sock_path():
+    p = os.environ.get("NIRI_SOCKET")
+    if not p:
+        sys.exit("niriquake: $NIRI_SOCKET is not set — are you running inside a niri session?")
+    return p
+
+
+def request(req, verbose=False):
+    """Send one JSON request, return the parsed reply. Raises RuntimeError on Err."""
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+        s.connect(sock_path())
+        payload = json.dumps(req) + "\n"
+        if verbose:
+            print(f">>> {payload.strip()}", file=sys.stderr)
+        s.sendall(payload.encode())
+        s.shutdown(socket.SHUT_WR)
+        data = b""
+        while True:
+            chunk = s.recv(65536)
+            if not chunk:
+                break
+            data += chunk
+    line = data.decode().strip().splitlines()[0]
+    if verbose:
+        print(f"<<< {line}", file=sys.stderr)
+    reply = json.loads(line)
+    if "Err" in reply:
+        raise RuntimeError(reply["Err"])
+    return reply.get("Ok", {})
+
+
+def action(act, verbose=False):
+    return request({"Action": act}, verbose)
+
+
+# --------------------------------------------------------------------------- #
+# State queries
+# --------------------------------------------------------------------------- #
+
+def get_windows(verbose=False):
+    return request("Windows", verbose)["Windows"]
+
+
+def get_workspaces(verbose=False):
+    return request("Workspaces", verbose)["Workspaces"]
+
+
+def focused_output(verbose=False):
+    return request("FocusedOutput", verbose).get("FocusedOutput")
+
+
+def find_window(app_id, windows):
+    """Exact app-id match; prefers the most recently opened (highest id)."""
+    matches = [w for w in windows if w.get("app_id") == app_id]
+    return max(matches, key=lambda w: w["id"]) if matches else None
+
+
+def focused_workspace(workspaces):
+    for ws in workspaces:
+        if ws.get("is_focused"):
+            return ws
+    return None
+
+
+def workspace_by_name(name, workspaces):
+    for ws in workspaces:
+        if ws.get("name") == name:
+            return ws
+    return None
+
+
+# --------------------------------------------------------------------------- #
+# Geometry
+# --------------------------------------------------------------------------- #
+
+def compute_geometry(args, verbose=False):
+    """Return (w_px, h_px, x_px, y_px) from the focused output's logical size.
+
+    Coordinates are for MoveFloatingWindow, i.e. relative to the working area
+    (below any top bar). Horizontal centering uses the output width, which is
+    correct unless you run a *side* bar — use --x to compensate if so.
+    """
+    out = focused_output(verbose)
+    logical = (out or {}).get("logical") or {}
+    ow = logical.get("width")
+    oh = logical.get("height")
+    if not ow or not oh:
+        return None
+    w = int(ow * args.width)
+    h = int(oh * args.height)
+    x = args.x if args.x is not None else max(0, (ow - w) // 2)
+    y = args.y if args.y is not None else 0
+    return w, h, x, y
+
+
+# --------------------------------------------------------------------------- #
+# Core operations
+# --------------------------------------------------------------------------- #
+
+def apply_layout(win_id, geom, verbose=False):
+    """Float, resize and position the window. Each step is best-effort so a
+    missing action variant on older/newer niri doesn't break the toggle."""
+    steps = []
+    steps.append({"MoveWindowToFloating": {"id": win_id}})
+    if geom:
+        w, h, x, y = geom
+        steps.append({"SetWindowWidth": {"id": win_id, "change": {"SetFixed": w}}})
+        steps.append({"SetWindowHeight": {"id": win_id, "change": {"SetFixed": h}}})
+        steps.append({"MoveFloatingWindow": {"id": win_id,
+                                             "x": {"SetFixed": float(x)},
+                                             "y": {"SetFixed": float(y)}}})
+    for st in steps:
+        try:
+            action(st, verbose)
+        except RuntimeError as e:
+            if verbose:
+                print(f"niriquake: non-fatal: {list(st)[0]}: {e}", file=sys.stderr)
+
+
+def show(win, args):
+    v = args.verbose
+    workspaces = get_workspaces(v)
+    fws = focused_workspace(workspaces)
+    if fws is None:
+        sys.exit("niriquake: could not determine the focused workspace")
+
+    if win["workspace_id"] != fws["id"]:
+        action({"MoveWindowToWorkspace": {
+            "window_id": win["id"],
+            "reference": {"Id": fws["id"]},
+            "focus": True,
+        }}, v)
+
+    apply_layout(win["id"], compute_geometry(args, v), v)
+    action({"FocusWindow": {"id": win["id"]}}, v)
+
+
+def hide(win, args):
+    v = args.verbose
+    workspaces = get_workspaces(v)
+
+    if args.scratch == "last":
+        # Dynamic mode: stash on the trailing empty workspace of the focused
+        # output (niri always keeps one). When the window is summoned back,
+        # that workspace empties and niri removes it automatically — no
+        # dedicated/named workspace ever needs to exist in the config.
+        fws = focused_workspace(workspaces)
+        out = fws.get("output") if fws else None
+        candidates = [ws for ws in workspaces if ws.get("output") == out]
+        if not candidates:
+            candidates = workspaces
+        target = max(candidates, key=lambda ws: ws.get("idx", 0))
+        if target["id"] == win["workspace_id"]:
+            return  # already stashed there
+        reference = {"Id": target["id"]}
+    else:
+        scratch = workspace_by_name(args.scratch, workspaces)
+        if scratch is None:
+            sys.exit(
+                f'niriquake: no workspace named "{args.scratch}".\n'
+                f'Add this line to your niri config (top level):\n\n'
+                f'    workspace "{args.scratch}"\n\n'
+                f'Or use `--scratch last` to stash on the auto-created empty\n'
+                f'workspace at the end instead (no config needed).'
+            )
+        reference = {"Name": args.scratch}
+
+    action({"MoveWindowToWorkspace": {
+        "window_id": win["id"],
+        "reference": reference,
+        "focus": False,          # focus stays on the current workspace
+    }}, v)
+
+
+def spawn_and_wait(args):
+    """Spawn the command and wait on the event stream for its window."""
+    v = args.verbose
+
+    # Subscribe BEFORE spawning so the window can't slip between the two.
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    s.connect(sock_path())
+    s.sendall(b'"EventStream"\n')
+    s.settimeout(args.spawn_timeout)
+    f = s.makefile("r")
+    f.readline()  # {"Ok":{"Handled":null}} handshake
+
+    action({"Spawn": {"command": args.command}}, v)
+
+    deadline = time.monotonic() + args.spawn_timeout
+    try:
+        while time.monotonic() < deadline:
+            line = f.readline()
+            if not line:
+                break
+            ev = json.loads(line)
+            wev = ev.get("WindowOpenedOrChanged")
+            if wev and wev["window"].get("app_id") == args.app_id:
+                return wev["window"]
+    except (socket.timeout, OSError):
+        pass
+    finally:
+        s.close()
+    sys.exit(
+        f"niriquake: spawned `{' '.join(args.command)}` but no window with "
+        f'app-id "{args.app_id}" appeared within {args.spawn_timeout}s.\n'
+        f"Check that the command actually sets that app-id "
+        f"(ghostty --class=..., wezterm start --class ..., foot -a ..., etc.)"
+    )
+
+
+# --------------------------------------------------------------------------- #
+# Entry point
+# --------------------------------------------------------------------------- #
+
+def main():
+    p = argparse.ArgumentParser(
+        prog="niriquake",
+        description="Quake-mode toggle for any app under niri.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog='example:\n  niriquake --app-id quake.ghostty -- ghostty --class=quake.ghostty',
+    )
+    p.add_argument("--app-id", required=True,
+                   help="exact Wayland app-id of the quake window")
+    p.add_argument("command", nargs="*", metavar="-- COMMAND ...",
+                   help="command that launches the app with that app-id")
+    p.add_argument("--scratch", default="quake",
+                   help='named workspace used to stash the window (default: '
+                        '"quake"), or the special value "last" to use the '
+                        'auto-created empty workspace at the end of the '
+                        'focused output (no config needed)')
+    p.add_argument("--width", type=float, default=0.95,
+                   help="width as a fraction of the screen (default: 0.95)")
+    p.add_argument("--height", type=float, default=0.45,
+                   help="height as a fraction of the screen (default: 0.45)")
+    p.add_argument("--x", type=int, default=None,
+                   help="override x position in logical px (default: centered)")
+    p.add_argument("--y", type=int, default=None,
+                   help="override y position in logical px (default: 0, top)")
+    p.add_argument("--mode", choices=["toggle", "show", "hide"], default="toggle")
+    p.add_argument("--spawn-timeout", type=float, default=10.0)
+    p.add_argument("--verbose", action="store_true")
+    args = p.parse_args()
+
+    win = find_window(args.app_id, get_windows(args.verbose))
+
+    if win is None:
+        if args.mode == "hide":
+            return
+        if not args.command:
+            sys.exit("niriquake: window not found and no spawn command given "
+                     "(pass it after `--`)")
+        win = spawn_and_wait(args)
+        # Window opens on the focused workspace; still enforce layout + focus.
+        apply_layout(win["id"], compute_geometry(args, args.verbose), args.verbose)
+        action({"FocusWindow": {"id": win["id"]}}, args.verbose)
+        return
+
+    on_focused_ws = False
+    fws = focused_workspace(get_workspaces(args.verbose))
+    if fws and win["workspace_id"] == fws["id"]:
+        on_focused_ws = True
+
+    if args.mode == "show":
+        show(win, args)
+    elif args.mode == "hide":
+        hide(win, args)
+    else:  # toggle
+        if win.get("is_focused") and on_focused_ws:
+            hide(win, args)
+        else:
+            show(win, args)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,13 @@
+android-studio
+bridge-utils
+claude-desktop
+dankcalendar-bin
+docker-rootless-extras
+fresh-editor
+gitbutler-bin
+google-chrome
+graphify-bin
+nirinit
+packet
+paru
+visual-studio-code-bin

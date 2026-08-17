@@ -1,0 +1,607 @@
+#!/usr/bin/env bash
+
+# archify - capture and reproduce this Arch Linux install.
+#
+# Configs live in the bare dotfiles repo (~/dotfiles, see mero/setup.sh).
+# This handles everything that repo can't: packages, services, /etc, toolchains.
+#
+#   archify save      snapshot the current system into mero/system/
+#   archify diff      show drift between the snapshot and the live system
+#   archify restore   rebuild a machine from the snapshot
+#   archify commit    stage + commit the snapshot into the dotfiles repo
+
+set -euo pipefail
+
+ROOT=${ARCHIFY_ROOT:-$HOME/mero/system}
+DRY_RUN=0
+WITH_ETC=1
+
+# --- output ------------------------------------------------------------------
+
+if [[ -t 1 ]]; then
+    C_RESET=$'\e[0m' C_DIM=$'\e[2m' C_RED=$'\e[31m' C_GREEN=$'\e[32m'
+    C_YELLOW=$'\e[33m' C_BLUE=$'\e[34m' C_BOLD=$'\e[1m'
+else
+    C_RESET='' C_DIM='' C_RED='' C_GREEN='' C_YELLOW='' C_BLUE='' C_BOLD=''
+fi
+
+step() { printf '%s==>%s %s%s%s\n' "$C_BLUE" "$C_RESET" "$C_BOLD" "$*" "$C_RESET"; }
+info() { printf '  %s%s%s\n' "$C_DIM" "$*" "$C_RESET"; }
+warn() { printf '%s warn%s %s\n' "$C_YELLOW" "$C_RESET" "$*" >&2; }
+die() { printf '%serror%s %s\n' "$C_RED" "$C_RESET" "$*" >&2; exit 1; }
+
+# Run a mutating command, or just print it under --dry-run.
+run() {
+    if ((DRY_RUN)); then
+        printf '  %s[dry-run]%s %s\n' "$C_DIM" "$C_RESET" "$*"
+        return 0
+    fi
+    "$@"
+}
+
+# --- /etc capture rules ------------------------------------------------------
+
+# Files matched here are never snapshotted: secrets, caches, generated state,
+# and package-manager leftovers. Extend via mero/system/etc-exclude.txt.
+DEFAULT_ETC_EXCLUDES=(
+    # Machine identity and hardware layout. Restoring these onto different
+    # hardware is at best wrong and at worst unbootable.
+    '/etc/fstab'
+    '/etc/crypttab'
+    '/etc/adjtime'
+    '/etc/mtab'
+    '/etc/machine-id'
+    # The user/group database — never overwrite it wholesale. Groups are
+    # replayed through usermod in restore_identity instead.
+    '/etc/passwd*'
+    '/etc/group*'
+    '/etc/shadow*'
+    '/etc/gshadow*'
+    '/etc/subuid*'
+    '/etc/subgid*'
+    '/etc/shells'
+    # Owned by identity.env, which restores them in the right order.
+    '/etc/hostname'
+    '/etc/locale.conf'
+    '/etc/locale.gen'
+    '/etc/vconsole.conf'
+    '/etc/.pwd.lock'
+    '/etc/.updated'
+    '/etc/ld.so.cache'
+    '/etc/printcap'
+    '/etc/brlapi.key'
+    '/etc/pacman.d/gnupg/*'
+    '/etc/pacman.d/mirrorlist'
+    '/etc/ssl/*'
+    '/etc/ca-certificates/*'
+    '/etc/NetworkManager/system-connections/*'
+    '/etc/ssh/*_key'
+    '/etc/ssh/ssh_host_*'
+    '/etc/cups/subscriptions.conf*'
+    '/etc/cups/printers.conf*'
+    '/etc/udev/hwdb.bin'
+    '/etc/resolv.conf'
+    '*.pacnew'
+    '*.pacsave'
+    '*.pacorig'
+    '*~'
+)
+
+etc_excludes() {
+    printf '%s\n' "${DEFAULT_ETC_EXCLUDES[@]}"
+    [[ -f $ROOT/etc-exclude.txt ]] &&
+        grep -vE '^\s*(#|$)' "$ROOT/etc-exclude.txt" || true
+}
+
+etc_excluded() {
+    local file=$1 pattern
+    while IFS= read -r pattern; do
+        # shellcheck disable=SC2053  # glob match is the point
+        [[ $file == $pattern ]] && return 0
+    done < <(etc_excludes)
+    return 1
+}
+
+# --- save --------------------------------------------------------------------
+
+save_packages() {
+    step "Packages"
+
+    # -n native (in a sync db), -m foreign (AUR/manual). Disjoint sets.
+    # -q names only, -e explicitly installed (deps come back automatically).
+    pacman -Qqen | sort >"$ROOT/pkg-native.txt"
+
+    # *-debug packages are build byproducts, not things you chose to install.
+    pacman -Qqem | grep -v -- '-debug$' | sort >"$ROOT/pkg-aur.txt"
+
+    info "$(wc -l <"$ROOT/pkg-native.txt") native, $(wc -l <"$ROOT/pkg-aur.txt") AUR"
+
+    if command -v flatpak >/dev/null; then
+        flatpak list --app --columns=application,origin 2>/dev/null |
+            sort >"$ROOT/pkg-flatpak.txt" || : >"$ROOT/pkg-flatpak.txt"
+        info "$(wc -l <"$ROOT/pkg-flatpak.txt") flatpak"
+    fi
+}
+
+save_services() {
+    step "Services"
+
+    systemctl list-unit-files --state=enabled --no-legend 2>/dev/null |
+        awk '{print $1}' | sort >"$ROOT/services-system.txt"
+
+    systemctl --user list-unit-files --state=enabled --no-legend 2>/dev/null |
+        awk '{print $1}' | sort >"$ROOT/services-user.txt"
+
+    info "$(wc -l <"$ROOT/services-system.txt") system, $(wc -l <"$ROOT/services-user.txt") user"
+}
+
+save_identity() {
+    step "System identity"
+
+    {
+        echo "# Written by archify save on $(date -Iseconds)"
+        echo "HOSTNAME=$(cat /etc/hostname 2>/dev/null || hostname)"
+        echo "TIMEZONE=$(readlink -f /etc/localtime | sed 's|.*/zoneinfo/||')"
+        echo "LOGIN_SHELL=$(getent passwd "$USER" | cut -d: -f7)"
+        echo "USER_GROUPS=$(id -nG | tr ' ' '\n' | grep -vx "$USER" | paste -sd,)"
+    } >"$ROOT/identity.env"
+
+    cp /etc/locale.conf "$ROOT/locale.conf" 2>/dev/null || true
+    cp /etc/vconsole.conf "$ROOT/vconsole.conf" 2>/dev/null || true
+    grep -vE '^\s*(#|$)' /etc/locale.gen 2>/dev/null >"$ROOT/locale.gen" || true
+
+    info "$(grep -c . <"$ROOT/identity.env") settings"
+}
+
+save_toolchains() {
+    step "Toolchains"
+
+    if command -v rustup >/dev/null; then
+        rustup toolchain list 2>/dev/null | sed 's/ (.*)//' | sort >"$ROOT/tc-rustup.txt" || true
+    fi
+
+    if command -v cargo >/dev/null; then
+        # Package lines are unindented ("ripgrep v14.1.0:"); binaries are indented.
+        cargo install --list 2>/dev/null |
+            grep -E '^[^[:space:]]' | sed 's/ v[0-9].*//' | sort >"$ROOT/tc-cargo.txt" || true
+    fi
+
+    if command -v npm >/dev/null; then
+        # Strip the tree-drawing prefix; keep name@version, scopes included.
+        npm ls -g --depth=0 2>/dev/null | tail -n +2 |
+            sed -E 's/^[│├└─[:space:]]+//' | grep -E '.@.' | sort >"$ROOT/tc-npm.txt" || true
+    fi
+
+    if [[ -d $HOME/.proto/tools ]]; then
+        : >"$ROOT/tc-proto.txt"
+        local tool version
+        for tool in "$HOME"/.proto/tools/*/; do
+            [[ -d $tool ]] || continue
+            for version in "$tool"*/; do
+                [[ -d $version ]] || continue
+                [[ $(basename "$version") == globals ]] && continue
+                echo "$(basename "$tool") $(basename "$version")" >>"$ROOT/tc-proto.txt"
+            done
+        done
+        sort -o "$ROOT/tc-proto.txt" "$ROOT/tc-proto.txt"
+    fi
+
+    local f
+    for f in rustup cargo npm proto; do
+        [[ -s $ROOT/tc-$f.txt ]] && info "$f: $(wc -l <"$ROOT/tc-$f.txt")"
+    done
+    return 0
+}
+
+save_etc() {
+    ((WITH_ETC)) || { info "skipping /etc (--no-etc)"; return 0; }
+
+    step "/etc"
+
+    if ! sudo -n true 2>/dev/null && ! sudo -v; then
+        warn "no sudo — skipping /etc capture"
+        return 0
+    fi
+
+    local staging="$ROOT/etc"
+    rm -rf "$staging"
+    mkdir -p "$staging"
+
+    # Two kinds of /etc file are worth keeping:
+    #   1. unowned  - created by you or a script, no package will ever restore it
+    #   2. MODIFIED - shipped by a package but edited since (pacman backup files)
+    local all_files unowned modified
+    all_files=$(sudo find /etc -type f 2>/dev/null | sort)
+
+    unowned=$(printf '%s\n' "$all_files" | xargs -r pacman -Qqo 2>&1 >/dev/null |
+        sed -n 's/^error: No package owns //p' || true)
+
+    # pacman reports these under "Backup Files", one per line, suffixed
+    # with [modified]; the first line also carries the field label.
+    modified=$(pacman -Qii 2>/dev/null |
+        sed -n 's/^[[:space:]]*\(Backup Files[[:space:]]*:[[:space:]]*\)\?\(\/[^[:space:]].*\) \[modified\]$/\2/p' |
+        sort -u || true)
+
+    local kept=0 skipped=0 file
+    : >"$staging/FILES.txt"
+
+    while IFS= read -r file; do
+        [[ -n $file && -f $file ]] || continue
+        if etc_excluded "$file"; then
+            ((++skipped))
+            continue
+        fi
+        sudo install -Dm"$(stat -c%a "$file")" "$file" "$staging${file#/etc}"
+        sudo chown "$USER:$USER" "$staging${file#/etc}"
+        printf '%s %s %s:%s\n' "$file" "$(stat -c%a "$file")" \
+            "$(stat -c%U "$file")" "$(stat -c%G "$file")" >>"$staging/FILES.txt"
+        ((++kept))
+    done < <(printf '%s\n%s\n' "$unowned" "$modified" | grep . | sort -u)
+
+    # Symlinks (like /etc/localtime) are recreated, not copied.
+    sudo find /etc -type l -printf '%p -> %l\n' 2>/dev/null |
+        sort >"$staging/SYMLINKS.txt" || true
+
+    info "$kept files kept, $skipped excluded"
+}
+
+save_manifest() {
+    cat >"$ROOT/MANIFEST.md" <<EOF
+# System snapshot
+
+Captured $(date -Iseconds) on \`$(cat /etc/hostname 2>/dev/null)\` by \`archify save\`.
+
+| What | Count | File |
+| --- | --- | --- |
+| Native packages | $(wc -l <"$ROOT/pkg-native.txt" 2>/dev/null || echo 0) | \`pkg-native.txt\` |
+| AUR packages | $(wc -l <"$ROOT/pkg-aur.txt" 2>/dev/null || echo 0) | \`pkg-aur.txt\` |
+| Flatpaks | $(wc -l <"$ROOT/pkg-flatpak.txt" 2>/dev/null || echo 0) | \`pkg-flatpak.txt\` |
+| System services | $(wc -l <"$ROOT/services-system.txt" 2>/dev/null || echo 0) | \`services-system.txt\` |
+| User services | $(wc -l <"$ROOT/services-user.txt" 2>/dev/null || echo 0) | \`services-user.txt\` |
+| /etc files | $(grep -c . "$ROOT/etc/FILES.txt" 2>/dev/null || echo 0) | \`etc/\` |
+
+Kernel \`$(uname -r)\`. Configs are restored separately by \`mero/setup.sh -i\`.
+EOF
+}
+
+cmd_save() {
+    mkdir -p "$ROOT"
+    save_packages
+    save_services
+    save_identity
+    save_toolchains
+    save_etc
+    save_manifest
+    step "Saved to $ROOT"
+    info "review with 'archify diff', publish with 'archify commit'"
+}
+
+# --- diff --------------------------------------------------------------------
+
+# Compare a saved list against live output. Prints +added / -removed.
+compare() {
+    local label=$1 saved=$2
+    local live_out
+    live_out=$(cat)
+
+    [[ -f $saved ]] || { warn "$label: no snapshot yet"; return 0; }
+
+    local added removed
+    added=$(comm -13 <(sort "$saved") <(printf '%s\n' "$live_out" | grep . | sort) || true)
+    removed=$(comm -23 <(sort "$saved") <(printf '%s\n' "$live_out" | grep . | sort) || true)
+
+    if [[ -z $added && -z $removed ]]; then
+        printf '  %s%-18s%s in sync\n' "$C_DIM" "$label" "$C_RESET"
+        return 0
+    fi
+
+    printf '  %s%s%s\n' "$C_BOLD" "$label" "$C_RESET"
+    [[ -n $added ]] && sed "s/^/    ${C_GREEN}+${C_RESET} /" <<<"$added"
+    [[ -n $removed ]] && sed "s/^/    ${C_RED}-${C_RESET} /" <<<"$removed"
+    return 0
+}
+
+cmd_diff() {
+    [[ -d $ROOT ]] || die "no snapshot at $ROOT — run 'archify save' first"
+
+    step "Drift since last save"
+    info "+ on the system but not in the snapshot   - in the snapshot but gone"
+    echo
+
+    pacman -Qqen | compare "native packages" "$ROOT/pkg-native.txt"
+    pacman -Qqem | grep -v -- '-debug$' | compare "AUR packages" "$ROOT/pkg-aur.txt"
+
+    if command -v flatpak >/dev/null && [[ -f $ROOT/pkg-flatpak.txt ]]; then
+        flatpak list --app --columns=application,origin 2>/dev/null |
+            compare "flatpaks" "$ROOT/pkg-flatpak.txt"
+    fi
+
+    systemctl list-unit-files --state=enabled --no-legend 2>/dev/null | awk '{print $1}' |
+        compare "system services" "$ROOT/services-system.txt"
+
+    systemctl --user list-unit-files --state=enabled --no-legend 2>/dev/null | awk '{print $1}' |
+        compare "user services" "$ROOT/services-user.txt"
+
+    if command -v npm >/dev/null && [[ -f $ROOT/tc-npm.txt ]]; then
+        npm ls -g --depth=0 2>/dev/null | tail -n +2 |
+            sed -E 's/^[│├└─[:space:]]+//' | grep -E '.@.' |
+            compare "npm globals" "$ROOT/tc-npm.txt"
+    fi
+}
+
+# --- restore -----------------------------------------------------------------
+
+FAILURES=()
+
+need_sudo() {
+    ((DRY_RUN)) && return 0
+    sudo -v || die "restore needs sudo"
+}
+
+restore_paru() {
+    command -v paru >/dev/null && { info "paru already installed"; return 0; }
+    [[ -s $ROOT/pkg-aur.txt ]] || return 0
+
+    step "Bootstrapping paru"
+    run sudo pacman -S --needed --noconfirm base-devel git
+
+    local build
+    build=$(mktemp -d)
+    run git clone --depth 1 https://aur.archlinux.org/paru-bin.git "$build/paru-bin"
+    if ((DRY_RUN)); then
+        info "[dry-run] makepkg -si in $build/paru-bin"
+    else
+        (cd "$build/paru-bin" && makepkg -si --noconfirm)
+    fi
+    rm -rf "$build"
+}
+
+# Install a package list, falling back to one-at-a-time so a single dead
+# package (renamed, dropped from the repos) can't sink the whole run.
+install_list() {
+    local label=$1 file=$2
+    shift 2
+    local -a cmd=("$@")
+
+    [[ -s $file ]] || return 0
+
+    local -a pkgs
+    mapfile -t pkgs < <(grep -vE '^\s*(#|$)' "$file")
+    ((${#pkgs[@]})) || return 0
+
+    step "$label (${#pkgs[@]})"
+
+    if run "${cmd[@]}" "${pkgs[@]}"; then
+        return 0
+    fi
+
+    warn "batch install failed — retrying individually"
+    local pkg
+    for pkg in "${pkgs[@]}"; do
+        run "${cmd[@]}" "$pkg" || { FAILURES+=("$label: $pkg"); warn "failed: $pkg"; }
+    done
+}
+
+restore_packages() {
+    step "Syncing package databases"
+    run sudo pacman -Syu --noconfirm
+
+    install_list "Native packages" "$ROOT/pkg-native.txt" \
+        sudo pacman -S --needed --noconfirm --asexplicit
+
+    restore_paru
+
+    if command -v paru >/dev/null || ((DRY_RUN)); then
+        install_list "AUR packages" "$ROOT/pkg-aur.txt" \
+            paru -S --needed --noconfirm --asexplicit
+    fi
+
+    if [[ -s $ROOT/pkg-flatpak.txt ]] && command -v flatpak >/dev/null; then
+        step "Flatpaks"
+        local app origin
+        while read -r app origin; do
+            [[ -n $app ]] || continue
+            run flatpak install -y "${origin:-flathub}" "$app" ||
+                FAILURES+=("flatpak: $app")
+        done <"$ROOT/pkg-flatpak.txt"
+    fi
+}
+
+restore_services() {
+    local unit
+
+    if [[ -s $ROOT/services-system.txt ]]; then
+        step "System services"
+        while read -r unit; do
+            [[ -n $unit ]] || continue
+            run sudo systemctl enable "$unit" 2>/dev/null ||
+                { warn "could not enable $unit"; FAILURES+=("service: $unit"); }
+        done <"$ROOT/services-system.txt"
+    fi
+
+    if [[ -s $ROOT/services-user.txt ]]; then
+        step "User services"
+        while read -r unit; do
+            [[ -n $unit ]] || continue
+            run systemctl --user enable "$unit" 2>/dev/null ||
+                { warn "could not enable --user $unit"; FAILURES+=("user service: $unit"); }
+        done <"$ROOT/services-user.txt"
+    fi
+}
+
+restore_identity() {
+    [[ -f $ROOT/identity.env ]] || return 0
+    step "System identity"
+
+    # shellcheck disable=SC1090
+    source "$ROOT/identity.env"
+
+    [[ -n ${HOSTNAME:-} ]] && run sudo hostnamectl set-hostname "$HOSTNAME"
+    [[ -n ${TIMEZONE:-} ]] && run sudo timedatectl set-timezone "$TIMEZONE"
+
+    if [[ -n ${USER_GROUPS:-} ]]; then
+        info "groups: $USER_GROUPS"
+        run sudo usermod -aG "$USER_GROUPS" "$USER"
+    fi
+
+    if [[ -n ${LOGIN_SHELL:-} && $LOGIN_SHELL != "$(getent passwd "$USER" | cut -d: -f7)" ]]; then
+        run sudo chsh -s "$LOGIN_SHELL" "$USER"
+    fi
+
+    if [[ -f $ROOT/locale.gen ]]; then
+        run sudo cp "$ROOT/locale.gen" /etc/locale.gen
+        run sudo locale-gen
+    fi
+    [[ -f $ROOT/locale.conf ]] && run sudo cp "$ROOT/locale.conf" /etc/locale.conf
+    [[ -f $ROOT/vconsole.conf ]] && run sudo cp "$ROOT/vconsole.conf" /etc/vconsole.conf
+    return 0
+}
+
+restore_etc() {
+    [[ -f $ROOT/etc/FILES.txt ]] || return 0
+    step "/etc"
+
+    local path mode owner rel
+    while read -r path mode owner; do
+        [[ -n $path ]] || continue
+        rel="$ROOT/etc${path#/etc}"
+        [[ -f $rel ]] || { warn "missing from snapshot: $path"; continue; }
+        run sudo install -Dm"$mode" -o "${owner%%:*}" -g "${owner##*:}" "$rel" "$path"
+    done <"$ROOT/etc/FILES.txt"
+
+    info "review etc/SYMLINKS.txt by hand — symlinks are not auto-restored"
+}
+
+restore_toolchains() {
+    step "Toolchains"
+
+    if [[ -s $ROOT/tc-rustup.txt ]] && command -v rustup >/dev/null; then
+        local tc
+        while read -r tc; do
+            [[ -n $tc ]] || continue
+            run rustup toolchain install "$tc" || FAILURES+=("rustup: $tc")
+        done <"$ROOT/tc-rustup.txt"
+    fi
+
+    if [[ -s $ROOT/tc-cargo.txt ]] && command -v cargo >/dev/null; then
+        local crate
+        while read -r crate; do
+            [[ -n $crate ]] || continue
+            run cargo install "$crate" || FAILURES+=("cargo: $crate")
+        done <"$ROOT/tc-cargo.txt"
+    fi
+
+    if [[ -s $ROOT/tc-npm.txt ]] && command -v npm >/dev/null; then
+        local -a specs
+        mapfile -t specs <"$ROOT/tc-npm.txt"
+        ((${#specs[@]})) && { run npm install -g "${specs[@]}" || FAILURES+=("npm globals"); }
+    fi
+
+    if [[ -s $ROOT/tc-proto.txt ]] && command -v proto >/dev/null; then
+        local tool version
+        while read -r tool version; do
+            [[ -n $tool ]] || continue
+            run proto install "$tool" "$version" || FAILURES+=("proto: $tool@$version")
+        done <"$ROOT/tc-proto.txt"
+    fi
+    return 0
+}
+
+restore_dotfiles() {
+    if [[ -d $HOME/dotfiles ]]; then
+        info "dotfiles repo already present — skipping"
+        return 0
+    fi
+    step "Dotfiles"
+    run bash "$HOME/mero/setup.sh" --install
+}
+
+cmd_restore() {
+    [[ -d $ROOT ]] || die "no snapshot at $ROOT"
+    [[ -f /etc/arch-release ]] || warn "this does not look like Arch Linux"
+    ((DRY_RUN)) && info "dry run — nothing will be changed"
+
+    need_sudo
+    restore_packages
+    restore_identity
+    restore_services
+    restore_etc
+    restore_toolchains
+    restore_dotfiles
+
+    echo
+    if ((${#FAILURES[@]})); then
+        warn "${#FAILURES[@]} item(s) need attention:"
+        printf '    %s\n' "${FAILURES[@]}"
+    else
+        step "Restore complete"
+    fi
+    info "reboot to pick up services, groups, and locale"
+}
+
+# --- commit ------------------------------------------------------------------
+
+cmd_commit() {
+    [[ -d $HOME/dotfiles ]] || die "no bare dotfiles repo at ~/dotfiles"
+    local git=(git --git-dir="$HOME/dotfiles" --work-tree="$HOME")
+
+    "${git[@]}" add -A "$ROOT"
+    if "${git[@]}" diff --cached --quiet; then
+        info "nothing to commit"
+        return 0
+    fi
+
+    "${git[@]}" --no-pager diff --cached --stat
+    "${git[@]}" commit -m "system: snapshot $(date '+%d %b %Y, %I:%M %p %Z')"
+    step "Committed — push with: cmx push"
+}
+
+# --- entry -------------------------------------------------------------------
+
+usage() {
+    cat <<'EOF'
+archify — capture and reproduce this Arch Linux install
+
+usage: archify <command> [options]
+
+commands:
+  save        snapshot packages, services, /etc, and toolchains
+  diff        show what changed since the last snapshot
+  restore     rebuild a machine from the snapshot
+  commit      stage and commit the snapshot into the dotfiles repo
+
+options:
+  -n, --dry-run   print what restore would do, change nothing
+      --no-etc    skip /etc during save (avoids the sudo prompt)
+  -h, --help      this
+
+The snapshot lives in mero/system/ and rides along with your dotfiles repo.
+Configs themselves are handled by mero/setup.sh, not this.
+EOF
+}
+
+main() {
+    local cmd=${1:-}
+    [[ $# -gt 0 ]] && shift
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+        -n | --dry-run) DRY_RUN=1 ;;
+        --no-etc) WITH_ETC=0 ;;
+        -h | --help) usage; exit 0 ;;
+        *) die "unknown option: $1" ;;
+        esac
+        shift
+    done
+
+    case $cmd in
+    save) cmd_save ;;
+    diff) cmd_diff ;;
+    restore) cmd_restore ;;
+    commit) cmd_commit ;;
+    -h | --help | help | '') usage ;;
+    *) die "unknown command: $cmd (try 'archify --help')" ;;
+    esac
+}
+
+main "$@"

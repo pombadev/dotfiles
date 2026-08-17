@@ -126,3 +126,11 @@ fi
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+export PATH="$HOME/fvm/bin:$PATH"
+export PATH="$HOME/fvm/default/bin:$PATH"
+
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/pomba/.local/bin:$PATH"

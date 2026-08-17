@@ -1,0 +1,10 @@
+# Extra /etc paths archify should never snapshot, one glob per line.
+# These are added to the built-in list in mero/bin/archify (secrets, the
+# user database, machine identity, hardware layout, *.pacnew, ...).
+#
+# Anything matched here is skipped by `archify save`, so it will not be
+# committed to the dotfiles repo and not restored on a new machine.
+#
+# Examples:
+#   /etc/wireguard/*
+#   /etc/nginx/ssl/*

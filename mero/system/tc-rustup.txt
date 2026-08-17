@@ -1,0 +1,2 @@
+1.95-x86_64-unknown-linux-gnu
+stable-x86_64-unknown-linux-gnu

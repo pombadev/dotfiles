@@ -4,5 +4,8 @@
 --type-add
 js:*.{js,jsx,mjs,cjs}*
 
+# tsx
+--type-add
+js:*.{tsx,mts,cts}*
 
 --ignore-vcs

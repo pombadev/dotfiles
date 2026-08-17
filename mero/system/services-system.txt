@@ -1,0 +1,14 @@
+bluetooth.service
+cups.path
+cups.service
+cups.socket
+firewalld.service
+getty@.service
+greetd.service
+NetworkManager-dispatcher.service
+NetworkManager.service
+NetworkManager-wait-online.service
+remote-fs.target
+systemd-timesyncd.service
+systemd-userdbd.socket
+tuned.service
