@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "workflowKeywordTriggerEnabled": false,
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"$HOME/.claude/statusline-command.sh\""
+  },
+  "enabledPlugins": {
+    "mattpocock-skills@claude-plugins-official": true,
+    "dart-flutter@dart-flutter": true,
+    "typescript-lsp@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "dart-flutter": {
+      "source": {
+        "source": "github",
+        "repo": "flutter/agent-plugins"
+      }
+    }
+  },
+  "effortLevel": "high",
+  "voice": {
+    "enabled": true,
+    "mode": "tap"
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "auto",
+  "verbose": true,
+  "preferredNotifChannel": "notifications_disabled",
+  "switchModelsOnFlag": false,
+  "remoteControlAtStartup": true,
+  "agentPushNotifEnabled": true,
+  "voiceEnabled": true,
+  "model": "opus"
+}
