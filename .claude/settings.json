@@ -32,6 +32,5 @@
   "switchModelsOnFlag": false,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
-  "voiceEnabled": true,
-  "model": "opus"
+  "voiceEnabled": true
 }
