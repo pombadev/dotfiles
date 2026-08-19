@@ -139,3 +139,6 @@ export PATH="/home/pomba/.local/bin:$PATH"
 if command -v fresh &> /dev/null; then
     export EDITOR=fresh
 fi
+
+# dune
+source $HOME/.local/share/dune/env/env.zsh

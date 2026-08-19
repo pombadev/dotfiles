@@ -125,7 +125,7 @@ binds {
     Print hotkey-overlay-title="Screenshot (Interactive)" { screenshot; }
     XF86Launch1 { screenshot; }
     Mod+Shift+E { quit; }
-    Mod+T hotkey-overlay-title="Wezterm" { spawn "wezterm"; }
+    Mod+T hotkey-overlay-title="Open Terminal" { spawn "wezterm"; }
     Mod+D repeat=false { toggle-overview; }
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
     Mod+Shift+Slash { show-hotkey-overlay; }

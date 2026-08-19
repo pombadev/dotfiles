@@ -1,0 +1,18 @@
+{
+  "enableTelemetry": false,
+  "model": "Claude Opus 4.6 (Thinking)",
+  "runningLightSpeed": "off",
+  "showFeedbackSurvey": false,
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"$HOME/.gemini/antigravity-cli/statusline-command.sh\"",
+    "enabled": true
+  },
+  "trajectory": "expand_always",
+  "trustedWorkspaces": [
+    "/home/pomba/Codes/ourpot",
+    "/home/pomba/.config/DankMaterialShell/plugins/toggle-sct",
+    "/home/pomba/Work/Apps",
+    "/home/pomba/.gemini/antigravity-cli"
+  ]
+}
