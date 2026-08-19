@@ -22,7 +22,7 @@ stash-explore() {
     # git stash list |
     #    fzf --reverse --preview-window=70% --preview 'bat -l diff <<< $(git stash show -p $(echo {} | grep -Eo "stash@{[0-9]{1,}}"))' |
     #    grep --color=none -Eo 'stash@{[0-9]{1,}}'
-    local stash=$(git stash list | cut -d \  -f1 | grep -Eo 'stash@{[0-9]{1,}}' | fzf --reverse --preview-window=70% --preview 'bat --color=always --style=numbers <<< `git stash show -p {}`')
+    local stash=$(git stash list | cut -d \  -f1 | grep --color=never -Eo 'stash@{[0-9]{1,}}' | fzf --reverse --preview-window=70% --preview 'bat --color=always --style=numbers <<< `git stash show -p {}`')
 
     if [[ -n "$stash" ]]; then
         git stash apply "$stash"

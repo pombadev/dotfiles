@@ -1,0 +1,32 @@
+{
+  "theme": "builtin://terminal",
+  "editor": {
+    "show_horizontal_scrollbar": true,
+    "highlight_current_column": true,
+    "completion_popup_auto_show": true,
+    "show_prompt_line": true,
+    "whitespace_spaces_inner": true,
+    "whitespace_spaces_trailing": true,
+    "whitespace_carriage_returns": true,
+    "whitespace_newlines": true,
+    "whitespace_spaces_leading": true,
+    "cursor_jump_animation": false,
+    "rainbow_indentation": true,
+    "indentation_guide": "all",
+    "virtual_space": "off",
+    "trim_trailing_whitespace_on_save": true,
+    "status_bar": {
+      "left": ["{trust}", "{diagnostics}", "{cursor:compact}", "{filename}", "{git_statusbar:branch}"]
+    }
+  },
+  "file_explorer": {
+    "show_hidden": true,
+    "show_gitignored": true
+  },
+  "file_browser": {
+    "show_hidden": true
+  },
+  "terminal": {
+    "mouse_drag_selects": true
+  }
+}

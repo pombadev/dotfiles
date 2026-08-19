@@ -134,3 +134,8 @@ export PATH="$HOME/fvm/default/bin:$PATH"
 
 # Added by Antigravity CLI installer
 export PATH="/home/pomba/.local/bin:$PATH"
+
+
+if command -v fresh &> /dev/null; then
+    export EDITOR=fresh
+fi

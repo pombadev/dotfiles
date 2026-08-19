@@ -298,7 +298,7 @@ include "dms/windowrules.kdl"
 
 binds {
     Mod+Grave {
-        spawn-sh "~/.config/niri/niriquake --scratch=last --height=0.9 --app-id=quake.ghostty -- ghostty --class=quake.ghostty";
+        spawn-sh "~/.config/niri/niriquake --scratch=last --height=0.9 --app-id=quake.wezterm -- wezterm start --class=quake.wezterm";
     }
 }
 
