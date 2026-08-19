@@ -8,7 +8,10 @@ greetd.service
 NetworkManager-dispatcher.service
 NetworkManager.service
 NetworkManager-wait-online.service
+paccache.timer
 remote-fs.target
+systemd-oomd.service
+systemd-oomd.socket
 systemd-timesyncd.service
 systemd-userdbd.socket
 tuned.service
