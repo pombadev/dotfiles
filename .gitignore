@@ -6,3 +6,4 @@ dotfiles
 .cargo/
 !.cargo/config.toml
 .qodo
+.ssh/

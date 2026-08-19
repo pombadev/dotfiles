@@ -1,4 +1,5 @@
 android-studio
+asusctl-git
 bridge-utils
 claude-desktop
 dankcalendar-bin
@@ -7,6 +8,7 @@ fresh-editor
 gitbutler-bin
 google-chrome
 graphify-bin
+greetd-dms-greeter-git
 nirinit
 packet
 paru
