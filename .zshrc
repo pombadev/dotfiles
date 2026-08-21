@@ -142,3 +142,7 @@ fi
 
 # dune
 source $HOME/.local/share/dune/env/env.zsh
+
+# >>> Codex installer >>>
+export PATH="/home/pomba/.local/bin:$PATH"
+# <<< Codex installer <<<

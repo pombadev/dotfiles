@@ -7,6 +7,7 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "format_on_save": "on",
   "diff_view_style": "split",
   "cli_default_open_behavior": "existing_window",
   "hide_mouse": "never",
