@@ -297,6 +297,8 @@ include "dms/cursor.kdl"
 include "dms/windowrules.kdl"
 
 binds {
+    Mod+Ctrl+L { spawn "~/.config/niri/niri-equalize"; }
+
     Mod+Grave {
         spawn-sh "~/.config/niri/niriquake --scratch=last --height=0.9 --app-id=quake.wezterm -- wezterm start --class=quake.wezterm";
     }

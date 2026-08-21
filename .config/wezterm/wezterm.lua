@@ -11,7 +11,7 @@ config.front_end = "WebGpu"
 config.enable_kitty_keyboard = true
 
 -- UI Layout Tweaks
-config.use_fancy_tab_bar = false
+config.use_fancy_tab_bar = true
 config.tab_bar_at_bottom = true
 config.inactive_pane_hsb = {
     brightness = 0.3, -- Slightly brighter so background panes aren't totally lost
@@ -48,6 +48,24 @@ config.colors = {
     }
 }
 
+-- Fancy tab bar frame, styled to match the retro black/yellow look
+config.window_frame = {
+    font = wezterm.font { family = "Roboto", weight = "Bold" },
+    font_size = 10,
+    active_titlebar_bg = "#000000",
+    inactive_titlebar_bg = "#000000",
+    active_titlebar_fg = "#fff700",
+    inactive_titlebar_fg = "#666666",
+    active_titlebar_border_bottom = "#fff700",
+    button_fg = "#666666",
+    button_bg = "#000000",
+    button_hover_fg = "#000000",
+    button_hover_bg = "#fff700",
+}
+
+function basename(s)
+  return string.gsub(s, '(.*[/\\])(.*)', '%2')
+end
 -- Original Tab & Title Formatting
 wezterm.on('format-window-title', function(tab, pane, tabs, panes, config)
     local index = ''
@@ -61,12 +79,7 @@ wezterm.on("format-tab-title", function(tab)
     local pane       = tab.active_pane
     local num_panes  = #tab.panes
     local pane_count = num_panes > 1 and string.format(" [%d] ", num_panes) or ""
-
-
-    local process_name = pane.foreground_process_name or ""
-    process_name = process_name:gsub("[/\\]+$", "")
-    process_name = process_name:match("([^/\\]+)$") or process_name
-
+    local process_name = basename(pane.foreground_process_name or "")
     local cwd = "~"
     local cwd_uri = pane.current_working_dir
 
@@ -76,7 +89,7 @@ wezterm.on("format-tab-title", function(tab)
         cwd = cwd:match("([^/\\]+)$") or cwd
     end
 
-    return string.format(" 󰉋 %s 󰆍 %s%s", cwd, process_name, pane_count)
+    return string.format(" 󰆍 %s on 󰉋 %s%s", process_name, cwd, pane_count)
 end)
 
 wezterm.on('update-status', function(window, pane)

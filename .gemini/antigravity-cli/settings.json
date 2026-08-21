@@ -1,6 +1,6 @@
 {
   "enableTelemetry": false,
-  "model": "Claude Opus 4.6 (Thinking)",
+  "model": "Gemini 3.7 Flash (High)",
   "runningLightSpeed": "off",
   "showFeedbackSurvey": false,
   "statusLine": {
@@ -13,6 +13,7 @@
     "/home/pomba/Codes/ourpot",
     "/home/pomba/.config/DankMaterialShell/plugins/toggle-sct",
     "/home/pomba/Work/Apps",
-    "/home/pomba/.gemini/antigravity-cli"
+    "/home/pomba/.gemini/antigravity-cli",
+    "/home/pomba/Codes/claude-statusline"
   ]
 }

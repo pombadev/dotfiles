@@ -1,5 +1,5 @@
 {
-  "theme": "builtin://terminal",
+  "theme": "https://github.com/Nandaleio/bluloco-fresh#bluloco-dark",
   "editor": {
     "show_horizontal_scrollbar": true,
     "highlight_current_column": true,
@@ -16,7 +16,8 @@
     "virtual_space": "off",
     "trim_trailing_whitespace_on_save": true,
     "status_bar": {
-      "left": ["{trust}", "{diagnostics}", "{cursor:compact}", "{filename}", "{git_statusbar:branch}"]
+      "left": ["{trust}", "{diagnostics}", "{cursor:compact}", "{filename}", "{git_statusbar:branch}"],
+      "right": ["{read_only}", "{line_ending}", "{encoding}", "{language}", "{lsp}", "{warnings}", "{update}", "{palette}"]
     }
   },
   "file_explorer": {
@@ -28,5 +29,37 @@
   },
   "terminal": {
     "mouse_drag_selects": true
+  },
+  "version": 2,
+  "lsp": {
+    "ocaml": {
+      "enabled": true,
+      "auto_start": true,
+      "process_limits": {
+        "max_memory_percent": 50,
+        "max_cpu_percent": 90,
+        "enabled": true
+      }
+    }
+  },
+  "plugins": {
+    "vi_mode": {
+      "enabled": true,
+      "settings": {
+        "autoStart": false,
+        "arrowKeys": true,
+        "searchWordUnderCursor": true
+      }
+    },
+    "git_explorer": {
+      "settings": {
+        "colorNames": true
+      }
+    },
+    "dashboard": {
+      "settings": {
+        "autoOpen": true
+      }
+    }
   }
 }
