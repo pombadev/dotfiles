@@ -1,7 +1,10 @@
 docker.socket
+gcr-ssh-agent.socket
 gnome-keyring-daemon.socket
 p11-kit-server.socket
 pipewire-pulse.socket
 pipewire.socket
+voxtype.service
 wireplumber.service
 xdg-user-dirs.service
+ydotool.service

@@ -1,4 +1,4 @@
-//spawn-sh-at-startup "/home/pomba/Codes/session-peon/session-peon --verbose"
+// spawn-at-startup "wluma"
 
 // This config is in the KDL format: https://kdl.dev
 // "/-" comments out the following node.
@@ -302,6 +302,9 @@ binds {
     Mod+Grave {
         spawn-sh "~/.config/niri/niriquake --scratch=last --height=0.9 --app-id=quake.wezterm -- wezterm start --class=quake.wezterm";
     }
+
+    // Hold Super + V to record, release to transcribe
+    F12 { spawn "voxtype" "record" "toggle"; }
 }
 
 window-rule {

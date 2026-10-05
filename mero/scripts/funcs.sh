@@ -29,8 +29,22 @@ stash-explore() {
     fi
 }
 
-clean-git-branches() {
-    git branch | grep -E -v "^(\* )|^  ((dev(elop)?)|master|staging|main)$" | xargs --no-run-if-empty git branch -D
+clean-git-branches () {
+        local protected='^(dev(elop)?|master|staging|main)$'
+        local current=$(git branch --show-current)
+        local branch dir
+
+        git worktree prune
+        git worktree list --porcelain |
+        awk '/^worktree /{dir=substr($0,10)} /^branch refs\/heads\//{print substr($0,19) "\t" dir}' |
+        while IFS=$'\t' read -r branch dir; do
+                [[ $branch == "$current" || $branch =~ $protected ]] && continue
+                git worktree remove "$dir" || echo "kept worktree $dir and its branch $branch" >&2
+        done
+
+        git for-each-ref --format='%(refname:short)' refs/heads |
+        grep -E -v "$protected" | grep -F -x -v -- "$current" |
+        xargs --no-run-if-empty git branch -D
 }
 
 # gcp - git commit with previews

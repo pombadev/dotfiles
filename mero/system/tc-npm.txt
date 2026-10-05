@@ -1,3 +1,7 @@
+cline@3.0.62
+@earendil-works/pi-coding-agent@0.84.4
 @fission-ai/openspec@1.9.0
+kanban@0.1.70
 supabase@2.113.0
+typescript@7.0.2
 typescript-language-server@5.3.0

@@ -146,3 +146,7 @@ source $HOME/.local/share/dune/env/env.zsh
 # >>> Codex installer >>>
 export PATH="/home/pomba/.local/bin:$PATH"
 # <<< Codex installer <<<
+
+# rhun
+case ":$PATH:" in *":/home/pomba/.local/bin:"*) ;; *) export PATH="/home/pomba/.local/bin:$PATH" ;; esac
+# rhun end

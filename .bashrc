@@ -77,3 +77,7 @@ export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
 
 # Added by Antigravity CLI installer
 export PATH="/home/pomba/.local/bin:$PATH"
+
+# rhun
+case ":$PATH:" in *":/home/pomba/.local/bin:"*) ;; *) export PATH="/home/pomba/.local/bin:$PATH" ;; esac
+# rhun end

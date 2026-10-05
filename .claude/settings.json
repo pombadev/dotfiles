@@ -2,10 +2,11 @@
   "permissions": {
     "defaultMode": "auto"
   },
+  "model": "opus",
   "workflowKeywordTriggerEnabled": false,
   "statusLine": {
     "type": "command",
-    "command": "bash \"$HOME/.claude/statusline-command.sh\""
+    "command": "$HOME/.local/bin/agent-statusline --no-tag --no-rc"
   },
   "enabledPlugins": {
     "mattpocock-skills@claude-plugins-official": true,
@@ -21,9 +22,13 @@
     }
   },
   "effortLevel": "high",
+  "companyAnnouncements": [
+    "Prompt check: what you want, why, where, and how you will judge it. Anything you leave out, I fill in with a guess."
+  ],
+  "tui": "fullscreen",
   "voice": {
     "enabled": true,
-    "mode": "tap"
+    "mode": "hold"
   },
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",

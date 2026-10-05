@@ -1,1 +1,1 @@
-com.markdeepwell.GitY	flathub
+studio.planetpeanut.Bobby	flathub
