@@ -11,3 +11,17 @@ window-rule {
     match app-id="^com.danklinux.dms$"
     open-floating true
 }
+
+// @id=wr_1791781621114253133 @name=valent
+window-rule {
+    match app-id="^valent$"
+    open-floating true
+    min-height 900
+}
+
+// @id=wr_1791781892130963236 @name=io.github.nozwock.Packet
+window-rule {
+    match app-id="^io.github.nozwock.Packet$"
+    open-floating true
+    open-focused true
+}

@@ -19,6 +19,9 @@ if [ -f "$HOME/.cargo/env" ]; then
     if command -v sccache &>/dev/null; then
         export RUSTC_WRAPPER=$(which sccache)
     fi
+
+elif [ -d "$HOME/.cargo/bin" ]; then
+    __PATH__+=":$HOME/.cargo/bin"
 fi
 
 # dart

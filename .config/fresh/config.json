@@ -61,5 +61,13 @@
         "autoOpen": true
       }
     }
-  }
+  },
+  "keybindings": [
+    {
+      "key": "o",
+      "modifiers": ["ctrl", "alt"],
+      "action": "quick_open_files",
+      "when": "global"
+    }
+  ]
 }

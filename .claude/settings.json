@@ -11,7 +11,8 @@
   "enabledPlugins": {
     "mattpocock-skills@claude-plugins-official": true,
     "dart-flutter@dart-flutter": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "cc-plugin-you-should-know@builtin": true
   },
   "extraKnownMarketplaces": {
     "dart-flutter": {
@@ -37,5 +38,6 @@
   "switchModelsOnFlag": false,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
-  "voiceEnabled": true
+  "voiceEnabled": true,
+  "crossSessionInbound": "accept"
 }
