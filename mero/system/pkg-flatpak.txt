@@ -1,1 +1,2 @@
+org.sil.scripture-app-builder	flathub
 studio.planetpeanut.Bobby	flathub

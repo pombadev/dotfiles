@@ -1,0 +1,37 @@
+input {
+    keyboard {
+        xkb
+        numlock
+    }
+    touchpad {
+        tap
+        natural-scroll
+        accel-speed 0.2
+    }
+    mouse
+    trackpoint
+}
+
+debug {
+    honor-xdg-activation-with-invalid-serial
+    wait-for-frame-completion-before-queueing
+}
+
+output "HDMI-A-1" {
+    mode "2560x1440@59.951"
+    scale 1
+    position x=0 y=0
+}
+
+output "eDP-1" {
+    mode "2880x1800@120.000"
+    scale 1.5
+    position y=1440 x=1522
+}
+
+output "DP-1" {
+    mode "2560x1440@60.000"
+    scale 1
+    position y=0 x=2560
+}
+

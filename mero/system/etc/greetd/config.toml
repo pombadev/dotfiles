@@ -1,0 +1,6 @@
+[terminal]
+vt = 1
+
+[default_session]
+user = "greeter"
+command = "/usr/bin/dms-greeter --command niri -p /usr/share/quickshell/dms --cache-dir /var/cache/dms-greeter -C /etc/greetd/niri/config.kdl"

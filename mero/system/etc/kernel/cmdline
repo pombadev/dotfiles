@@ -1,0 +1,1 @@
+root=/dev/ArchinstallVg/root zswap.enabled=0 rootflags=subvol=@ rw rootfstype=btrfs

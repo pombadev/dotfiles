@@ -1,5 +1,5 @@
 cline@3.0.62
-@earendil-works/pi-coding-agent@0.84.4
+@earendil-works/pi-coding-agent@1.0.0
 @fission-ai/openspec@1.9.0
 kanban@0.1.70
 supabase@2.113.0

@@ -9,7 +9,6 @@ google-chrome
 greetd-dms-greeter-bin
 nirinit
 packet
-pacsea-bin
 paru
 reco
 ryzenadj
@@ -17,5 +16,4 @@ shellcheck-bin
 shelly-gnome
 sublime-merge
 valent
-visual-studio-code-bin
 voxtype

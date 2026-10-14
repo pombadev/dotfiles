@@ -1,0 +1,6 @@
+[terminal]
+vt = 1
+
+[default_session]
+user = "greeter"
+command = "/usr/share/quickshell/dms/Modules/Greetd/assets/dms-greeter --command niri -p /usr/share/quickshell/dms"
