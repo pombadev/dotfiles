@@ -18,7 +18,8 @@
     "status_bar": {
       "left": ["{trust}", "{diagnostics}", "{cursor:compact}", "{filename}", "{git_statusbar:branch}"],
       "right": ["{read_only}", "{line_ending}", "{encoding}", "{language}", "{lsp}", "{warnings}", "{update}", "{palette}"]
-    }
+    },
+    "enable_inlay_hints": true
   },
   "file_explorer": {
     "show_hidden": true,
@@ -40,7 +41,33 @@
         "max_cpu_percent": 90,
         "enabled": true
       }
-    }
+    },
+    "jsonc": [
+      {
+        "command": "~/.npm/packages/bin/vscode-json-languageserver",
+        "enabled": true,
+        "args": ["--stdio"],
+        "auto_start": true,
+        "process_limits": {
+          "max_memory_percent": 50,
+          "max_cpu_percent": 90,
+          "enabled": true
+        }
+      }
+    ],
+    "json": [
+      {
+        "command": "~/.npm/packages/bin/vscode-json-languageserver",
+        "enabled": true,
+        "args": ["--stdio"],
+        "auto_start": true,
+        "process_limits": {
+          "max_memory_percent": 50,
+          "max_cpu_percent": 90,
+          "enabled": true
+        }
+      }
+    ]
   },
   "plugins": {
     "vi_mode": {
@@ -54,11 +81,30 @@
     "git_explorer": {
       "settings": {
         "colorNames": true
-      }
+      },
+      "enabled": true
     },
     "dashboard": {
       "settings": {
         "autoOpen": true
+      },
+      "enabled": true
+    },
+    "welcome_screen": {
+      "enabled": true,
+      "settings": {
+        "showOnStartup": true
+      }
+    },
+    "orchestrator": {
+      "enabled": true,
+      "settings": {
+        "autoOpenDock": "auto",
+        "defaultView": "compact",
+        "showAllWorktrees": false,
+        "showEmptyWorkspaces": true,
+        "notifications": "all",
+        "notifySound": false
       }
     }
   },
@@ -69,5 +115,6 @@
       "action": "quick_open_files",
       "when": "global"
     }
-  ]
+  ],
+  "orchestrator_mode": false
 }

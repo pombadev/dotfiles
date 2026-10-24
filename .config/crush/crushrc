@@ -1,0 +1,13 @@
+if which cline &> /dev/null; then
+    provider add cline \
+      --name "ClinePass" \
+      --type openai-compat \
+      --base-url "https://api.cline.bot/api/v1" \
+      --api-key "$(secret-tool lookup service cline kind api)" \
+      --discover-models false
+
+    curl -s https://api.cline.bot/api/v1/ai/cline/recommended-models \
+          | jq -r '.clinePass[].id' \
+          | while read -r model; do model add "cline/$model" --name "$model"; done
+
+fi

@@ -7,6 +7,7 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "copilot": {},
   "format_on_save": "on",
   "diff_view_style": "split",
   "cli_default_open_behavior": "existing_window",
@@ -28,8 +29,27 @@
         "database_url": "postgresql://myuser:mypassword@localhost:5432/mydatabase",
       },
     },
+    "argent": {
+      "source": "custom",
+      "command": "argent",
+      "args": [
+        "mcp"
+      ]
+    },
   },
   "agent_servers": {
+    "antigravity-acp": {
+      "type": "registry"
+    },
+    "codex-acp": {
+      "type": "registry"
+    },
+    "cline": {
+      "default_config_options": {
+        "provider": "cline-pass"
+      },
+      "type": "registry"
+    },
     "claude-acp": {
       "default_config_options": {
         "model": "default",
@@ -50,9 +70,6 @@
         "model": "auto",
         "reasoning_effort": "xhigh",
       },
-      "type": "registry",
-    },
-    "gemini": {
       "type": "registry",
     },
   },
@@ -136,7 +153,6 @@
     "copilot": {
       "proxy": null,
       "proxy_no_verify": null,
-      "enterprise_uri": null,
     },
     "enabled_in_text_threads": false,
   },

@@ -1,5 +1,8 @@
 {
   "permissions": {
+    "allow": [
+      "mcp__argent"
+    ],
     "defaultMode": "auto"
   },
   "model": "opus",
@@ -12,7 +15,9 @@
     "mattpocock-skills@claude-plugins-official": true,
     "dart-flutter@dart-flutter": true,
     "typescript-lsp@claude-plugins-official": true,
-    "cc-plugin-you-should-know@builtin": true
+    "cc-plugin-you-should-know@builtin": true,
+    "cloudflare@cloudflare": true,
+    "expo@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "dart-flutter": {
@@ -37,7 +42,7 @@
   "preferredNotifChannel": "notifications_disabled",
   "switchModelsOnFlag": false,
   "remoteControlAtStartup": true,
+  "crossSessionInbound": "accept",
   "agentPushNotifEnabled": true,
-  "voiceEnabled": true,
-  "crossSessionInbound": "accept"
+  "voiceEnabled": true
 }

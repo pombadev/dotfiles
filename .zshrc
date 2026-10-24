@@ -150,3 +150,6 @@ export PATH="/home/pomba/.local/bin:$PATH"
 # rhun
 case ":$PATH:" in *":/home/pomba/.local/bin:"*) ;; *) export PATH="/home/pomba/.local/bin:$PATH" ;; esac
 # rhun end
+
+# opencode
+export PATH=/home/pomba/.opencode/bin:$PATH

@@ -9,7 +9,7 @@ output "HKC OVERSEAS LIMITED 27E6QCA 0000000000001" {
 output "Samsung Display Corp. ATNA60CL10-0  Unknown" {
     mode "2880x1800@120.000"
     scale 1.25
-    position x=1470 y=1440
+    position x=1425 y=1440
     variable-refresh-rate
 }
 

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["~/.agents/AGENTS.md"],
+  "model": "cline-pass/deepseek-v4.1-flash-1017",
+  "plugins": ["opencode-browser"],
+  "mcp": {
+    "servers": {
+      "browsermcp": {
+        "type": "local",
+        "command": ["npx", "-y", "@browsermcp/mcp@0.1.3"],
+      },
+    },
+    "argent": {
+      "type": "local",
+      "command": ["argent", "mcp"],
+      "enabled": true,
+    },
+  },
+  "tools": {
+    "argent*": true,
+  },
+}
