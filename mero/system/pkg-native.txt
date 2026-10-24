@@ -25,6 +25,7 @@ dosfstools
 efibootmgr
 evtest
 exfatprogs
+extra-cmake-modules
 eza
 fastflowlm
 feh
@@ -47,6 +48,7 @@ gpu-screen-recorder
 greetd
 gst-plugin-pipewire
 gvfs-mtp
+hipblas
 htop
 inter-font
 inxi
@@ -62,6 +64,8 @@ libvirt
 linux-firmware
 linux-headers
 linux-zen
+lld
+lsof
 lvm2
 matugen
 mesa-utils
@@ -97,6 +101,7 @@ reflector
 reptyr
 restic
 ripgrep
+rocblas
 rocm-hip-runtime
 rsync
 rustup
@@ -106,6 +111,7 @@ sof-firmware
 sops
 starship
 sudo
+sushi
 system-config-printer
 tailscale
 tcpdump
